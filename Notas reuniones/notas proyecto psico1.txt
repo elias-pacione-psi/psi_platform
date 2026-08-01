@@ -1,0 +1,9 @@
+Preguntas: Va a ser multipaginas o solo para gestion de plataforma de usuarios?
+
+*Que el alumno pueda elegir segun horarios disponibles en una franja horaria dispuesta por el profesor*
+
+Que tipo de material se va a subir, de eso dependera el storage necesario (clases grabadas)
+
+Que funcionalidades necesita tener (compararlas con las que ya tiene.
+
+Escalabilidad, cantidad de alumnos y admins, visibilidad (al ser la mayoria de los servicios gratis estan limitados)

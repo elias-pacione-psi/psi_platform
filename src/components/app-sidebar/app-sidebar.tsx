@@ -1,10 +1,11 @@
 'use client'
 
-import { Home, LogOut, Users, FolderHeart, Library, Calendar, LayoutList } from "lucide-react"
+import { Home, LogOut, Users, FolderHeart, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import { BrandLogo } from "@/components/BrandLogo"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 import {
   Sidebar,
@@ -19,33 +20,38 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const itemsPaciente = [
+const itemsAlumno = [
   {
     title: "Inicio",
-    url: "/paciente",
+    url: "/alumno",
     icon: Home,
   },
   {
     title: "Mis programas",
-    url: "/paciente/programas",
+    url: "/alumno/programas",
     icon: LayoutList,
   },
   {
     title: "Materiales",
-    url: "/paciente/materiales",
+    url: "/alumno/materiales",
     icon: FolderHeart,
   },
   {
+    title: "Tareas",
+    url: "/alumno/tareas",
+    icon: ClipboardList,
+  },
+  {
     title: "Mi agenda",
-    url: "/paciente/agenda",
+    url: "/alumno/agenda",
     icon: Calendar,
   },
 ]
 
 const itemsPsicologo = [
   {
-    title: "Pacientes",
-    url: "/psicologo/pacientes",
+    title: "Alumnos",
+    url: "/psicologo/alumnos",
     icon: Users,
   },
   {
@@ -54,9 +60,24 @@ const itemsPsicologo = [
     icon: LayoutList,
   },
   {
+    title: "Cohortes",
+    url: "/psicologo/cohortes",
+    icon: GraduationCap,
+  },
+  {
+    title: "Entregas",
+    url: "/psicologo/entregas",
+    icon: Inbox,
+  },
+  {
     title: "Biblioteca",
     url: "/psicologo/biblioteca",
     icon: Library,
+  },
+  {
+    title: "Archivos",
+    url: "/psicologo/archivos",
+    icon: FolderCog,
   },
   {
     title: "Agenda",
@@ -80,40 +101,64 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
 
   return (
     <Sidebar className="border-r-gray-200">
-      <SidebarHeader className="p-4 border-b border-gray-100 flex items-center justify-center">
+      <SidebarHeader className="p-4 border-b border-border flex flex-row items-center justify-between">
         <BrandLogo />
+        <ThemeToggle />
       </SidebarHeader>
       <SidebarContent>
-        {!esPsicologo && (
+        {esPsicologo ? (
+          <>
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-tinta/70">Panel del psicólogo</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {itemsPsicologo.map((item) => {
+                    const isActive = pathname.startsWith(item.url)
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
+                          <Link href={item.url} className="flex items-center gap-2 w-full">
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-tinta/70 flex items-center justify-between">
+                <span>Vista Alumno (Demo)</span>
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {itemsAlumno.map((item) => {
+                    const isActive = pathname === item.url || (item.url !== "/alumno" && pathname.startsWith(item.url))
+                    return (
+                      <SidebarMenuItem key={`demo-${item.title}`}>
+                        <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
+                          <Link href={item.url} className="flex items-center gap-2 w-full">
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        ) : (
           <SidebarGroup>
             <SidebarGroupLabel className="text-tinta/70">Navegación</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {itemsPaciente.map((item) => {
-                  const isActive = pathname === item.url || (item.url !== "/paciente" && pathname.startsWith(item.url))
-                  return (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
-                        <Link href={item.url} className="flex items-center gap-2 w-full">
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {esPsicologo && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-tinta/70">Panel del psicólogo</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {itemsPsicologo.map((item) => {
-                  const isActive = pathname.startsWith(item.url)
+                {itemsAlumno.map((item) => {
+                  const isActive = pathname === item.url || (item.url !== "/alumno" && pathname.startsWith(item.url))
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
@@ -130,12 +175,12 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t border-gray-100">
+      <SidebarFooter className="p-4 border-t border-border">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={handleSignOut}
-              className="font-sans text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
+              className="font-sans text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-all duration-200"
             >
               <LogOut className="h-4 w-4" />
               <span>Cerrar sesión</span>

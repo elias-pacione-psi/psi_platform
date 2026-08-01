@@ -1,0 +1,9 @@
+Cuentas asociadas de la plataforma de Elias Pacione:
+
+Principal Gmail (todas las cuentas se inician desde este email)
+elias.psicologiaconsentido  password: salmo23nadamefalta
+
+Supabase (Database SQL) Se inicia con el gmail principal:
+Project name: elias-pacione-psi   password:   dxpTB4NGskYx2pLd
+
+usuario y contrasena de admin plataforma: elias.psicologiaconsentido@gmail.com // ~}'kPfZij}&62E-

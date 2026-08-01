@@ -1,11 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
 import { firmarUrlsRecursos } from '@/utils/supabase/recursos'
-import { AdminActividadesClient } from './AdminActividadesClient'
+import { AdminLeccionesClient } from './AdminLeccionesClient'
 import { redirect } from 'next/navigation'
 
-export default async function AdminActividadesPage(props: { params: Promise<{ programaId: string }> }) {
-  const params = await props.params;
-  const programaId = params.programaId;
+export default async function AdminLeccionesPage(props: { params: Promise<{ programaId: string }> }) {
+  const params = await props.params
+  const programaId = params.programaId
   const supabase = await createClient()
 
   const { data: programa, error: progError } = await supabase
@@ -18,26 +18,48 @@ export default async function AdminActividadesPage(props: { params: Promise<{ pr
     redirect('/psicologo/programas')
   }
 
-  const { data: unidades } = await supabase
-    .from('unidades')
+  const { data: modulos } = await supabase
+    .from('modulos')
     .select('*')
     .eq('programa_id', programaId)
+    .order('orden', { ascending: true })
     .order('created_at', { ascending: true })
 
-  const { data: actividades } = await supabase
-    .from('actividades')
+  const { data: lecciones } = await supabase
+    .from('lecciones')
     .select('*')
     .eq('programa_id', programaId)
+    .order('orden', { ascending: true })
     .order('created_at', { ascending: true })
 
-  // Para el link "Ver archivo" del editor: firmar URLs de archivos del bucket,
-  // preservando el path original para no romper la edición
-  const firmadas = await firmarUrlsRecursos(actividades || [])
-  const actividadesParaCliente = (actividades || []).map((a, i) => ({ ...a, url_abrible: firmadas[i].url_recurso }))
+  // Preguntas de las lecciones de tipo quiz (el instructor sí puede verlas)
+  const quizIds = (lecciones || []).filter(l => l.tipo_contenido === 'quiz').map(l => l.id)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let preguntasPorLeccion: Record<string, any[]> = {}
+  if (quizIds.length > 0) {
+    const { data: preguntas } = await supabase
+      .from('quiz_preguntas')
+      .select('id, leccion_id, pregunta, opciones, respuesta_correcta, orden')
+      .in('leccion_id', quizIds)
+      .order('orden', { ascending: true })
+    preguntasPorLeccion = (preguntas || []).reduce((acc, p) => {
+      (acc[p.leccion_id] ||= []).push(p)
+      return acc
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }, {} as Record<string, any[]>)
+  }
+
+  // Firmar URLs de archivos subidos (para el link "Ver archivo" del editor)
+  const firmadas = await firmarUrlsRecursos(lecciones || [])
+  const leccionesParaCliente = (lecciones || []).map((l, i) => ({
+    ...l,
+    url_abrible: firmadas[i].url_recurso,
+    preguntas: preguntasPorLeccion[l.id] || [],
+  }))
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <AdminActividadesClient programa={programa} unidades={unidades || []} actividades={actividadesParaCliente} />
+      <AdminLeccionesClient programa={programa} modulos={modulos || []} lecciones={leccionesParaCliente} />
     </div>
   )
 }

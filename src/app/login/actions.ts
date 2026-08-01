@@ -19,15 +19,15 @@ export async function login(formData: FormData) {
     return { error: error.message }
   }
 
-  // El psicólogo entra directo a su panel; el paciente a su espacio
-  let destino = '/paciente'
+  // El psicólogo entra directo a su panel; el alumno a su espacio
+  let destino = '/alumno'
   if (data.user) {
     const { data: perfil } = await supabase
-      .from('pacientes')
+      .from('alumnos')
       .select('rol')
       .eq('id', data.user.id)
       .single()
-    if (perfil?.rol === 'psicologo') destino = '/psicologo/pacientes'
+    if (perfil?.rol === 'psicologo') destino = '/psicologo/alumnos'
   }
 
   revalidatePath('/', 'layout')

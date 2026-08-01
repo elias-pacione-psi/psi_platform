@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-@theme {
-  /* Paleta sobria para consultorio: tinta (petróleo), marca (verde) y crema */
-  --color-tinta: #1f3d3a;
-  --color-marca: #2f7d6d;
-  --color-crema: #f8f7f2;
-}
-
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
@@ -14,13 +7,35 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--color-crema);
-  --color-foreground: var(--color-tinta);
+  /* Marca personal de Elias Pacione — Concepto 1 "La Escucha" del brief
+     (ver docs/marca/). tinta (carbón verdoso), marca (verde) y crema. Van por
+     `var()` en vez de un hex fijo para que giren con el tema: en oscuro,
+     `crema` pasa a ser el fondo oscuro y `tinta` el texto claro. Así las
+     clases `text-tinta` / `bg-crema` que ya existen se adaptan solas. */
+  --color-tinta: var(--tinta);
+  --color-marca: var(--marca);
+  --color-crema: var(--crema);
 
-  --font-sans: var(--font-montserrat);
+  /* Sages del brief. Son claros a propósito: sirven como SUPERFICIE (tarjetas,
+     badges, bloques) con texto oscuro encima — nunca como color de texto ni de
+     botón, donde no llegan al contraste mínimo (1.9:1 y 2.4:1 sobre crema). */
+  --color-sage: var(--sage);
+  --color-sage-hondo: var(--sage-hondo);
+  --color-gris-calido: var(--gris-calido);
+
+  /* Par que NO gira: superficies pensadas para ser oscuras siempre (fondo del
+     login, footer, encabezado de los visores) con su texto claro encima. Si
+     usaran tinta/crema, en modo oscuro quedaría blanco sobre blanco. */
+  --color-noche: #333d3a;
+  --color-nieve: #f5f1ea;
+
+  --color-background: var(--crema);
+  --color-foreground: var(--tinta);
+
+  --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-playfair);
-  --font-serif: var(--font-playfair);
+  --font-heading: var(--font-poppins);
+  --font-serif: var(--font-lora);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -62,68 +77,99 @@
 }
 
 :root {
-  --card: oklch(1 0 0);
-  --card-foreground: #1f3d3a;
-  --popover: oklch(1 0 0);
-  --popover-foreground: #1f3d3a;
-  --primary: #1f3d3a;
-  --primary-foreground: #f8f7f2;
-  --secondary: #f8f7f2;
-  --secondary-foreground: #1f3d3a;
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: #f8f7f2;
-  --accent-foreground: #1f3d3a;
+  color-scheme: light;
+
+  /* Paleta del brief (Concepto 1): sage #A8B7A0, sage hondo #8FA395,
+     crema #F5F1EA, gris cálido #D8D5CF, carbón verdoso #4A4F4C. */
+  --crema: #f5f1ea;
+  --tinta: #4a4f4c;
+  --sage: #a8b7a0;
+  --sage-hondo: #8fa395;
+  --gris-calido: #d8d5cf;
+  /* `marca` es el color de ACCIÓN (botones, links, íconos). Los sages del brief
+     no sirven para ese rol: #A8B7A0 da 1.88:1 sobre crema y 2.11:1 con texto
+     blanco — muy por debajo del mínimo. Este es el mismo verde profundizado
+     hasta pasar AA en los dos roles a la vez: 5.32:1 sobre crema y 5.99:1 con
+     texto blanco encima (verificado). Los sages originales viven intactos
+     arriba, como superficie. */
+  --marca: #54685b;
+
+  --card: #fffdfa;
+  --card-foreground: #4a4f4c;
+  --popover: #fffdfa;
+  --popover-foreground: #4a4f4c;
+  --primary: #4a4f4c;
+  --primary-foreground: #f5f1ea;
+  --secondary: #f5f1ea;
+  --secondary-foreground: #4a4f4c;
+  --muted: #eeebe3;
+  --muted-foreground: #7b807c;
+  --accent: #eef1ea;
+  --accent-foreground: #4a4f4c;
   --destructive: #b3372f;
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: #2f7d6d;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --border: #e2ded4;
+  --input: #e2ded4;
+  --ring: #54685b;
+  --chart-1: #54685b;
+  --chart-2: #8fa395;
+  --chart-3: #a8b7a0;
+  --chart-4: #d8d5cf;
+  --chart-5: #4a4f4c;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: #1f3d3a;
-  --sidebar-primary: #1f3d3a;
-  --sidebar-primary-foreground: #f8f7f2;
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: #1f3d3a;
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: #2f7d6d;
+  --sidebar: #fbf9f4;
+  --sidebar-foreground: #4a4f4c;
+  --sidebar-primary: #4a4f4c;
+  --sidebar-primary-foreground: #f5f1ea;
+  --sidebar-accent: #eef1ea;
+  --sidebar-accent-foreground: #4a4f4c;
+  --sidebar-border: #e2ded4;
+  --sidebar-ring: #54685b;
 }
 
 .dark {
-  --card: #1f3d3a;
-  --card-foreground: #f8f7f2;
-  --popover: #1f3d3a;
-  --popover-foreground: #f8f7f2;
-  --primary: #f8f7f2;
-  --primary-foreground: #1f3d3a;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: #f8f7f2;
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: #f8f7f2;
-  --destructive: #b3372f;
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: #f8f7f2;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: #1f3d3a;
-  --sidebar-foreground: #f8f7f2;
-  --sidebar-primary: #f8f7f2;
-  --sidebar-primary-foreground: #1f3d3a;
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: #f8f7f2;
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  color-scheme: dark;
+
+  /* Invertido respecto del claro: el fondo es el carbón verdoso de la marca
+     llevado a fondo, y el texto, crema. */
+  --crema: #1b211f;
+  --tinta: #ece9e2;
+  --gris-calido: #6c716c;
+  /* Sobre fondo oscuro el sage del brief SÍ funciona sin retoques: #8FA395 da
+     6.1:1 contra el fondo, tanto como texto/ícono como de fondo de botón con
+     texto oscuro encima. O sea que en oscuro la marca usa su verde real. */
+  --sage: #8fa395;
+  --sage-hondo: #a8b7a0;
+  --marca: #8fa395;
+
+  --card: #242b28;
+  --card-foreground: #ece9e2;
+  --popover: #242b28;
+  --popover-foreground: #ece9e2;
+  --primary: #ece9e2;
+  --primary-foreground: #1b211f;
+  --secondary: #2c3431;
+  --secondary-foreground: #ece9e2;
+  --muted: #2c3431;
+  --muted-foreground: #a7aca6;
+  --accent: #2c3431;
+  --accent-foreground: #ece9e2;
+  --destructive: #ff6b5e;
+  --border: rgba(255, 255, 255, 0.11);
+  --input: rgba(255, 255, 255, 0.16);
+  --ring: #8fa395;
+  --chart-1: #8fa395;
+  --chart-2: #a8b7a0;
+  --chart-3: #a7aca6;
+  --chart-4: #6c716c;
+  --chart-5: #2c3431;
+  --sidebar: #161b19;
+  --sidebar-foreground: #ece9e2;
+  --sidebar-primary: #8fa395;
+  --sidebar-primary-foreground: #1b211f;
+  --sidebar-accent: #2c3431;
+  --sidebar-accent-foreground: #ece9e2;
+  --sidebar-border: rgba(255, 255, 255, 0.11);
+  --sidebar-ring: #8fa395;
 }
 
 @layer base {
@@ -158,4 +204,92 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
   }
+}
+
+/* Soporte de barra de arrastre para recuadros/paneles de interfaz */
+.antigravity-drag-bar,
+[data-drag-header] {
+  -webkit-app-region: drag;
+  user-select: none;
+  cursor: move;
+}
+
+.antigravity-drag-bar button,
+.antigravity-drag-bar input,
+.antigravity-drag-bar select,
+.antigravity-drag-bar a,
+[data-drag-header] button,
+[data-drag-header] input,
+[data-drag-header] select,
+[data-drag-header] a {
+  -webkit-app-region: no-drag;
+}
+
+/* --------------------------------------------------------------------------
+   React Big Calendar — Theme & Dark Mode Overrides
+   -------------------------------------------------------------------------- */
+.rbc-calendar {
+  color: var(--tinta);
+}
+
+.rbc-btn-group button {
+  color: var(--tinta) !important;
+  border-color: var(--border) !important;
+  background-color: transparent !important;
+}
+
+.rbc-btn-group button:hover,
+.rbc-btn-group button:focus {
+  background-color: var(--muted) !important;
+}
+
+.rbc-btn-group button.rbc-active {
+  background-color: var(--marca) !important;
+  color: var(--crema) !important;
+  border-color: var(--marca) !important;
+  box-shadow: none !important;
+}
+
+.rbc-off-range-bg {
+  background-color: var(--muted) !important;
+}
+
+.rbc-today {
+  background-color: color-mix(in srgb, var(--marca) 10%, transparent) !important;
+}
+
+.rbc-header {
+  border-bottom: 1px solid var(--border) !important;
+  border-left: 1px solid var(--border) !important;
+  color: var(--tinta) !important;
+  padding: 0.5rem 0 !important;
+}
+.rbc-header + .rbc-header {
+  border-left: 1px solid var(--border) !important;
+}
+
+.rbc-month-row, 
+.rbc-month-view, 
+.rbc-time-view, 
+.rbc-agenda-view, 
+.rbc-day-bg, 
+.rbc-time-header-content {
+  border-color: var(--border) !important;
+}
+
+.rbc-date-cell {
+  color: var(--tinta);
+}
+
+.rbc-off-range .rbc-date-cell,
+.rbc-off-range {
+  color: var(--muted-foreground) !important;
+}
+
+.rbc-agenda-view table.rbc-agenda-table {
+  border: 1px solid var(--border) !important;
+}
+
+.rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+  border-color: var(--border) !important;
 }

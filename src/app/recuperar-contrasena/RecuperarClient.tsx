@@ -39,7 +39,7 @@ export function RecuperarClient() {
 
   return (
     <div className="min-h-screen bg-crema flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg border-gray-200">
+      <Card className="w-full max-w-md shadow-lg border-border">
         <CardHeader className="space-y-2 pb-6">
           <CardTitle className="text-3xl font-heading text-center font-bold text-tinta">Recuperar Contraseña</CardTitle>
           <CardDescription className="text-center font-sans">
@@ -49,7 +49,7 @@ export function RecuperarClient() {
         <CardContent>
           {successMsg ? (
             <div className="text-center space-y-4">
-              <div className="bg-green-50 text-green-800 p-4 rounded-xl border border-green-200">
+              <div className="bg-green-50 dark:bg-green-950/40 text-green-800 p-4 rounded-xl border border-green-200 dark:border-green-700">
                 ¡Enlace enviado! Revisa tu bandeja de entrada (o la carpeta de spam).
               </div>
               <Link href="/login" className="inline-block mt-4 text-marca font-bold underline">
@@ -60,20 +60,20 @@ export function RecuperarClient() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-sans text-tinta">Email</Label>
-                <Input id="email" name="email" type="email" placeholder="paciente@ejemplo.com" required className="border-gray-200" disabled={isPending} />
+                <Input id="email" name="email" type="email" placeholder="alumno@ejemplo.com" required className="border-border" disabled={isPending} />
               </div>
 
               {errorMsg && (
-                <p className="text-sm font-sans text-red-600 font-medium">
+                <p className="text-sm font-sans text-red-600 dark:text-red-400 font-medium">
                   {errorMsg}
                 </p>
               )}
 
               <div className="flex flex-col gap-3">
-                <Button type="submit" disabled={isPending} className="w-full bg-marca hover:bg-marca/90 text-white font-sans text-md h-12 rounded-lg">
+                <Button type="submit" disabled={isPending} className="w-full bg-marca hover:bg-marca/90 text-crema font-sans text-md h-12 rounded-lg">
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Enviar enlace de recuperación"}
                 </Button>
-                <Link href="/login" className="flex items-center justify-center text-sm font-sans text-gray-600 hover:text-gray-900 mt-2">
+                <Link href="/login" className="flex items-center justify-center text-sm font-sans text-muted-foreground hover:text-foreground mt-2">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Volver atrás
                 </Link>

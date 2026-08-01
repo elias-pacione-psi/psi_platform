@@ -4,7 +4,10 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { requirePsicologo } from '@/utils/supabase/guards'
 import { createAdminClient } from '@/utils/supabase/admin'
-import { BUCKET_MATERIALES, esArchivoSubido } from '@/utils/supabase/recursos'
+import { BUCKET_MATERIALES } from '@/utils/supabase/recursos'
+import { borrarDeR2, extraerKeyDeR2 } from '@/utils/r2'
+import { esMarcadorR2 } from '@/utils/r2-marcador'
+import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
 
 // URL base para los redirects de invitación (localhost en dev, VERCEL_URL/SITE_URL en prod)
 function baseUrl() {
@@ -15,33 +18,107 @@ function baseUrl() {
 // Los invitados deben pasar por /configurar-password antes de entrar al portal
 const INVITE_REDIRECT = `${baseUrl()}/auth/confirm?next=/configurar-password`
 
-// Borra del bucket los archivos subidos (ignora URLs externas)
+// Borra del backend que corresponda los archivos subidos (ignora URLs externas).
+// R2 se detecta por la marca r2key:// (extraerKeyDeR2), no por tipo_contenido: el mismo
+// tipo_contenido (ej. drive_video) puede vivir en Drive real o en R2 elegido por el picker.
 async function limpiarArchivosDeStorage(recursos: { tipo_contenido: string; url_recurso: string }[]) {
-  const paths = recursos
-    .filter(r => esArchivoSubido(r.tipo_contenido) && r.url_recurso && !r.url_recurso.startsWith('http'))
-    .map(r => r.url_recurso)
-  if (paths.length === 0) return
-  const supabaseAdmin = createAdminClient()
-  const { error } = await supabaseAdmin.storage.from(BUCKET_MATERIALES).remove(paths)
-  if (error) console.error('Error limpiando Storage (se continúa):', error.message)
+  const subidos = recursos.filter(r => r.url_recurso && !r.url_recurso.startsWith('http'))
+
+  const pathsR2 = subidos.map(r => extraerKeyDeR2(r.url_recurso)).filter((k): k is string => Boolean(k))
+  const pathsSupabase = subidos.filter(r => r.tipo_contenido.startsWith('supabase_')).map(r => r.url_recurso)
+
+  if (pathsR2.length > 0) await borrarDeR2(pathsR2)
+
+  if (pathsSupabase.length > 0) {
+    const supabaseAdmin = createAdminClient()
+    const { error } = await supabaseAdmin.storage.from(BUCKET_MATERIALES).remove(pathsSupabase)
+    if (error) console.error('Error limpiando Storage de Supabase (se continúa):', error.message)
+  }
 }
 
 // ============================================================
-// PACIENTES
+// VALIDACIÓN DE CONTENIDO
+// url_recurso y link_videollamada terminan embebidos en <iframe>, <video>,
+// <audio>, <img> y window.open(): nunca aceptar protocolos que no sean https
+// ni hosts fuera del proveedor que declara tipo_contenido.
 // ============================================================
 
-const pacienteSchema = z.object({
+// 'quiz' y 'entrega' no llevan recurso embebido (quiz: preguntas aparte;
+// entrega: consigna en markdown opcional). tipo_contenido sigue siendo solo el FORMATO
+// (cómo renderizar); el origen real del archivo (R2/Drive/Dropbox/Supabase) vive en la
+// columna `origen` y no en el nombre del tipo — ver utils/taxonomia.ts. Subir a R2 se
+// hace desde /psicologo/archivos (el gestor) y después se elige acá con el picker
+// (marca r2key://, ver utils/r2-marcador.ts), en vez de subir de nuevo por cada lección.
+const TIPOS_LECCION = [
+  'drive_video', 'drive_audio', 'drive_pdf', 'drive_image',
+  'dropbox_video', 'dropbox_audio', 'dropbox_pdf',
+  'supabase_video', 'supabase_audio', 'supabase_pdf',
+  'texto_markdown', 'quiz', 'entrega',
+] as const
+
+const TIPOS_BIBLIOTECA = [
+  'drive_pdf', 'drive_video', 'drive_audio',
+  'dropbox_pdf', 'dropbox_video', 'dropbox_audio',
+  'supabase_pdf', 'supabase_video', 'supabase_audio',
+  'enlace_externo',
+] as const
+
+const HOSTS_DRIVE = ['drive.google.com']
+const HOSTS_DROPBOX = ['www.dropbox.com', 'dropbox.com', 'dl.dropboxusercontent.com']
+
+// Path dentro de un bucket (tipos supabase_*): sin esquema ni traversal
+const RE_PATH_BUCKET = /^[a-zA-Z0-9][a-zA-Z0-9_\-./]*$/
+
+function esUrlHttps(valor: string, hosts?: string[]): boolean {
+  let url: URL
+  try { url = new URL(valor) } catch { return false }
+  if (url.protocol !== 'https:') return false
+  return !hosts || hosts.includes(url.hostname)
+}
+
+// Devuelve un mensaje de error, o null si url_recurso es válido para ese tipo
+function errorEnRecurso(tipo_contenido: string, url_recurso: string): string | null {
+  if (tipo_contenido === 'quiz') return null // sin recurso
+  if (tipo_contenido === 'entrega' || tipo_contenido === 'texto_markdown') {
+    return url_recurso.length <= 50000 ? null : 'El texto es demasiado largo (máx. 50.000 caracteres)'
+  }
+  if (!url_recurso) return 'El recurso es obligatorio'
+  // Elegido desde el picker/gestor de archivos de R2: ya se validó ahí (allowlist de
+  // Content-Type + requirePsicologo), acá solo hace falta reconocer la marca y su largo.
+  if (esMarcadorR2(url_recurso)) return url_recurso.length <= 600 ? null : 'Referencia de archivo inválida'
+  if (tipo_contenido.startsWith('supabase_')) {
+    const esPathValido = RE_PATH_BUCKET.test(url_recurso) && !url_recurso.includes('..') && url_recurso.length <= 500
+    return esPathValido ? null : 'Ruta de archivo inválida'
+  }
+  if (url_recurso.length > 2000) return 'La URL es demasiado larga'
+  if (tipo_contenido.startsWith('drive_') && tipo_contenido !== 'drive_image') {
+    return esUrlHttps(url_recurso, HOSTS_DRIVE) ? null : 'La URL debe ser https de drive.google.com'
+  }
+  if (tipo_contenido.startsWith('dropbox_')) {
+    return esUrlHttps(url_recurso, HOSTS_DROPBOX) ? null : 'La URL debe ser https de dropbox.com'
+  }
+  // drive_image admite cualquier imagen https; enlace_externo, cualquier https
+  return esUrlHttps(url_recurso) ? null : 'La URL debe empezar con https://'
+}
+
+// ============================================================
+// ALUMNOS
+// ============================================================
+
+const alumnoSchema = z.object({
   nombre: z.string().trim().min(1, 'El nombre es obligatorio').max(100),
   email: z.string().trim().toLowerCase().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'El email no es válido').max(254),
   telefono: z.string().trim().max(30).optional().or(z.literal('')),
-  link_videollamada: z.string().trim().max(500).optional().or(z.literal('')),
+  link_videollamada: z.string().trim().max(500)
+    .refine(v => v === '' || esUrlHttps(v), 'El link de videollamada debe ser una URL https válida')
+    .optional().or(z.literal('')),
 })
 
-export async function crearPacienteDirecto(formData: FormData) {
+export async function crearAlumnoDirecto(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
 
-  const parsed = pacienteSchema.safeParse({
+  const parsed = alumnoSchema.safeParse({
     nombre: formData.get('nombre') ?? '',
     email: formData.get('email') ?? '',
     telefono: formData.get('telefono') ?? '',
@@ -56,7 +133,6 @@ export async function crearPacienteDirecto(formData: FormData) {
 
   const supabaseAdmin = createAdminClient()
 
-  // Creamos + invitamos al paciente (recibe email para setear contraseña vía /configurar-password)
   const { data: invited, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
     data: { nombre, telefono },
     redirectTo: INVITE_REDIRECT,
@@ -67,31 +143,29 @@ export async function crearPacienteDirecto(formData: FormData) {
 
   const newId = invited.user.id
 
-  // Perfil completo (defensivo: funciona aunque el trigger no exista)
-  const { error: perfilError } = await supabaseAdmin.from('pacientes').upsert({
+  const { error: perfilError } = await supabaseAdmin.from('alumnos').upsert({
     id: newId,
     email,
     nombre,
     telefono,
     link_videollamada,
-    rol: 'paciente',
+    rol: 'alumno',
     estado: 'activo',
   }, { onConflict: 'id' })
   if (perfilError) return { error: perfilError.message }
 
-  // Programas asignados
   if (programas.length > 0) {
-    await supabaseAdmin.from('programas_asignados').delete().eq('paciente_id', newId)
-    const asignaciones = programas.map(programa_id => ({ paciente_id: newId, programa_id }))
+    await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', newId)
+    const asignaciones = programas.map(programa_id => ({ alumno_id: newId, programa_id }))
     const { error: progErr } = await supabaseAdmin.from('programas_asignados').insert(asignaciones)
     if (progErr) return { error: progErr.message }
   }
 
-  revalidatePath('/psicologo/pacientes')
+  revalidatePath('/psicologo/alumnos')
   return { success: true }
 }
 
-export async function actualizarPaciente(formData: FormData) {
+export async function actualizarAlumno(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
@@ -102,43 +176,44 @@ export async function actualizarPaciente(formData: FormData) {
   const link_videollamada = (formData.get('link_videollamada') as string)?.trim() || null
 
   if (!id || !nombre) return { error: 'Faltan datos obligatorios' }
+  if (link_videollamada && !esUrlHttps(link_videollamada)) {
+    return { error: 'El link de videollamada debe ser una URL https válida' }
+  }
 
   const { error } = await supabase
-    .from('pacientes')
+    .from('alumnos')
     .update({ nombre, telefono, link_videollamada })
     .eq('id', id)
 
   if (error) return { error: error.message }
 
-  // Programas asignados: el cliente admin saltea RLS para gestionar datos de otro usuario
   const programasAsignados = formData.getAll('programas') as string[]
   const supabaseAdmin = createAdminClient()
 
-  await supabaseAdmin.from('programas_asignados').delete().eq('paciente_id', id)
+  await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', id)
   if (programasAsignados.length > 0) {
-    const asignaciones = programasAsignados.map(programa_id => ({ paciente_id: id, programa_id }))
+    const asignaciones = programasAsignados.map(programa_id => ({ alumno_id: id, programa_id }))
     const { error: errorAsignaciones } = await supabaseAdmin.from('programas_asignados').insert(asignaciones)
     if (errorAsignaciones) return { error: errorAsignaciones.message }
   }
 
-  revalidatePath('/psicologo/pacientes')
+  revalidatePath('/psicologo/alumnos')
   return { success: true }
 }
 
-export async function cambiarEstadoPaciente(id: string, nuevoEstado: 'activo' | 'suspendido' | 'eliminado') {
+export async function cambiarEstadoAlumno(id: string, nuevoEstado: 'activo' | 'suspendido' | 'eliminado') {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
 
   const supabaseAdmin = createAdminClient()
 
   const { error: updateError } = await supabaseAdmin
-    .from('pacientes')
+    .from('alumnos')
     .update({ estado: nuevoEstado })
     .eq('id', id)
 
   if (updateError) return { error: updateError.message }
 
-  // Ban de Supabase Auth: el suspendido/eliminado no puede volver a loguearse
   if (nuevoEstado === 'suspendido' || nuevoEstado === 'eliminado') {
     const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(id, { ban_duration: '876000h' })
     if (banError) return { error: banError.message }
@@ -147,7 +222,7 @@ export async function cambiarEstadoPaciente(id: string, nuevoEstado: 'activo' | 
     if (unbanError) return { error: unbanError.message }
   }
 
-  revalidatePath('/psicologo/pacientes')
+  revalidatePath('/psicologo/alumnos')
   return { success: true }
 }
 
@@ -155,29 +230,26 @@ export async function eliminarUsuarioTotal(id: string) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
 
-  // El psicólogo no puede autoeliminarse por accidente
   if (auth.user.id === id) return { error: 'No podés eliminar tu propia cuenta.' }
 
   const supabaseAdmin = createAdminClient()
 
-  // 1. Borrar explícitamente todas las filas del paciente (por si algún FK no está en CASCADE)
-  const tablasUsuario = ['programas_asignados', 'recursos_asignados', 'agenda_sesiones']
+  const tablasUsuario = ['programas_asignados', 'recursos_asignados', 'agenda_sesiones', 'cohortes_alumnos', 'progreso_lecciones', 'quiz_intentos', 'entregas']
   for (const tabla of tablasUsuario) {
-    const { error } = await supabaseAdmin.from(tabla).delete().eq('paciente_id', id)
-    if (error) console.error(`Error borrando ${tabla} del paciente (se continúa):`, error.message)
+    const { error } = await supabaseAdmin.from(tabla).delete().eq('alumno_id', id)
+    if (error) console.error(`Error borrando ${tabla} del alumno (se continúa):`, error.message)
   }
 
-  // 2. Borrar el perfil y el usuario de Auth (cierra su sesión y limpia restos por cascada)
-  await supabaseAdmin.from('pacientes').delete().eq('id', id)
+  await supabaseAdmin.from('alumnos').delete().eq('id', id)
   const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id)
   if (authError) return { error: authError.message }
 
-  revalidatePath('/psicologo/pacientes')
+  revalidatePath('/psicologo/alumnos')
   return { success: true }
 }
 
 // ============================================================
-// PROGRAMAS / UNIDADES / ACTIVIDADES
+// PROGRAMAS / MÓDULOS / LECCIONES
 // ============================================================
 
 export async function guardarPrograma(formData: FormData) {
@@ -208,22 +280,21 @@ export async function eliminarPrograma(id: string) {
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  // Antes de que el CASCADE borre las actividades, juntamos los archivos subidos para limpiarlos
-  const { data: actividades } = await supabase
-    .from('actividades')
+  const { data: lecciones } = await supabase
+    .from('lecciones')
     .select('tipo_contenido, url_recurso')
     .eq('programa_id', id)
 
   const { error } = await supabase.from('programas').delete().eq('id', id)
   if (error) return { error: error.message }
 
-  await limpiarArchivosDeStorage(actividades || [])
+  await limpiarArchivosDeStorage(lecciones || [])
 
   revalidatePath('/psicologo/programas')
   return { success: true }
 }
 
-export async function guardarUnidad(formData: FormData) {
+export async function guardarModulo(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
@@ -236,10 +307,11 @@ export async function guardarUnidad(formData: FormData) {
   if (!titulo) return { error: 'El título es obligatorio' }
 
   if (id) {
-    const { error } = await supabase.from('unidades').update({ titulo, descripcion }).eq('id', id)
+    const { error } = await supabase.from('modulos').update({ titulo, descripcion }).eq('id', id)
     if (error) return { error: error.message }
   } else {
-    const { error } = await supabase.from('unidades').insert({ programa_id, titulo, descripcion })
+    const orden = await siguienteOrden(supabase, 'modulos', 'programa_id', programa_id)
+    const { error } = await supabase.from('modulos').insert({ programa_id, titulo, descripcion, orden })
     if (error) return { error: error.message }
   }
 
@@ -247,50 +319,59 @@ export async function guardarUnidad(formData: FormData) {
   return { success: true }
 }
 
-export async function eliminarUnidad(id: string, programa_id: string) {
+export async function eliminarModulo(id: string, programa_id: string) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  const { data: actividades } = await supabase
-    .from('actividades')
+  const { data: lecciones } = await supabase
+    .from('lecciones')
     .select('tipo_contenido, url_recurso')
-    .eq('unidad_id', id)
+    .eq('modulo_id', id)
 
-  const { error } = await supabase.from('unidades').delete().eq('id', id)
+  const { error } = await supabase.from('modulos').delete().eq('id', id)
   if (error) return { error: error.message }
 
-  await limpiarArchivosDeStorage(actividades || [])
+  await limpiarArchivosDeStorage(lecciones || [])
 
   revalidatePath(`/psicologo/programas/${programa_id}`)
   return { success: true }
 }
 
-export async function guardarActividad(formData: FormData) {
+export async function guardarLeccion(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
   const id = formData.get('id') as string | null
   const programa_id = formData.get('programa_id') as string
-  const unidad_id = formData.get('unidad_id') as string
+  const modulo_id = formData.get('modulo_id') as string
   const titulo = (formData.get('titulo') as string)?.trim()
   const tipo_contenido = formData.get('tipo_contenido') as string
-  const url_recurso = (formData.get('url_recurso') as string)?.trim()
+  let url_recurso = (formData.get('url_recurso') as string)?.trim() || ''
+  // Solo tiene sentido para 'entrega'; para el resto se guarda null aunque el form la mande.
+  const fechaLimiteRaw = (formData.get('fecha_limite') as string) || ''
+  const fecha_limite = tipo_contenido === 'entrega' && fechaLimiteRaw ? new Date(fechaLimiteRaw).toISOString() : null
 
-  if (!titulo || !tipo_contenido || !url_recurso) return { error: 'Faltan datos obligatorios' }
+  if (!titulo || !tipo_contenido) return { error: 'Faltan datos obligatorios' }
+  if (!(TIPOS_LECCION as readonly string[]).includes(tipo_contenido)) return { error: 'Tipo de contenido inválido' }
+  if (tipo_contenido === 'quiz') url_recurso = ''
+  const errRecurso = errorEnRecurso(tipo_contenido, url_recurso)
+  if (errRecurso) return { error: errRecurso }
+
+  const tipo_medio = tipoMedioPorTipoContenido(tipo_contenido)
+  const origen = origenPorUrlRecurso(url_recurso, tipo_contenido)
 
   if (id) {
-    // Si se reemplazó un archivo subido, borramos el anterior del bucket
     const { data: anterior } = await supabase
-      .from('actividades')
+      .from('lecciones')
       .select('tipo_contenido, url_recurso')
       .eq('id', id)
       .single()
 
     const { error } = await supabase
-      .from('actividades')
-      .update({ titulo, tipo_contenido, url_recurso, unidad_id })
+      .from('lecciones')
+      .update({ titulo, tipo_contenido, url_recurso, modulo_id, fecha_limite, tipo_medio, origen })
       .eq('id', id)
     if (error) return { error: error.message }
 
@@ -298,9 +379,10 @@ export async function guardarActividad(formData: FormData) {
       await limpiarArchivosDeStorage([anterior])
     }
   } else {
+    const orden = await siguienteOrden(supabase, 'lecciones', 'modulo_id', modulo_id)
     const { error } = await supabase
-      .from('actividades')
-      .insert({ programa_id, unidad_id, titulo, tipo_contenido, url_recurso })
+      .from('lecciones')
+      .insert({ programa_id, modulo_id, titulo, tipo_contenido, url_recurso, orden, fecha_limite, tipo_medio, origen })
     if (error) return { error: error.message }
   }
 
@@ -308,23 +390,216 @@ export async function guardarActividad(formData: FormData) {
   return { success: true }
 }
 
-export async function eliminarActividad(id: string, programa_id: string) {
+export async function eliminarLeccion(id: string, programa_id: string) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  const { data: actividad } = await supabase
-    .from('actividades')
+  const { data: leccion } = await supabase
+    .from('lecciones')
     .select('tipo_contenido, url_recurso')
     .eq('id', id)
     .single()
 
-  const { error } = await supabase.from('actividades').delete().eq('id', id)
+  const { error } = await supabase.from('lecciones').delete().eq('id', id)
   if (error) return { error: error.message }
 
-  if (actividad) await limpiarArchivosDeStorage([actividad])
+  if (leccion) await limpiarArchivosDeStorage([leccion])
 
   revalidatePath(`/psicologo/programas/${programa_id}`)
+  return { success: true }
+}
+
+// Reordenamiento: intercambia el `orden` con el vecino en la dirección pedida.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function moverEntidad(supabase: any, tabla: string, scopeCol: string, scopeVal: string, id: string, dir: 'up' | 'down') {
+  const { data: items } = await supabase
+    .from(tabla)
+    .select('id, orden')
+    .eq(scopeCol, scopeVal)
+    .order('orden', { ascending: true })
+    .order('created_at', { ascending: true })
+  if (!items) return
+  const idx = items.findIndex((i: { id: string }) => i.id === id)
+  if (idx < 0) return
+  const swapIdx = dir === 'up' ? idx - 1 : idx + 1
+  if (swapIdx < 0 || swapIdx >= items.length) return
+  const a = items[idx], b = items[swapIdx]
+  await supabase.from(tabla).update({ orden: b.orden }).eq('id', a.id)
+  await supabase.from(tabla).update({ orden: a.orden }).eq('id', b.id)
+}
+
+export async function moverModulo(id: string, programa_id: string, dir: 'up' | 'down') {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  await moverEntidad(auth.supabase, 'modulos', 'programa_id', programa_id, id, dir)
+  revalidatePath(`/psicologo/programas/${programa_id}`)
+  return { success: true }
+}
+
+export async function moverLeccion(id: string, modulo_id: string, programa_id: string, dir: 'up' | 'down') {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  await moverEntidad(auth.supabase, 'lecciones', 'modulo_id', modulo_id, id, dir)
+  revalidatePath(`/psicologo/programas/${programa_id}`)
+  return { success: true }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function siguienteOrden(supabase: any, tabla: string, scopeCol: string, scopeVal: string): Promise<number> {
+  const { data } = await supabase
+    .from(tabla).select('orden').eq(scopeCol, scopeVal)
+    .order('orden', { ascending: false }).limit(1).maybeSingle()
+  return (data?.orden ?? -1) + 1
+}
+
+// ============================================================
+// QUIZ (preguntas de comprensión — educativas)
+// ============================================================
+
+const preguntaSchema = z.object({
+  pregunta: z.string().trim().min(1).max(1000),
+  opciones: z.array(z.string().trim().min(1).max(500)).min(2).max(8),
+  respuesta_correcta: z.string().trim().min(1).max(500),
+}).refine(p => p.opciones.includes(p.respuesta_correcta), {
+  message: 'La respuesta correcta debe ser una de las opciones',
+})
+
+export async function guardarQuizPreguntas(leccionId: string, programaId: string, preguntasJson: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  let parsed: unknown
+  try { parsed = JSON.parse(preguntasJson) } catch { return { error: 'El JSON de preguntas es inválido' } }
+  const arr = z.array(preguntaSchema).max(50).safeParse(parsed)
+  if (!arr.success) return { error: arr.error.issues[0]?.message ?? 'Preguntas inválidas' }
+
+  await supabase.from('quiz_preguntas').delete().eq('leccion_id', leccionId)
+  if (arr.data.length > 0) {
+    const filas = arr.data.map((p, i) => ({
+      leccion_id: leccionId,
+      pregunta: p.pregunta,
+      opciones: p.opciones,
+      respuesta_correcta: p.respuesta_correcta,
+      orden: i,
+    }))
+    const { error } = await supabase.from('quiz_preguntas').insert(filas)
+    if (error) return { error: error.message }
+  }
+
+  revalidatePath(`/psicologo/programas/${programaId}`)
+  return { success: true }
+}
+
+// ============================================================
+// ENTREGAS (revisión por el instructor)
+// ============================================================
+
+export async function revisarEntrega(entregaId: string, comentario: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { error } = await supabase
+    .from('entregas')
+    .update({ estado: 'revisada', comentario_instructor: comentario?.trim() || null })
+    .eq('id', entregaId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/psicologo/entregas')
+  return { success: true }
+}
+
+// ============================================================
+// COHORTES
+// ============================================================
+
+export async function guardarCohorte(formData: FormData) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const id = formData.get('id') as string | null
+  const programa_id = formData.get('programa_id') as string
+  const nombre = (formData.get('nombre') as string)?.trim()
+  const fecha_inicio = (formData.get('fecha_inicio') as string) || null
+  const fecha_fin = (formData.get('fecha_fin') as string) || null
+
+  if (!nombre || !programa_id) return { error: 'Nombre y programa son obligatorios' }
+
+  if (id) {
+    const { error } = await supabase.from('cohortes').update({ nombre, programa_id, fecha_inicio, fecha_fin }).eq('id', id)
+    if (error) return { error: error.message }
+  } else {
+    const { error } = await supabase.from('cohortes').insert({ nombre, programa_id, fecha_inicio, fecha_fin })
+    if (error) return { error: error.message }
+  }
+
+  revalidatePath('/psicologo/cohortes')
+  return { success: true }
+}
+
+export async function eliminarCohorte(id: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { error } = await supabase.from('cohortes').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/psicologo/cohortes')
+  return { success: true }
+}
+
+// Inscribe alumnos a una cohorte y les da acceso al programa de la cohorte.
+export async function inscribirAlumnosEnCohorte(cohorteId: string, alumnoIds: string[]) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { data: cohorte } = await supabase.from('cohortes').select('programa_id').eq('id', cohorteId).single()
+  if (!cohorte) return { error: 'Cohorte no encontrada' }
+
+  const supabaseAdmin = createAdminClient()
+  if (alumnoIds.length > 0) {
+    const inscripciones = alumnoIds.map(alumno_id => ({ cohorte_id: cohorteId, alumno_id }))
+    const { error: e1 } = await supabaseAdmin.from('cohortes_alumnos').upsert(inscripciones, { onConflict: 'cohorte_id,alumno_id' })
+    if (e1) return { error: e1.message }
+
+    const accesos = alumnoIds.map(alumno_id => ({ alumno_id, programa_id: cohorte.programa_id }))
+    const { error: e2 } = await supabaseAdmin.from('programas_asignados').upsert(accesos, { onConflict: 'alumno_id,programa_id' })
+    if (e2) return { error: e2.message }
+  }
+
+  revalidatePath('/psicologo/cohortes')
+  return { success: true }
+}
+
+export async function quitarAlumnoDeCohorte(cohorteId: string, alumnoId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { data: cohorte } = await supabase.from('cohortes').select('programa_id').eq('id', cohorteId).single()
+  const supabaseAdmin = createAdminClient()
+  await supabaseAdmin.from('cohortes_alumnos').delete().eq('cohorte_id', cohorteId).eq('alumno_id', alumnoId)
+
+  // Si ya no está en ninguna otra cohorte del mismo programa, revocar acceso al programa
+  if (cohorte) {
+    const { data: otras } = await supabaseAdmin
+      .from('cohortes_alumnos')
+      .select('cohortes(programa_id)')
+      .eq('alumno_id', alumnoId)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sigueEnPrograma = (otras || []).some((o: any) => o.cohortes?.programa_id === cohorte.programa_id)
+    if (!sigueEnPrograma) {
+      await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', alumnoId).eq('programa_id', cohorte.programa_id)
+    }
+  }
+
+  revalidatePath('/psicologo/cohortes')
   return { success: true }
 }
 
@@ -342,15 +617,22 @@ export async function crearRecursoBiblioteca(formData: FormData) {
   const url_recurso = (formData.get('url_recurso') as string)?.trim()
 
   if (!titulo || !url_recurso) return { error: 'Título y recurso son obligatorios' }
+  if (!(TIPOS_BIBLIOTECA as readonly string[]).includes(tipo_contenido)) return { error: 'Tipo de contenido inválido' }
+  const errRecurso = errorEnRecurso(tipo_contenido, url_recurso)
+  if (errRecurso) return { error: errRecurso }
 
   const { error } = await supabase
     .from('biblioteca_recursos')
-    .insert({ titulo, tipo_contenido, url_recurso })
+    .insert({
+      titulo, tipo_contenido, url_recurso,
+      tipo_medio: tipoMedioPorTipoContenido(tipo_contenido),
+      origen: origenPorUrlRecurso(url_recurso, tipo_contenido),
+    })
 
   if (error) return { error: error.message }
 
   revalidatePath('/psicologo/biblioteca')
-  revalidatePath('/paciente/materiales')
+  revalidatePath('/alumno/materiales')
   return { success: true }
 }
 
@@ -375,51 +657,64 @@ export async function eliminarRecursoBiblioteca(id: string) {
   if (recurso) await limpiarArchivosDeStorage([recurso])
 
   revalidatePath('/psicologo/biblioteca')
-  revalidatePath('/paciente/materiales')
+  revalidatePath('/alumno/materiales')
   return { success: true }
 }
 
-export async function asignarRecursoBiblioteca(recursoId: string, pacienteIds: string[]) {
+export async function asignarRecursoBiblioteca(recursoId: string, alumnoIds: string[]) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
 
   const supabaseAdmin = createAdminClient()
 
-  // Limpiar relaciones previas para este recurso
   await supabaseAdmin.from('recursos_asignados').delete().eq('recurso_id', recursoId)
 
-  // Insertar nuevas
-  if (pacienteIds.length > 0) {
-    const asignaciones = pacienteIds.map(pacienteId => ({
+  if (alumnoIds.length > 0) {
+    const asignaciones = alumnoIds.map(alumnoId => ({
       recurso_id: recursoId,
-      paciente_id: pacienteId
+      alumno_id: alumnoId
     }))
     const { error } = await supabaseAdmin.from('recursos_asignados').insert(asignaciones)
     if (error) return { error: error.message }
   }
 
   revalidatePath('/psicologo/biblioteca')
-  revalidatePath('/paciente/materiales', 'page')
+  revalidatePath('/alumno/materiales', 'page')
   return { success: true }
 }
 
 // ============================================================
-// AGENDA DE SESIONES
+// AGENDA DE SESIONES (individual o por cohorte; virtual o presencial)
 // ============================================================
+
+// Lee alumno_id | cohorte_id + tipo + lugar + enlace del formData y arma el destino
+function leerDestinoSesion(formData: FormData): { alumno_id: string | null, cohorte_id: string | null, tipo: string, lugar: string | null, enlace: string | null } | { error: string } {
+  const alumno_id = (formData.get('alumno_id') as string) || null
+  const cohorte_id = (formData.get('cohorte_id') as string) || null
+  if ((alumno_id && cohorte_id) || (!alumno_id && !cohorte_id)) {
+    return { error: 'Elegí un alumno o una cohorte (uno solo)' }
+  }
+  const tipo = ((formData.get('tipo') as string) || 'virtual')
+  if (tipo !== 'virtual' && tipo !== 'presencial') return { error: 'Tipo de sesión inválido' }
+  const lugar = tipo === 'presencial' ? ((formData.get('lugar') as string)?.trim() || null) : null
+  const enlaceRaw = tipo === 'virtual' ? ((formData.get('enlace') as string)?.trim() || '') : ''
+  if (enlaceRaw && !esUrlHttps(enlaceRaw)) return { error: 'El enlace debe ser una URL https válida' }
+  return { alumno_id, cohorte_id, tipo, lugar, enlace: enlaceRaw || null }
+}
 
 export async function agregarSesionUnica(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  const paciente_id = formData.get('paciente_id') as string
+  const destino = leerDestinoSesion(formData)
+  if ('error' in destino) return { error: destino.error }
   const fecha_hora = formData.get('fecha_hora') as string
-
-  if (!paciente_id || !fecha_hora) return { error: 'Faltan datos obligatorios' }
+  if (!fecha_hora) return { error: 'Falta la fecha y hora' }
 
   const { error } = await supabase
     .from('agenda_sesiones')
-    .insert({ paciente_id, fecha_hora: new Date(fecha_hora).toISOString() })
+    .insert({ ...destino, fecha_hora: new Date(fecha_hora).toISOString() })
 
   if (error) return { error: error.message }
 
@@ -432,42 +727,30 @@ export async function generarSesionesRecurrentes(formData: FormData) {
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  const paciente_id = formData.get('paciente_id') as string
+  const destino = leerDestinoSesion(formData)
+  if ('error' in destino) return { error: destino.error }
   const dia_semana = parseInt(formData.get('dia_semana') as string)
   const hora = formData.get('hora') as string
   const semanas = parseInt(formData.get('semanas') as string)
 
-  if (!paciente_id || isNaN(dia_semana) || !hora || isNaN(semanas)) return { error: 'Datos inválidos' }
+  if (isNaN(dia_semana) || !hora || isNaN(semanas)) return { error: 'Datos inválidos' }
+  if (semanas < 1 || semanas > 52) return { error: 'Cantidad de semanas fuera de rango' }
 
   const sesiones = []
   const hoy = new Date()
   const fechaCalculada = new Date(hoy)
-
-  // Buscar el próximo día que coincida
   fechaCalculada.setDate(hoy.getDate() + (dia_semana + 7 - hoy.getDay()) % 7)
-  if (fechaCalculada < hoy) {
-    fechaCalculada.setDate(fechaCalculada.getDate() + 7)
-  }
+  if (fechaCalculada < hoy) fechaCalculada.setDate(fechaCalculada.getDate() + 7)
 
   const [horas, minutos] = hora.split(':')
-
   for (let i = 0; i < semanas; i++) {
     const sesionDate = new Date(fechaCalculada)
     sesionDate.setHours(parseInt(horas), parseInt(minutos), 0, 0)
-
-    sesiones.push({
-      paciente_id,
-      fecha_hora: sesionDate.toISOString()
-    })
-
-    // Sumar 7 días para la próxima semana
+    sesiones.push({ ...destino, fecha_hora: sesionDate.toISOString() })
     fechaCalculada.setDate(fechaCalculada.getDate() + 7)
   }
 
-  const { error } = await supabase
-    .from('agenda_sesiones')
-    .insert(sesiones)
-
+  const { error } = await supabase.from('agenda_sesiones').insert(sesiones)
   if (error) return { error: error.message }
 
   revalidatePath('/psicologo/agenda')
@@ -479,27 +762,19 @@ export async function eliminarSesionUnica(id: string) {
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  const { error } = await supabase
-    .from('agenda_sesiones')
-    .delete()
-    .eq('id', id)
-
+  const { error } = await supabase.from('agenda_sesiones').delete().eq('id', id)
   if (error) return { error: error.message }
 
   revalidatePath('/psicologo/agenda')
   return { success: true }
 }
 
-export async function eliminarTodaLaAgendaDelPaciente(pacienteId: string) {
+export async function eliminarTodaLaAgendaDelAlumno(alumnoId: string) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
-  const { error } = await supabase
-    .from('agenda_sesiones')
-    .delete()
-    .eq('paciente_id', pacienteId)
-
+  const { error } = await supabase.from('agenda_sesiones').delete().eq('alumno_id', alumnoId)
   if (error) return { error: error.message }
 
   revalidatePath('/psicologo/agenda')

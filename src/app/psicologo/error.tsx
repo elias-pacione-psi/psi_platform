@@ -22,7 +22,7 @@ export default function AdminError({
       </p>
       <Button
         onClick={() => reset()}
-        className="bg-marca hover:bg-marca/90 text-white"
+        className="bg-marca hover:bg-marca/90 text-crema"
       >
         Reintentar
       </Button>

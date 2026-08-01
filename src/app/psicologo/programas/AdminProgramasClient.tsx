@@ -83,20 +83,20 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-heading font-bold text-tinta">Programas</h1>
-          <p className="text-muted-foreground mt-2 font-sans">Carpetas temáticas de contenido para asignar a tus pacientes.</p>
+          <p className="text-muted-foreground mt-2 font-sans">Carpetas temáticas de contenido para asignar a tus alumnos.</p>
         </div>
-        <Button onClick={() => openModal(null)} className="bg-marca hover:bg-marca/90 text-white shadow-md">
+        <Button onClick={() => openModal(null)} className="bg-marca hover:bg-marca/90 text-crema shadow-md">
           <Plus className="w-4 h-4 mr-2" />
           Crear programa
         </Button>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
         <Table>
-          <TableHeader className="bg-gray-50">
+          <TableHeader className="bg-muted">
             <TableRow>
               <TableHead className="font-heading font-semibold text-tinta">Título</TableHead>
-              <TableHead className="font-heading font-semibold text-tinta">Actividades</TableHead>
+              <TableHead className="font-heading font-semibold text-tinta">Lecciones</TableHead>
               <TableHead className="text-right font-heading font-semibold text-tinta">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -108,17 +108,17 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
             ) : programas.map((programa) => (
               <TableRow key={programa.id}>
                 <TableCell className="font-medium text-tinta max-w-[300px] truncate">{programa.titulo}</TableCell>
-                <TableCell>{programa.cantidad_actividades}</TableCell>
+                <TableCell>{programa.cantidad_lecciones}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button variant="outline" size="sm" onClick={() => openModal(programa)} className="font-sans">
                     <Settings2 className="w-4 h-4 mr-2" />
                     Editar
                   </Button>
-                  <Button variant="default" size="sm" onClick={() => router.push(`/psicologo/programas/${programa.id}`)} className="font-sans bg-tinta hover:bg-tinta/90">
+                  <Button variant="default" size="sm" onClick={() => router.push(`/psicologo/programas/${programa.id}`)} className="font-sans bg-noche hover:bg-noche/90">
                     Contenido
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setProgramaToDelete(programa.id)} className="font-sans text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700" disabled={isPending}>
+                  <Button variant="outline" size="sm" onClick={() => setProgramaToDelete(programa.id)} className="font-sans text-red-600 dark:text-red-400 border-red-200 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-700 dark:hover:text-red-400 dark:hover:text-red-400" disabled={isPending}>
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </TableCell>
@@ -144,7 +144,7 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
 
             <div className="space-y-2">
               <Label htmlFor="titulo" className="font-bold text-tinta">Título del programa</Label>
-              <Input id="titulo" name="titulo" defaultValue={selectedPrograma?.titulo || ''} placeholder="Ej: Manejo de la ansiedad" className="bg-white border-gray-200" required />
+              <Input id="titulo" name="titulo" defaultValue={selectedPrograma?.titulo || ''} placeholder="Ej: Manejo de la ansiedad" className="bg-card border-border" required />
             </div>
 
             <div className="space-y-2">
@@ -153,14 +153,14 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
                 id="descripcion"
                 name="descripcion"
                 defaultValue={selectedPrograma?.descripcion || ''}
-                className="bg-white border-gray-200 h-24 resize-none"
+                className="bg-card border-border h-24 resize-none"
               />
             </div>
 
-            {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
+            {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" disabled={isPending} className="bg-marca hover:bg-marca/90 text-white px-8">
+              <Button type="submit" disabled={isPending} className="bg-marca hover:bg-marca/90 text-crema px-8">
                 {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Guardar programa"}
               </Button>
             </div>
@@ -173,7 +173,7 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
           <AlertDialogHeader>
             <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Eliminar este programa?</AlertDialogTitle>
             <AlertDialogDescription className="font-sans text-muted-foreground">
-              Esta acción no se puede deshacer. Eliminará permanentemente el programa y <b>todas</b> las unidades y actividades (materiales) que contiene.
+              Esta acción no se puede deshacer. Eliminará permanentemente el programa y <b>todas</b> las modulos y lecciones (materiales) que contiene.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

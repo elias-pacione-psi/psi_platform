@@ -4,10 +4,10 @@ import { AdminProgramasClient } from './AdminProgramasClient'
 export default async function AdminProgramasPage() {
   const supabase = await createClient()
 
-  // Programas con conteo de actividades
+  // Programas con conteo de lecciones
   const { data: programas, error } = await supabase
     .from('programas')
-    .select('*, actividades(count)')
+    .select('*, lecciones(count)')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -16,7 +16,7 @@ export default async function AdminProgramasPage() {
 
   const programasFormateados = programas?.map(m => ({
     ...m,
-    cantidad_actividades: m.actividades[0]?.count || 0
+    cantidad_lecciones: m.lecciones[0]?.count || 0
   })) || []
 
   return (

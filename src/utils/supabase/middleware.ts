@@ -26,7 +26,7 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // '/' se compara exacto: con startsWith('/') toda ruta sería pública y el guard nunca redirigiría
-  const publicRoutes = ['/login', '/recuperar-contrasena', '/auth/confirm', '/configurar-password']
+  const publicRoutes = ['/login', '/recuperar-contrasena', '/auth/confirm', '/configurar-password', '/privacidad']
   const esRutaPublica = request.nextUrl.pathname === '/'
     || publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 

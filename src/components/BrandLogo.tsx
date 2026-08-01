@@ -1,17 +1,23 @@
 import Link from 'next/link'
-import { Sprout } from 'lucide-react'
+import { BrandMark } from '@/components/BrandMark'
 
-// Marca provisoria en texto (sin assets). Cambiar acá el nombre/ícono
-// cuando el psicólogo defina su identidad visual.
-export function BrandLogo({ href = '/paciente' }: { href?: string }) {
+// Lockup horizontal del brandbook: isotipo a la izquierda, "Elias Pacione" en
+// Poppins y el claim en serif debajo. El isotipo es apaisado (~1.5:1), por eso
+// va en una caja ancha y no dentro de un círculo.
+export function BrandLogo({ href = '/alumno' }: { href?: string }) {
   return (
-    <Link href={href} className="flex items-center justify-center gap-2.5 w-full px-2 py-3 transition-transform hover:scale-[1.02] duration-200">
-      <span className="w-10 h-10 rounded-full bg-marca/10 text-marca flex items-center justify-center shrink-0">
-        <Sprout className="w-5 h-5" />
-      </span>
-      <span className="flex flex-col leading-tight">
-        <span className="font-heading font-bold text-lg text-tinta">Espacio</span>
-        <span className="font-heading text-lg text-marca -mt-1">Terapéutico</span>
+    <Link
+      href={href}
+      className="flex items-center gap-3 w-full px-2 py-3 transition-opacity hover:opacity-80 duration-200"
+    >
+      <BrandMark className="w-9 h-6 shrink-0 text-tinta" />
+      <span className="flex flex-col leading-tight min-w-0">
+        <span className="font-heading font-semibold text-[15px] tracking-tight text-tinta whitespace-nowrap">
+          Elias Pacione
+        </span>
+        <span className="font-serif text-[11px] text-muted-foreground whitespace-nowrap">
+          Psicología con sentido.
+        </span>
       </span>
     </Link>
   )

@@ -4,11 +4,15 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# Plataforma Psicólogo — reglas del proyecto
+# Plataforma de Cursos (Psicología) — reglas del proyecto
 
-- Plataforma para que un psicólogo asigne material a pacientes. Los pacientes SOLO consumen contenido: no hay chat, no hay entregas, no hay ningún flujo donde el paciente escriba datos hacia la plataforma. No agregar features que rompan eso sin discutirlo antes.
-- **Regla legal (Ley 25.326)**: el esquema del paciente se limita a cuenta + contenido asignado + agenda. Prohibido agregar campos de diagnóstico, motivo de consulta o notas clínicas — son "datos sensibles" y cambian el régimen de compliance. Es decisión de producto+legal, no técnica.
-- Auth: rol en `pacientes.rol` (`'psicologo' | 'paciente'`), nunca en metadata de auth. Server actions siempre con `requireUser()`/`requirePsicologo()` de `src/utils/supabase/guards.ts`. `createAdminClient()` (service-role) solo cuando hay que saltar RLS explícitamente.
-- RLS es la capa real de seguridad (ver `supabase/schema.sql`). Al crear una tabla nueva: RLS habilitado desde el día uno, policies con scope (`auth.uid()` o `es_psicologo()`), nunca `qual = true`.
-- Storage: bucket `materiales` es PRIVADO. Los archivos se guardan por path en `url_recurso` (tipos `supabase_*`) y se sirven con URLs firmadas vía `firmarUrlsRecursos()` en RSC, después de que RLS filtró las filas.
-- Prohibido reintroducir: chat/tutor IA, quiz o instrumentos de evaluación (PHQ-9/GAD-7 etc.), progreso del paciente, bitácora clínica, registro público de usuarios.
+- Es una **plataforma de cursos/LMS**: un psicólogo (rol `psicologo`) dicta formaciones a **alumnos** (rol `alumno`). Jerarquía: `programas` (curso) → `modulos` → `lecciones`. Alumnos organizados en `cohortes`.
+- **Regla legal (Ley 25.326)**: el modelo del alumno = cuenta + contenido asignado + agenda + progreso EDUCATIVO (lección completada, intento de quiz, entrega). Prohibido agregar campos de diagnóstico, motivo de consulta o notas clínicas. Aunque los cursos enseñen sobre escalas clínicas (PHQ-9/GAD-7), NO implementarlas como instrumentos: son materia, no funciones.
+- Progreso/evaluación permitidos SOLO en clave educativa (lección vista, quiz de comprensión con umbral 70%, entrega de trabajo con devolución pedagógica).
+- Auth: rol en `alumnos.rol`, nunca en metadata de auth. Server actions siempre con `requireUser()`/`requirePsicologo()` de `src/utils/supabase/guards.ts`. `createAdminClient()` (service-role) solo cuando hay que saltar RLS explícitamente (invitar, inscribir, banear, borrar, corregir quiz).
+- RLS es la capa real (ver `supabase/schema.sql`). Tabla nueva: RLS habilitado desde el día uno, policies con scope (`auth.uid()`, `es_psicologo()`, `tiene_acceso_programa()`), nunca `qual = true`.
+- Quiz: `quiz_preguntas` tiene `respuesta_correcta` y es de acceso solo-instructor por RLS. El alumno recibe preguntas sin respuesta y la corrección es server-side vía `src/utils/supabase/quiz.ts` (service-role). Nunca mandar la respuesta correcta al navegador antes del envío.
+- Storage: **Cloudflare R2 es el default** para material nuevo (lecciones, biblioteca y entregas de alumnos) — código en `src/utils/r2/`. Drive/Dropbox/bucket privado de Supabase (`materiales`/`entregas`, carpeta `{uid}/…`) quedan como alternativas en el selector, no eliminar esas opciones. Todo se sirve con URLs firmadas vía `firmarUrlsRecursos` / `firmarUrlEntrega` en RSC, que ya distinguen el backend por el path.
+- Validar `url_recurso`/enlaces (https + host del proveedor) antes de guardar — terminan en iframes/embeds.
+- Prohibido reintroducir: chat/tutor IA, registro público de usuarios, escalas clínicas como instrumento.
+- **Bitácora de sesiones**: cuando Lucas indique que la sesión/conversación terminó (o se va a cerrar), agregar una entrada nueva arriba de todo en `BITACORA.md` con lo importante que se trabajó — qué se hizo, decisiones tomadas, qué quedó pendiente y de quién. Sin esto, la sesión siguiente arranca sin contexto de lo que se decidió acá. No hace falta que Lucas lo pida cada vez: es un hábito de cierre de sesión, como correr los checks antes de terminar.

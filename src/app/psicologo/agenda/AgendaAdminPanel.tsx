@@ -11,74 +11,106 @@ import { CalendarPlus, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { agregarSesionUnica, generarSesionesRecurrentes } from '../actions'
 
-export function AgendaAdminPanel({ pacientes }: { pacientes: { id: string, nombre: string, email: string }[] }) {
+type Item = { id: string, nombre: string }
+
+export function AgendaAdminPanel({ alumnos, cohortes }: { alumnos: Item[], cohortes: Item[] }) {
   const [isPending, startTransition] = useTransition()
-  const [selectedPaciente, setSelectedPaciente] = useState<string | null>('')
+  // destino con formato "alumno:<id>" | "cohorte:<id>"
+  const [destino, setDestino] = useState<string>('')
+  const [tipo, setTipo] = useState<'virtual' | 'presencial'>('virtual')
+
+  // base-ui Select resuelve el label mostrado desde `items` (sin eso, muestra el value crudo)
+  const destinoItems = {
+    ...Object.fromEntries(cohortes.map(c => [`cohorte:${c.id}`, `👥 ${c.nombre}`])),
+    ...Object.fromEntries(alumnos.map(a => [`alumno:${a.id}`, a.nombre])),
+  }
+
+  // Agrega alumno_id|cohorte_id + tipo al formData según el destino elegido
+  const aplicarDestino = (formData: FormData): boolean => {
+    if (!destino) { toast.error('Primero elegí un destino (alumno o cohorte).'); return false }
+    const [clase, id] = destino.split(':')
+    formData.append(clase === 'cohorte' ? 'cohorte_id' : 'alumno_id', id)
+    formData.append('tipo', tipo)
+    return true
+  }
 
   const handleAgregarUnica = async (formData: FormData) => {
-    if (!selectedPaciente) {
-      toast.error('Primero seleccioná un paciente.')
-      return;
-    }
-    formData.append('paciente_id', selectedPaciente)
-
+    if (!aplicarDestino(formData)) return
     startTransition(async () => {
-      try {
-        const result = await agregarSesionUnica(formData)
-        if (result?.error) {
-          toast.error(result.error)
-        } else {
-          toast.success("Sesión agendada correctamente.")
-          const form = document.getElementById('form-sesion-unica') as HTMLFormElement
-          if (form) form.reset()
-        }
-      } catch {
-        toast.error('Error inesperado al agendar.')
+      const result = await agregarSesionUnica(formData)
+      if (result?.error) toast.error(result.error)
+      else {
+        toast.success("Sesión agendada correctamente.")
+        ;(document.getElementById('form-sesion-unica') as HTMLFormElement)?.reset()
       }
     })
   }
 
   const handleGenerarRecurrentes = async (formData: FormData) => {
-    if (!selectedPaciente) {
-      toast.error('Primero seleccioná un paciente.')
-      return;
-    }
-    formData.append('paciente_id', selectedPaciente)
-
+    if (!aplicarDestino(formData)) return
     startTransition(async () => {
-      try {
-        const result = await generarSesionesRecurrentes(formData)
-        if (result?.error) {
-          toast.error(result.error)
-        } else {
-          toast.success(`Se agendaron ${formData.get('semanas')} sesiones recurrentes.`)
-          const form = document.getElementById('form-recurrentes') as HTMLFormElement
-          if (form) form.reset()
-        }
-      } catch {
-        toast.error('Error inesperado al agendar recurrentes.')
+      const result = await generarSesionesRecurrentes(formData)
+      if (result?.error) toast.error(result.error)
+      else {
+        toast.success(`Se agendaron ${formData.get('semanas')} sesiones recurrentes.`)
+        ;(document.getElementById('form-recurrentes') as HTMLFormElement)?.reset()
       }
     })
   }
 
+  const camposTipo = (
+    <>
+      <div className="space-y-2">
+        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Modalidad</Label>
+        <Select
+          value={tipo}
+          onValueChange={(v) => setTipo((v as 'virtual' | 'presencial') || 'virtual')}
+          disabled={isPending}
+          items={{ virtual: 'Virtual (videollamada)', presencial: 'Presencial' }}
+        >
+          <SelectTrigger className="bg-muted border-border h-10"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="virtual">Virtual (videollamada)</SelectItem>
+            <SelectItem value="presencial">Presencial</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      {tipo === 'virtual' ? (
+        <div className="space-y-2">
+          <Label htmlFor="enlace" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Enlace (opcional para individual)</Label>
+          <Input name="enlace" placeholder="https://meet.google.com/..." className="bg-muted border-border h-10" disabled={isPending} />
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <Label htmlFor="lugar" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Lugar</Label>
+          <Input name="lugar" placeholder="Ej: Dignos, Quilmes" className="bg-muted border-border h-10" disabled={isPending} />
+        </div>
+      )}
+    </>
+  )
+
   return (
-    <Card className="border-gray-200 shadow-sm bg-white sticky top-24">
-      <CardHeader className="pb-3 border-b border-gray-100">
+    <Card className="border-border shadow-sm bg-card sticky top-24">
+      <CardHeader className="pb-3 border-b border-border">
         <CardTitle className="font-heading text-lg text-tinta">Agendar sesiones</CardTitle>
       </CardHeader>
       <CardContent className="pt-4 space-y-6">
-
         <div className="space-y-2">
-          <Label className="font-bold text-tinta text-sm">1. Seleccionar paciente</Label>
-          <Select value={selectedPaciente || undefined} onValueChange={setSelectedPaciente} disabled={isPending}>
-            <SelectTrigger className="bg-gray-50 border-gray-200">
-              <SelectValue placeholder="Elegí un paciente..." />
+          <Label className="font-bold text-tinta text-sm">1. Destino</Label>
+          <Select value={destino} onValueChange={(v) => setDestino(v || '')} disabled={isPending} items={destinoItems}>
+            <SelectTrigger className="bg-muted border-border">
+              <SelectValue placeholder="Alumno o cohorte..." />
             </SelectTrigger>
             <SelectContent>
-              {pacientes.map(p => (
-                <SelectItem key={p.id} value={p.id}>{p.nombre}</SelectItem>
-              ))}
-              {pacientes.length === 0 && <SelectItem value="none" disabled>No hay pacientes activos</SelectItem>}
+              {cohortes.length > 0 && (
+                <>
+                  <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Cohortes</div>
+                  {cohortes.map(c => <SelectItem key={c.id} value={`cohorte:${c.id}`}>👥 {c.nombre}</SelectItem>)}
+                </>
+              )}
+              <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Alumnos</div>
+              {alumnos.map(a => <SelectItem key={a.id} value={`alumno:${a.id}`}>{a.nombre}</SelectItem>)}
+              {alumnos.length === 0 && cohortes.length === 0 && <SelectItem value="none" disabled>No hay destinos</SelectItem>}
             </SelectContent>
           </Select>
         </div>
@@ -94,19 +126,12 @@ export function AgendaAdminPanel({ pacientes }: { pacientes: { id: string, nombr
             <TabsContent value="unica">
               <form id="form-sesion-unica" action={handleAgregarUnica} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fecha_hora" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Fecha y hora exacta</Label>
-                  <Input
-                    type="datetime-local"
-                    id="fecha_hora"
-                    name="fecha_hora"
-                    required
-                    className="bg-gray-50 border-gray-200 h-10"
-                    disabled={isPending || !selectedPaciente}
-                  />
+                  <Label htmlFor="fecha_hora" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Fecha y hora</Label>
+                  <Input type="datetime-local" id="fecha_hora" name="fecha_hora" required className="bg-muted border-border h-10" disabled={isPending || !destino} />
                 </div>
-                <Button type="submit" disabled={isPending || !selectedPaciente} className="w-full bg-marca hover:bg-marca/90 text-white shadow-sm">
-                  {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CalendarPlus className="w-4 h-4 mr-2" />}
-                  Agendar sesión
+                {camposTipo}
+                <Button type="submit" disabled={isPending || !destino} className="w-full bg-marca hover:bg-marca/90 text-crema shadow-sm">
+                  {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CalendarPlus className="w-4 h-4 mr-2" />} Agendar sesión
                 </Button>
               </form>
             </TabsContent>
@@ -115,11 +140,14 @@ export function AgendaAdminPanel({ pacientes }: { pacientes: { id: string, nombr
               <form id="form-recurrentes" action={handleGenerarRecurrentes} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label htmlFor="dia_semana" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Día</Label>
-                    <Select name="dia_semana" required disabled={isPending || !selectedPaciente}>
-                      <SelectTrigger id="dia_semana" className="bg-gray-50 border-gray-200 h-10">
-                        <SelectValue placeholder="Día" />
-                      </SelectTrigger>
+                    <Label htmlFor="dia_semana" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Día</Label>
+                    <Select
+                      name="dia_semana"
+                      required
+                      disabled={isPending || !destino}
+                      items={{ '1': 'Lunes', '2': 'Martes', '3': 'Miércoles', '4': 'Jueves', '5': 'Viernes', '6': 'Sábado', '0': 'Domingo' }}
+                    >
+                      <SelectTrigger id="dia_semana" className="bg-muted border-border h-10"><SelectValue placeholder="Día" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="1">Lunes</SelectItem>
                         <SelectItem value="2">Martes</SelectItem>
@@ -132,23 +160,22 @@ export function AgendaAdminPanel({ pacientes }: { pacientes: { id: string, nombr
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="hora" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Hora</Label>
-                    <Input type="time" id="hora" name="hora" required className="bg-gray-50 border-gray-200 h-10" disabled={isPending || !selectedPaciente} />
+                    <Label htmlFor="hora" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Hora</Label>
+                    <Input type="time" id="hora" name="hora" required className="bg-muted border-border h-10" disabled={isPending || !destino} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="semanas" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Cantidad de semanas</Label>
-                  <Input type="number" id="semanas" name="semanas" min="1" max="52" defaultValue="4" required className="bg-gray-50 border-gray-200 h-10" disabled={isPending || !selectedPaciente} />
+                  <Label htmlFor="semanas" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Cantidad de semanas</Label>
+                  <Input type="number" id="semanas" name="semanas" min="1" max="52" defaultValue="4" required className="bg-muted border-border h-10" disabled={isPending || !destino} />
                 </div>
-                <Button type="submit" disabled={isPending || !selectedPaciente} className="w-full bg-tinta hover:bg-tinta/90 text-white shadow-sm">
-                  {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CalendarPlus className="w-4 h-4 mr-2" />}
-                  Generar en lote
+                {camposTipo}
+                <Button type="submit" disabled={isPending || !destino} className="w-full bg-noche hover:bg-noche/90 text-white shadow-sm">
+                  {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CalendarPlus className="w-4 h-4 mr-2" />} Generar en lote
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
         </div>
-
       </CardContent>
     </Card>
   )

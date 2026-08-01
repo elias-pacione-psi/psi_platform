@@ -15,21 +15,21 @@ export default async function AdminLayout({
     redirect('/login')
   }
 
-  const { data: paciente } = await supabase
-    .from('pacientes')
+  const { data: alumno } = await supabase
+    .from('alumnos')
     .select('rol')
     .eq('id', user.id)
     .single()
 
-  if (!paciente || paciente.rol !== 'psicologo') {
-    redirect('/paciente')
+  if (!alumno || alumno.rol !== 'psicologo') {
+    redirect('/alumno')
   }
 
   return (
     <SidebarProvider>
       <AppSidebar userRole="psicologo" />
       <main className="flex-1 min-h-screen bg-crema/30 overflow-x-hidden flex flex-col">
-        <div className="p-4 flex items-center border-b border-gray-200 bg-white sticky top-0 z-10 shrink-0">
+        <div className="p-4 flex items-center border-b border-border bg-card sticky top-0 z-10 shrink-0">
           <SidebarTrigger className="text-tinta" />
         </div>
         <div className="p-6 md:p-8 flex-1">

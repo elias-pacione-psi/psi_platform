@@ -10,7 +10,23 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { toast } from 'sonner'
 
-const MIN_LEN = 8
+// Debe coincidir con la política de Supabase (supabase/config.toml → [auth]): si
+// difieren, una contraseña que pasa esta validación puede ser rechazada igual por el
+// servidor, con un error genérico que no le explica al alumno qué le falta.
+const MIN_LEN = 12
+const REQUISITOS: { regex: RegExp; label: string }[] = [
+  { regex: /[a-z]/, label: 'una minúscula' },
+  { regex: /[A-Z]/, label: 'una mayúscula' },
+  { regex: /[0-9]/, label: 'un número' },
+  { regex: /[^A-Za-z0-9]/, label: 'un símbolo' },
+]
+
+function validarPassword(password: string): string | null {
+  if (password.length < MIN_LEN) return `La contraseña debe tener al menos ${MIN_LEN} caracteres.`
+  const faltantes = REQUISITOS.filter((r) => !r.regex.test(password)).map((r) => r.label)
+  if (faltantes.length > 0) return `Falta al menos ${faltantes.join(', ')}.`
+  return null
+}
 
 export function ConfigurarPasswordClient() {
   const [isPending, setIsPending] = useState(false)
@@ -24,8 +40,9 @@ export function ConfigurarPasswordClient() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (password.length < MIN_LEN) {
-      toast.error(`La contraseña debe tener al menos ${MIN_LEN} caracteres.`)
+    const errorValidacion = validarPassword(password)
+    if (errorValidacion) {
+      toast.error(errorValidacion)
       return
     }
     if (password !== confirm) {
@@ -39,17 +56,19 @@ export function ConfigurarPasswordClient() {
     const { error } = await supabase.auth.updateUser({ password })
 
     if (error) {
-      toast.error('No se pudo actualizar la contraseña. Inténtalo de nuevo.')
+      // Si la política del servidor cambia y queda más estricta que esta validación,
+      // mostramos el motivo real en vez de un genérico que deja al alumno sin saber qué hacer.
+      toast.error(error.message || 'No se pudo actualizar la contraseña. Inténtalo de nuevo.')
       setIsPending(false)
     } else {
       toast.success('¡Contraseña actualizada con éxito!')
-      router.push('/paciente')
+      router.push('/alumno')
     }
   }
 
   return (
     <div className="min-h-screen bg-crema flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg border-gray-200">
+      <Card className="w-full max-w-md shadow-lg border-border">
         <CardHeader className="space-y-2 pb-6">
           <CardTitle className="text-3xl font-heading text-center font-bold text-tinta">Configurar nueva contraseña</CardTitle>
           <CardDescription className="text-center font-sans">
@@ -66,7 +85,7 @@ export function ConfigurarPasswordClient() {
                   name="password"
                   type={show ? 'text' : 'password'}
                   required
-                  className="border-gray-200 pr-10"
+                  className="border-border pr-10"
                   disabled={isPending}
                   minLength={MIN_LEN}
                   value={password}
@@ -76,14 +95,16 @@ export function ConfigurarPasswordClient() {
                 <button
                   type="button"
                   onClick={() => setShow((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-tinta"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-tinta"
                   tabIndex={-1}
                   aria-label={show ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
                   {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-400">Mínimo {MIN_LEN} caracteres.</p>
+              <p className="text-xs text-muted-foreground">
+                Mínimo {MIN_LEN} caracteres, con mayúsculas, minúsculas, números y símbolos (ej: !@#$%).
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -93,7 +114,7 @@ export function ConfigurarPasswordClient() {
                 name="confirm"
                 type={show ? 'text' : 'password'}
                 required
-                className={`border-gray-200 ${confirm.length > 0 && !passwordsMatch ? 'border-red-400 focus-visible:ring-red-300' : ''}`}
+                className={`border-border ${confirm.length > 0 && !passwordsMatch ? 'border-red-400 focus-visible:ring-red-300' : ''}`}
                 disabled={isPending}
                 minLength={MIN_LEN}
                 value={confirm}
@@ -101,11 +122,11 @@ export function ConfigurarPasswordClient() {
                 autoComplete="new-password"
               />
               {confirm.length > 0 && !passwordsMatch && (
-                <p className="text-xs text-red-600">Las contraseñas no coinciden.</p>
+                <p className="text-xs text-red-600 dark:text-red-400">Las contraseñas no coinciden.</p>
               )}
             </div>
 
-            <Button type="submit" disabled={isPending || !passwordsMatch} className="w-full bg-marca hover:bg-marca/90 text-white font-sans text-md h-12 rounded-lg">
+            <Button type="submit" disabled={isPending || !passwordsMatch} className="w-full bg-marca hover:bg-marca/90 text-crema font-sans text-md h-12 rounded-lg">
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Guardar contraseña y entrar"}
             </Button>
           </form>

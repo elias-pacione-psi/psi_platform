@@ -11,8 +11,27 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { EventoCalendario } from '@/app/calendarActions';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { CalendarPlus } from 'lucide-react'
 import { toast } from 'sonner'
-import { eliminarSesionUnica, eliminarTodaLaAgendaDelPaciente } from '@/app/psicologo/actions';
+import { eliminarSesionUnica, eliminarTodaLaAgendaDelAlumno } from '@/app/psicologo/actions';
+
+// Formato requerido por Google Calendar: YYYYMMDDTHHmmSSZ
+function formatoFechaGoogle(date: Date) {
+  return date.toISOString().replace(/-|:|\.\d\d\d/g, '')
+}
+
+function urlGoogleCalendar(evento: EventoCalendario) {
+  const start = new Date(evento.start)
+  const end = new Date(evento.end)
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: evento.title,
+    dates: `${formatoFechaGoogle(start)}/${formatoFechaGoogle(end)}`,
+    location: evento.tipo === 'presencial' ? (evento.lugar || '') : (evento.enlace || ''),
+    details: evento.tipo === 'presencial' ? 'Sesión presencial.' : 'Sesión virtual — el enlace está en "Ubicación".',
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
 
 const locales = {
   'es': es,
@@ -57,7 +76,7 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectEvent = (event: any) => {
-    // Todos ven el detalle (el paciente accede al link de videollamada); solo el psicólogo ve acciones de borrado
+    // Todos ven el detalle (el alumno accede al link de videollamada); solo el psicólogo ve acciones de borrado
     if (event.type === 'sesion') {
       setDetalleDialog({ open: true, selectedEvent: event });
     }
@@ -81,14 +100,14 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
   }
 
   const confirmDeleteAll = async () => {
-    const pacienteId = detalleDialog.selectedEvent?.paciente_id;
-    if (pacienteId) {
+    const alumnoId = detalleDialog.selectedEvent?.alumno_id;
+    if (alumnoId) {
       try {
-        const result = await eliminarTodaLaAgendaDelPaciente(pacienteId)
+        const result = await eliminarTodaLaAgendaDelAlumno(alumnoId)
         if (result?.error) {
           toast.error(result.error)
         } else {
-          toast.success("Todas las sesiones del paciente fueron eliminadas.")
+          toast.success("Todas las sesiones del alumno fueron eliminadas.")
         }
       } catch {
         toast.error("Error al eliminar las sesiones en lote.")
@@ -99,7 +118,7 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
 
   if (!mounted) {
     return (
-      <div className="h-[600px] w-full bg-gray-50 animate-pulse rounded-xl border border-gray-200 flex items-center justify-center">
+      <div className="h-[600px] w-full bg-muted animate-pulse rounded-xl border border-border flex items-center justify-center">
         <p className="text-muted-foreground font-sans">Cargando calendario...</p>
       </div>
     );
@@ -120,6 +139,8 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
     if (event.type === 'feriado') {
       backgroundColor = '#cbd5e1'; // Slate 300 (gris opaco)
       color = '#334155'; // Slate 700
+    } else if (event.tipo === 'presencial') {
+      backgroundColor = '#1f3d3a'; // Tinta (presencial)
     }
 
     return {
@@ -136,7 +157,7 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
   };
 
   return (
-    <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-200 shadow-sm h-[700px]">
+    <div className="bg-card p-4 md:p-6 rounded-2xl border border-border shadow-sm h-[700px]">
       <Calendar
         localizer={localizer}
         events={calendarEvents}
@@ -157,22 +178,37 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
             <AlertDialogTitle className="text-tinta font-serif text-2xl">
               {detalleDialog.selectedEvent?.title || 'Detalle del evento'}
             </AlertDialogTitle>
-            <AlertDialogDescription className="font-sans text-base text-gray-700">
+            <AlertDialogDescription className="font-sans text-base text-muted-foreground">
               <span className="block">
                 {detalleDialog.selectedEvent?.type === 'sesion' && (
-                  <span className="mt-2 block">
-                    {detalleDialog.selectedEvent?.start ? format(new Date(detalleDialog.selectedEvent.start), "EEEE d 'de' MMMM - HH:mm 'hs'", { locale: es }) : 'Podés ingresar a la videollamada desde acá.'}
-                  </span>
+                  <>
+                    <span className="mt-2 block">
+                      {detalleDialog.selectedEvent?.start ? format(new Date(detalleDialog.selectedEvent.start), "EEEE d 'de' MMMM - HH:mm 'hs'", { locale: es }) : ''}
+                    </span>
+                    {detalleDialog.selectedEvent?.tipo === 'presencial' && (
+                      <span className="mt-2 block font-semibold text-tinta">📍 Presencial{detalleDialog.selectedEvent?.lugar ? ` — ${detalleDialog.selectedEvent.lugar}` : ''}</span>
+                    )}
+                  </>
                 )}
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          {detalleDialog.selectedEvent?.type === 'sesion' && detalleDialog.selectedEvent?.link_videollamada && (
-            <div className="flex w-full mb-4">
-              <a href={detalleDialog.selectedEvent.link_videollamada} target="_blank" rel="noopener noreferrer" className="w-full">
-                <Button className="w-full flex items-center justify-center bg-tinta hover:bg-tinta/90 text-white font-semibold py-2 px-4 transition-colors h-12 text-md shadow-md rounded-xl">
+          {detalleDialog.selectedEvent?.type === 'sesion' && detalleDialog.selectedEvent?.tipo !== 'presencial' && detalleDialog.selectedEvent?.enlace && (
+            <div className="flex w-full mb-2">
+              <a href={detalleDialog.selectedEvent.enlace} target="_blank" rel="noopener noreferrer" className="w-full">
+                <Button className="w-full flex items-center justify-center bg-noche hover:bg-noche/90 text-white font-semibold py-2 px-4 transition-colors h-12 text-md shadow-md rounded-xl">
                   📹 Entrar a la videollamada
+                </Button>
+              </a>
+            </div>
+          )}
+
+          {detalleDialog.selectedEvent?.type === 'sesion' && (
+            <div className="flex w-full mb-4">
+              <a href={urlGoogleCalendar(detalleDialog.selectedEvent)} target="_blank" rel="noopener noreferrer" className="w-full">
+                <Button variant="outline" className="w-full flex items-center justify-center border-tinta/20 text-tinta hover:bg-crema font-semibold h-10 rounded-xl">
+                  <CalendarPlus className="w-4 h-4 mr-2" /> Agregar a Google Calendar
                 </Button>
               </a>
             </div>
@@ -186,9 +222,11 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
                 <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
                   Eliminar sesión
                 </AlertDialogAction>
-                <AlertDialogAction onClick={confirmDeleteAll} className="bg-red-800 hover:bg-red-900 text-white font-bold">
-                  Eliminar todas las del paciente
-                </AlertDialogAction>
+                {detalleDialog.selectedEvent?.alumno_id && (
+                  <AlertDialogAction onClick={confirmDeleteAll} className="bg-red-800 hover:bg-red-900 text-white font-bold">
+                    Eliminar todas las del alumno
+                  </AlertDialogAction>
+                )}
               </>
             )}
           </AlertDialogFooter>

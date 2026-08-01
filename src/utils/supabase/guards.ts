@@ -20,7 +20,7 @@ export async function requirePsicologo(): Promise<GuardResult> {
   if ('error' in auth) return auth
 
   const { data: perfil } = await auth.supabase
-    .from('pacientes')
+    .from('alumnos')
     .select('rol')
     .eq('id', auth.user.id)
     .single()
