@@ -266,7 +266,24 @@ export function ArchivosClient({
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10">
+                  <Checkbox
+                    checked={
+                      (listado.carpetas.length > 0 || listado.archivos.length > 0) &&
+                      seleccion.size === listado.carpetas.length + listado.archivos.length
+                    }
+                    onCheckedChange={(v) => {
+                      if (v) {
+                        const nuevaSeleccion = new Set<string>()
+                        listado.carpetas.forEach(c => nuevaSeleccion.add(c.prefijo))
+                        listado.archivos.forEach(a => nuevaSeleccion.add(a.key))
+                        setSeleccion(nuevaSeleccion)
+                      } else {
+                        setSeleccion(new Set())
+                      }
+                    }}
+                  />
+                </TableHead>
                 <TableHead className="font-bold text-tinta">Nombre</TableHead>
                 <TableHead className="font-bold text-tinta">Tamaño</TableHead>
                 <TableHead className="font-bold text-tinta">Modificado</TableHead>
