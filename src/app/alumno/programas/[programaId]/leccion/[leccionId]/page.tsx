@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ClipboardCheck } from 'lucide-react'
 import { DriveIframe } from '@/components/DriveIframe'
+import { PdfViewerSeguro } from '@/components/PdfViewerSeguro'
 import { MarkdownRico } from '@/components/MarkdownRico'
 import { Button } from '@/components/ui/button'
 import { firmarUrlsRecursos, firmarUrlEntrega } from '@/utils/supabase/recursos'
@@ -112,7 +113,7 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
           <div className="mb-8 flex justify-center bg-muted p-8 rounded-xl border border-border"><audio src={leccion.url_recurso} controls className="w-full max-w-2xl" /></div>
         )}
         {(tipo === 'r2_pdf' || tipo === 'supabase_pdf') && leccion.url_recurso && (
-          <div className="mb-8"><iframe src={leccion.url_recurso} className="w-full h-[80vh] rounded-xl border border-border" title="Documento PDF" /></div>
+          <div className="mb-8"><PdfViewerSeguro url={leccion.url_recurso} /></div>
         )}
         {tipo === 'drive_image' && leccion.url_recurso && (
           <div className="mb-8 flex justify-center">

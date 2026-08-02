@@ -27,6 +27,7 @@ const command = new PutBucketCorsCommand({
         AllowedOrigins: [
           'http://localhost:3000',
           'https://psi-platform-git-main-psi12.vercel.app',
+          'https://psi-platform-ten.vercel.app',
         ],
         ExposeHeaders: ['ETag'],
         MaxAgeSeconds: 3600,
