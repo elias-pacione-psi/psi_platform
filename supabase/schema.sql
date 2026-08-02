@@ -178,6 +178,27 @@ create index if not exists idx_entregas_alumno on public.entregas (alumno_id);
 create index if not exists idx_agenda_alumno_fecha on public.agenda_sesiones (alumno_id, fecha_hora);
 create index if not exists idx_agenda_cohorte_fecha on public.agenda_sesiones (cohorte_id, fecha_hora);
 
+-- Solicitudes de contacto del formulario público de la landing ("Consultas y Turnos").
+-- NO crea cuenta ni es registro público de alumnos: el psicólogo revisa acá y, si
+-- corresponde, invita manualmente con crearAlumnoDirecto (el alta sigue siendo por
+-- invitación). `objetivos` es el motivo de consulta que cuenta el interesado — dato
+-- sensible de salud (Ley 25.326) recolectado pre-alta: sin policies para
+-- authenticated/anon a propósito, se escribe y se lee únicamente con
+-- createAdminClient() (ver src/app/actions.ts y psicologo/alumnos/page.tsx), mismo
+-- patrón que quiz_preguntas. Esta tabla se creó fuera de este archivo en su momento
+-- (por eso aparece acá recién ahora, agregada en la auditoría del 2026-08-02) — quedó
+-- sin RLS habilitada hasta esta migración.
+create table if not exists public.solicitudes_registro (
+  id uuid primary key default gen_random_uuid(),
+  nombre text not null,
+  email text not null,
+  telefono text,
+  objetivos text,
+  estado text not null default 'pendiente',
+  created_at timestamptz not null default now()
+);
+alter table public.solicitudes_registro enable row level security;
+
 -- ----------------------------------------------------------------------------
 -- 2) HELPERS (security definer para no recursar sobre las policies)
 -- ----------------------------------------------------------------------------
@@ -461,10 +482,14 @@ create policy "quiz_intentos_select" on public.quiz_intentos
   for select to authenticated
   using (alumno_id = auth.uid() or public.es_psicologo());
 
+-- Sin policy de insert para authenticated a propósito: antes solo exigía
+-- alumno_id = auth.uid(), sin validar puntaje/aprobado, así que cualquiera con su
+-- propia sesión podía llamar a la API de Supabase directo e insertar un resultado
+-- inventado (aprobado=true) sin resolver el quiz. corregirQuiz() ya corre en el
+-- servidor con service-role (src/utils/supabase/quiz.ts); responderQuiz() ahora
+-- también inserta con createAdminClient() en vez del cliente del usuario — mismo
+-- patrón que quiz_preguntas, sin este policy no queda otro camino de escritura.
 drop policy if exists "quiz_intentos_insert_propio" on public.quiz_intentos;
-create policy "quiz_intentos_insert_propio" on public.quiz_intentos
-  for insert to authenticated
-  with check (alumno_id = auth.uid());
 
 -- entregas: el alumno crea/ve/edita la suya (el trigger protege campos del
 -- instructor); el psicólogo ve todas y las revisa.
@@ -473,16 +498,31 @@ create policy "entregas_select" on public.entregas
   for select to authenticated
   using (alumno_id = auth.uid() or public.es_psicologo());
 
+-- Valida que archivo_url apunte a la carpeta del propio alumno — el mismo chequeo que
+-- ya hace perteneceAlAlumno() en src/app/alumno/actions.ts, pero ahora también acá:
+-- antes de esta función, la policy solo exigía alumno_id = auth.uid(), así que alguien
+-- que llamara a la API de Supabase directo (sin pasar por la server action) podía
+-- registrar como propia la key de otro alumno y después leerla firmada desde Tareas.
+create or replace function public.archivo_url_pertenece_alumno(url text)
+returns boolean
+language sql
+stable
+as $$
+  select
+    url like ('r2key://entregas/' || auth.uid()::text || '/%')
+    or url like (auth.uid()::text || '/%')
+$$;
+
 drop policy if exists "entregas_insert_propio" on public.entregas;
 create policy "entregas_insert_propio" on public.entregas
   for insert to authenticated
-  with check (alumno_id = auth.uid());
+  with check (alumno_id = auth.uid() and public.archivo_url_pertenece_alumno(archivo_url));
 
 drop policy if exists "entregas_update_propio" on public.entregas;
 create policy "entregas_update_propio" on public.entregas
   for update to authenticated
   using (alumno_id = auth.uid())
-  with check (alumno_id = auth.uid());
+  with check (alumno_id = auth.uid() and public.archivo_url_pertenece_alumno(archivo_url));
 
 drop policy if exists "entregas_update_psicologo" on public.entregas;
 create policy "entregas_update_psicologo" on public.entregas

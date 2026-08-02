@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireUser } from '@/utils/supabase/guards'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { corregirQuiz } from '@/utils/supabase/quiz'
 import { firmarSubidaR2, r2Configurado } from '@/utils/r2'
 import { marcarKeyR2, keyDeMarcadorR2, PREFIJO_ENTREGAS_R2 } from '@/utils/r2-marcador'
@@ -82,6 +83,8 @@ export async function marcarLeccionCompletada(leccionId: string, programaId: str
   if ('error' in auth) return { error: auth.error }
   const { supabase, user } = auth
 
+  if (!(await tieneAcceso(supabase, user.id, programaId))) return { error: 'No autorizado' }
+
   if (completado) {
     const { error } = await supabase
       .from('progreso_lecciones')
@@ -113,7 +116,11 @@ export async function responderQuiz(leccionId: string, programaId: string, respu
   const resultado = await corregirQuiz(leccionId, respuestas)
   if (!resultado) return { error: 'No se pudieron cargar las preguntas' }
 
-  const { error: errIntento } = await supabase.from('quiz_intentos').insert({
+  // Con service-role: la tabla no tiene policy de insert para authenticated (ver
+  // schema.sql), así que un resultado de quiz solo puede entrar por acá, ya corregido
+  // en el servidor — nunca con un puntaje/aprobado que el alumno mande directo a la API.
+  const supabaseAdmin = createAdminClient()
+  const { error: errIntento } = await supabaseAdmin.from('quiz_intentos').insert({
     alumno_id: user.id,
     leccion_id: leccionId,
     puntaje: resultado.puntaje,
