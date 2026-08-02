@@ -199,13 +199,13 @@ export function AdminLeccionesClient({ programa, modulos, lecciones }: { program
                   </div>
                 </div>
 
-                <Table>
+                <Table className="table-fixed">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="font-heading font-semibold text-tinta w-24">Orden</TableHead>
                       <TableHead className="font-heading font-semibold text-tinta">Lección</TableHead>
-                      <TableHead className="font-heading font-semibold text-tinta">Tipo</TableHead>
-                      <TableHead className="text-right font-heading font-semibold text-tinta">Acciones</TableHead>
+                      <TableHead className="font-heading font-semibold text-tinta w-[200px]">Tipo</TableHead>
+                      <TableHead className="text-right font-heading font-semibold text-tinta w-72">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -220,7 +220,7 @@ export function AdminLeccionesClient({ programa, modulos, lecciones }: { program
                             <button onClick={() => startTransition(async () => { await moverLeccion(leccion.id, modulo.id, programa.id, 'down') })} disabled={isPending || index === leccionesDeModulo.length - 1} className="disabled:opacity-30 text-tinta/50 hover:text-marca"><ChevronDown className="w-4 h-4" /></button>
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium text-tinta max-w-[280px] truncate">{leccion.titulo}</TableCell>
+                        <TableCell className="font-medium text-tinta truncate">{leccion.titulo}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="px-2 py-1 rounded-md text-xs font-semibold bg-muted text-muted-foreground border border-border">
