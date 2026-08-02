@@ -6,6 +6,7 @@ import { DriveIframe } from '@/components/DriveIframe'
 import { PdfViewerSeguro } from '@/components/PdfViewerSeguro'
 import { MarkdownRico } from '@/components/MarkdownRico'
 import { Button } from '@/components/ui/button'
+import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
 import { firmarUrlsRecursos, firmarUrlEntrega } from '@/utils/supabase/recursos'
 import { obtenerPreguntasSinRespuesta } from '@/utils/supabase/quiz'
 import { QuizSolver } from './QuizSolver'
@@ -49,6 +50,13 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
 
   const [leccion] = await firmarUrlsRecursos([leccionDB])
   const tipo = leccion.tipo_contenido
+  const tipoMedio = leccion.tipo_medio as string | null
+  // tipo_contenido es una taxonomía histórica (drive_pdf/dropbox_pdf/etc.) que no
+  // refleja el origen real del archivo — un PDF de R2 también se guarda como
+  // 'drive_pdf' (ver src/utils/taxonomia.ts). Lo que decide si el navegador va a
+  // mostrar su visor nativo (con descargar/imprimir) es si la URL es un archivo
+  // directo o una página de preview HTML de Drive/Dropbox, no el tipo_contenido.
+  const esArchivoDirecto = !!leccion.url_recurso && !esPaginaDePreviewSandboxeable(leccion.url_recurso)
 
   const Header = (
     <div className="mb-6 flex items-center gap-4">
@@ -103,21 +111,30 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
     <div className="max-w-6xl mx-auto flex flex-col min-h-[calc(100vh-8rem)] pb-8">
       {Header}
       <div className="flex-1 bg-card rounded-2xl shadow-sm border border-border p-6 md:p-8 w-full">
-        {['drive_video', 'drive_audio', 'drive_pdf', 'dropbox_video', 'dropbox_audio', 'dropbox_pdf'].includes(tipo) && leccion.url_recurso && (
-          <div className="mb-8"><DriveIframe url={leccion.url_recurso} /></div>
+        {tipoMedio === 'pdf' && leccion.url_recurso && (
+          <div className="mb-8">
+            {esArchivoDirecto
+              ? <PdfViewerSeguro url={leccion.url_recurso} />
+              : <DriveIframe url={leccion.url_recurso} />}
+          </div>
         )}
-        {(tipo === 'r2_video' || tipo === 'supabase_video') && leccion.url_recurso && (
-          <div className="mb-8 flex justify-center"><video src={leccion.url_recurso} controls className="w-full max-w-4xl rounded-xl shadow-sm bg-black" /></div>
-        )}
-        {(tipo === 'r2_audio' || tipo === 'supabase_audio') && leccion.url_recurso && (
-          <div className="mb-8 flex justify-center bg-muted p-8 rounded-xl border border-border"><audio src={leccion.url_recurso} controls className="w-full max-w-2xl" /></div>
-        )}
-        {(tipo === 'r2_pdf' || tipo === 'supabase_pdf') && leccion.url_recurso && (
-          <div className="mb-8"><PdfViewerSeguro url={leccion.url_recurso} /></div>
-        )}
-        {tipo === 'drive_image' && leccion.url_recurso && (
+        {tipoMedio === 'video' && leccion.url_recurso && (
           <div className="mb-8 flex justify-center">
-            {leccion.url_recurso.includes('drive.google.com') ? (
+            {esArchivoDirecto
+              ? <video src={leccion.url_recurso} controls controlsList="nodownload noremoteplayback" className="w-full max-w-4xl rounded-xl shadow-sm bg-black" />
+              : <div className="w-full"><DriveIframe url={leccion.url_recurso} /></div>}
+          </div>
+        )}
+        {tipoMedio === 'audio' && leccion.url_recurso && (
+          <div className="mb-8 flex justify-center bg-muted p-8 rounded-xl border border-border">
+            {esArchivoDirecto
+              ? <audio src={leccion.url_recurso} controls controlsList="nodownload noremoteplayback" className="w-full max-w-2xl" />
+              : <div className="w-full"><DriveIframe url={leccion.url_recurso} /></div>}
+          </div>
+        )}
+        {tipoMedio === 'imagen' && leccion.url_recurso && (
+          <div className="mb-8 flex justify-center">
+            {!esArchivoDirecto ? (
               <div className="w-full max-w-4xl"><DriveIframe url={leccion.url_recurso} /></div>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
@@ -125,7 +142,7 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
             )}
           </div>
         )}
-        {tipo === 'texto_markdown' && leccion.url_recurso && (
+        {tipoMedio === 'markdown' && leccion.url_recurso && (
           <MarkdownRico>{leccion.url_recurso}</MarkdownRico>
         )}
 

@@ -131,7 +131,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
 
             <SidebarGroup>
               <SidebarGroupLabel className="text-tinta/70 flex items-center justify-between">
-                <span>Vista Alumno (Demo)</span>
+                <span>Vista Alumno</span>
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
