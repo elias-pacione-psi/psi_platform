@@ -26,6 +26,7 @@ const command = new PutBucketCorsCommand({
         // del primer deploy — si no, la subida funciona en local pero falla en prod.
         AllowedOrigins: [
           'http://localhost:3000',
+          'https://psi-platform-git-main-psi12.vercel.app',
         ],
         ExposeHeaders: ['ETag'],
         MaxAgeSeconds: 3600,

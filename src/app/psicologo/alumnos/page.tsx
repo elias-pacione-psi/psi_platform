@@ -1,13 +1,16 @@
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { AdminAlumnosClient } from './AdminAlumnosClient'
 
 export default async function AdminAlumnosPage() {
   const supabase = await createClient()
+  const supabaseAdmin = createAdminClient()
 
   const [
     { data: alumnos, error: alumnosError },
     { data: programas, error: programasError },
-    { data: lecciones }
+    { data: lecciones },
+    { data: solicitudes, error: solicitudesError }
   ] = await Promise.all([
     supabase
       .from('alumnos')
@@ -27,11 +30,15 @@ export default async function AdminAlumnosPage() {
       .order('titulo', { ascending: true }),
     supabase
       .from('lecciones')
-      .select('id, programa_id')
+      .select('id, programa_id'),
+    supabaseAdmin
+      .from('solicitudes_registro')
+      .select('*')
+      .order('created_at', { ascending: false })
   ])
 
-  if (alumnosError || programasError) {
-    console.error("Error fetching critical admin data:", { alumnosError, programasError })
+  if (alumnosError || programasError || solicitudesError) {
+    console.error("Error fetching critical admin data:", { alumnosError, programasError, solicitudesError })
     return (
       <div className="p-8 text-center text-red-600 dark:text-red-400 font-sans">
         <h2 className="text-2xl font-bold font-heading mb-4">Error cargando datos del panel</h2>
@@ -81,6 +88,7 @@ export default async function AdminAlumnosPage() {
       <AdminAlumnosClient
         alumnos={alumnosList}
         todosLosProgramas={programas || []}
+        solicitudes={solicitudes || []}
       />
     </div>
   )

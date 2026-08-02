@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { FolderHeart, Calendar, ShieldCheck } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { BrandMark } from '@/components/BrandMark'
+import { LandingClient } from './LandingClient'
 
 // Los cuatro conceptos que el brief define como la esencia de la marca.
 const conceptos = [
@@ -17,8 +18,7 @@ const prestaciones = [
   { icono: ShieldCheck, titulo: 'Privado', texto: 'Acceso únicamente por invitación. Acá no se publica ni se comparte nada de lo tuyo.' },
 ]
 
-// Landing sobria: acá no hay registro público — las cuentas las crea Elias y
-// el alumno llega invitado por email.
+// Landing sobria
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
@@ -66,10 +66,10 @@ export default function LandingPage() {
             espiritualidad pueden ser escuchadas y comprendidas.
           </p>
           <Link
-            href="/login"
+            href="#contacto"
             className="inline-block bg-tinta text-crema px-10 py-4 rounded-full font-medium text-base transition-colors hover:bg-marca"
           >
-            Acceder a mi espacio
+            Comenzar proceso
           </Link>
         </div>
       </section>
@@ -91,7 +91,7 @@ export default function LandingPage() {
       </section>
 
       {/* QUÉ VAS A ENCONTRAR ACÁ DENTRO */}
-      <section className="flex-1">
+      <section>
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {prestaciones.map(({ icono: Icono, titulo, texto }) => (
@@ -104,6 +104,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Formulario de Contacto */}
+      <LandingClient />
 
       <footer className="bg-noche text-nieve/70 py-12 px-6">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
