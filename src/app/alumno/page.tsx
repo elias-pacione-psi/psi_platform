@@ -18,7 +18,7 @@ export default async function AlumnoHomePage() {
   const [{ data: proximaSesion }, { count: countProg }, { count: countRec }] = await Promise.all([
     supabase
       .from('agenda_sesiones')
-      .select('fecha_hora')
+      .select('fecha_hora, duracion_minutos, tipo, lugar, cohortes(nombre)')
       .gte('fecha_hora', new Date().toISOString())
       .order('fecha_hora', { ascending: true })
       .limit(1)
@@ -56,22 +56,34 @@ export default async function AlumnoHomePage() {
           </CardHeader>
           <CardContent>
             {proximaSesion?.fecha_hora ? (
+              // Todo esto salía hardcodeado ("Presencial · Dignos, Quilmes", "8:00 a
+              // 12:00 hs", "Encuentro 1 · Laboratorio de Escucha Activa"): mostraba lo
+              // mismo para cualquier sesión, sin importar cuál fuera. Ahora sale de la
+              // fila, con duracion_minutos para calcular la hora de fin.
               <div className="mb-4 p-4 bg-crema rounded-xl border border-tinta/10">
                 <p className="text-marca font-sans font-semibold mb-1">
-                  Presencial · Dignos, Quilmes
+                  {proximaSesion.tipo === 'presencial'
+                    ? `Presencial${proximaSesion.lugar ? ` · ${proximaSesion.lugar}` : ''}`
+                    : 'Virtual'}
                 </p>
                 <p className="text-tinta font-serif font-medium mb-1">
-                  <span className="font-bold">
+                  <span className="font-bold first-letter:uppercase">
                     {new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
                   </span>
-                  , 8:00 a 12:00 hs
+                  {', '}
+                  {new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  {' a '}
+                  {new Date(new Date(proximaSesion.fecha_hora).getTime() + (proximaSesion.duracion_minutos ?? 60) * 60000)
+                    .toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  {' hs'}
                 </p>
-                <p className="text-muted-foreground font-sans text-sm mb-3">
-                  11:00 UTC / 08:00 ARG
-                </p>
-                <p className="text-tinta font-sans font-medium border-t border-tinta/10 pt-3">
-                  Encuentro 1 · Laboratorio de Escucha Activa
-                </p>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(proximaSesion as any).cohortes?.nombre && (
+                  <p className="text-tinta font-sans font-medium border-t border-tinta/10 pt-3 mt-3">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(proximaSesion as any).cohortes.nombre}
+                  </p>
+                )}
               </div>
             ) : (
               <div className="mb-4 p-4 bg-crema rounded-xl border border-tinta/10 text-center">

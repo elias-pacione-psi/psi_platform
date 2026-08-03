@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { firmarUrlsRecursos } from '@/utils/supabase/recursos'
 import { BibliotecaClient } from './BibliotecaClient'
 
-export const metadata = { title: 'Mis materiales | Elias Pacione' }
+export const metadata = { title: 'Biblioteca | Elias Pacione' }
 
 type Recurso = { id: string; titulo: string; tipo_contenido: string; url_recurso: string }
 
@@ -36,7 +36,7 @@ export default async function MaterialesPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="text-4xl font-heading font-bold text-tinta">Materiales</h1>
+        <h1 className="text-4xl font-heading font-bold text-tinta">Biblioteca</h1>
         <p className="text-muted-foreground mt-2 font-sans">
           Recursos de apoyo que tu psicólogo habilitó para vos.
         </p>

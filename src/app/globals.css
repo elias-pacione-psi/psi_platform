@@ -7,18 +7,21 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Marca personal de Elias Pacione — Concepto 1 "La Escucha" del brief
-     (ver docs/marca/). tinta (carbón verdoso), marca (verde) y crema. Van por
-     `var()` en vez de un hex fijo para que giren con el tema: en oscuro,
-     `crema` pasa a ser el fondo oscuro y `tinta` el texto claro. Así las
-     clases `text-tinta` / `bg-crema` que ya existen se adaptan solas. */
+  /* Marca personal de Elias Pacione — paleta de la PROPUESTA 2 del brief
+     ("La persona y la psicología", ver docs/marca/). tinta (petróleo), marca
+     (azul medio) y crema (hueso). Van por `var()` en vez de un hex fijo para
+     que giren con el tema: en oscuro, `crema` pasa a ser el fondo oscuro y
+     `tinta` el texto claro. Así las clases `text-tinta` / `bg-crema` que ya
+     existen se adaptan solas. El isotipo y las tipografías siguen siendo las
+     del Concepto 1 — acá cambió solo el color. */
   --color-tinta: var(--tinta);
   --color-marca: var(--marca);
   --color-crema: var(--crema);
 
-  /* Sages del brief. Son claros a propósito: sirven como SUPERFICIE (tarjetas,
-     badges, bloques) con texto oscuro encima — nunca como color de texto ni de
-     botón, donde no llegan al contraste mínimo (1.9:1 y 2.4:1 sobre crema). */
+  /* Tonos claros del brief. Son claros a propósito: sirven como SUPERFICIE
+     (tarjetas, badges, bloques) con texto oscuro encima — nunca como color de
+     texto ni de botón, donde no llegan al contraste mínimo (1.96:1 el verde y
+     2.88:1 el azul claro, sobre el hueso). */
   --color-sage: var(--sage);
   --color-sage-hondo: var(--sage-hondo);
   --color-gris-calido: var(--gris-calido);
@@ -26,8 +29,8 @@
   /* Par que NO gira: superficies pensadas para ser oscuras siempre (fondo del
      login, footer, encabezado de los visores) con su texto claro encima. Si
      usaran tinta/crema, en modo oscuro quedaría blanco sobre blanco. */
-  --color-noche: #333d3a;
-  --color-nieve: #f5f1ea;
+  --color-noche: #2f3e46;
+  --color-nieve: #f7f6f3;
 
   --color-background: var(--crema);
   --color-foreground: var(--tinta);
@@ -79,97 +82,97 @@
 :root {
   color-scheme: light;
 
-  /* Paleta del brief (Concepto 1): sage #A8B7A0, sage hondo #8FA395,
-     crema #F5F1EA, gris cálido #D8D5CF, carbón verdoso #4A4F4C. */
-  --crema: #f5f1ea;
-  --tinta: #4a4f4c;
-  --sage: #a8b7a0;
-  --sage-hondo: #8fa395;
-  --gris-calido: #d8d5cf;
-  /* `marca` es el color de ACCIÓN (botones, links, íconos). Los sages del brief
-     no sirven para ese rol: #A8B7A0 da 1.88:1 sobre crema y 2.11:1 con texto
-     blanco — muy por debajo del mínimo. Este es el mismo verde profundizado
-     hasta pasar AA en los dos roles a la vez: 5.32:1 sobre crema y 5.99:1 con
-     texto blanco encima (verificado). Los sages originales viven intactos
-     arriba, como superficie. */
-  --marca: #54685b;
+  /* Paleta impresa en el board de la Propuesta 2: #5A6D7D azul medio,
+     #7F95A6 azul claro, #D6DEE5 azul pálido, #F7F6F3 hueso, #A8B79F verde,
+     #2F3E46 petróleo. */
+  --crema: #f7f6f3;
+  --tinta: #2f3e46;
+  --sage: #a8b79f;
+  --sage-hondo: #7f95a6;
+  --gris-calido: #d6dee5;
+  /* `marca` es el color de ACCIÓN (botones, links, íconos). De los seis del
+     board, el azul medio #5A6D7D es el único que sirve para ese rol sin
+     retoques: 4.96:1 sobre el hueso y 5.36:1 con texto blanco encima
+     (verificado). El verde y el azul claro se quedan como superficie. */
+  --marca: #5a6d7d;
 
-  --card: #fffdfa;
-  --card-foreground: #4a4f4c;
-  --popover: #fffdfa;
-  --popover-foreground: #4a4f4c;
-  --primary: #4a4f4c;
-  --primary-foreground: #f5f1ea;
-  --secondary: #f5f1ea;
-  --secondary-foreground: #4a4f4c;
-  --muted: #eeebe3;
-  --muted-foreground: #7b807c;
-  --accent: #eef1ea;
-  --accent-foreground: #4a4f4c;
+  --card: #ffffff;
+  --card-foreground: #2f3e46;
+  --popover: #ffffff;
+  --popover-foreground: #2f3e46;
+  --primary: #2f3e46;
+  --primary-foreground: #f7f6f3;
+  --secondary: #f7f6f3;
+  --secondary-foreground: #2f3e46;
+  --muted: #eceff2;
+  --muted-foreground: #5f6d77;
+  --accent: #e8edf1;
+  --accent-foreground: #2f3e46;
   --destructive: #b3372f;
-  --border: #e2ded4;
-  --input: #e2ded4;
-  --ring: #54685b;
-  --chart-1: #54685b;
-  --chart-2: #8fa395;
-  --chart-3: #a8b7a0;
-  --chart-4: #d8d5cf;
-  --chart-5: #4a4f4c;
+  --border: #dce3e8;
+  --input: #dce3e8;
+  --ring: #5a6d7d;
+  --chart-1: #5a6d7d;
+  --chart-2: #7f95a6;
+  --chart-3: #a8b79f;
+  --chart-4: #d6dee5;
+  --chart-5: #2f3e46;
   --radius: 0.625rem;
-  --sidebar: #fbf9f4;
-  --sidebar-foreground: #4a4f4c;
-  --sidebar-primary: #4a4f4c;
-  --sidebar-primary-foreground: #f5f1ea;
-  --sidebar-accent: #eef1ea;
-  --sidebar-accent-foreground: #4a4f4c;
-  --sidebar-border: #e2ded4;
-  --sidebar-ring: #54685b;
+  --sidebar: #f2f4f6;
+  --sidebar-foreground: #2f3e46;
+  --sidebar-primary: #2f3e46;
+  --sidebar-primary-foreground: #f7f6f3;
+  --sidebar-accent: #e8edf1;
+  --sidebar-accent-foreground: #2f3e46;
+  --sidebar-border: #dce3e8;
+  --sidebar-ring: #5a6d7d;
 }
 
 .dark {
   color-scheme: dark;
 
-  /* Invertido respecto del claro: el fondo es el carbón verdoso de la marca
-     llevado a fondo, y el texto, crema. */
-  --crema: #1b211f;
-  --tinta: #ece9e2;
-  --gris-calido: #6c716c;
-  /* Sobre fondo oscuro el sage del brief SÍ funciona sin retoques: #8FA395 da
-     6.1:1 contra el fondo, tanto como texto/ícono como de fondo de botón con
-     texto oscuro encima. O sea que en oscuro la marca usa su verde real. */
-  --sage: #8fa395;
-  --sage-hondo: #a8b7a0;
-  --marca: #8fa395;
+  /* Invertido respecto del claro: el fondo es el petróleo del board
+     profundizado, y el texto, el hueso. */
+  --crema: #1e282e;
+  --tinta: #f7f6f3;
+  --gris-calido: #5a6d7d;
+  /* Sobre fondo oscuro el azul medio queda demasiado apagado para ser acción,
+     así que la marca sube al azul claro del board: #7F95A6 da 4.83:1 contra el
+     fondo, tanto como texto/ícono como de fondo de botón con texto oscuro
+     encima (verificado). */
+  --sage: #7f95a6;
+  --sage-hondo: #a8b79f;
+  --marca: #7f95a6;
 
-  --card: #242b28;
-  --card-foreground: #ece9e2;
-  --popover: #242b28;
-  --popover-foreground: #ece9e2;
-  --primary: #ece9e2;
-  --primary-foreground: #1b211f;
-  --secondary: #2c3431;
-  --secondary-foreground: #ece9e2;
-  --muted: #2c3431;
-  --muted-foreground: #a7aca6;
-  --accent: #2c3431;
-  --accent-foreground: #ece9e2;
+  --card: #26323a;
+  --card-foreground: #f7f6f3;
+  --popover: #26323a;
+  --popover-foreground: #f7f6f3;
+  --primary: #f7f6f3;
+  --primary-foreground: #1e282e;
+  --secondary: #2c3a43;
+  --secondary-foreground: #f7f6f3;
+  --muted: #2c3a43;
+  --muted-foreground: #a3b0b8;
+  --accent: #2c3a43;
+  --accent-foreground: #f7f6f3;
   --destructive: #ff6b5e;
   --border: rgba(255, 255, 255, 0.11);
   --input: rgba(255, 255, 255, 0.16);
-  --ring: #8fa395;
-  --chart-1: #8fa395;
-  --chart-2: #a8b7a0;
-  --chart-3: #a7aca6;
-  --chart-4: #6c716c;
-  --chart-5: #2c3431;
-  --sidebar: #161b19;
-  --sidebar-foreground: #ece9e2;
-  --sidebar-primary: #8fa395;
-  --sidebar-primary-foreground: #1b211f;
-  --sidebar-accent: #2c3431;
-  --sidebar-accent-foreground: #ece9e2;
+  --ring: #7f95a6;
+  --chart-1: #7f95a6;
+  --chart-2: #a8b79f;
+  --chart-3: #a3b0b8;
+  --chart-4: #5a6d7d;
+  --chart-5: #2c3a43;
+  --sidebar: #182126;
+  --sidebar-foreground: #f7f6f3;
+  --sidebar-primary: #7f95a6;
+  --sidebar-primary-foreground: #1e282e;
+  --sidebar-accent: #2c3a43;
+  --sidebar-accent-foreground: #f7f6f3;
   --sidebar-border: rgba(255, 255, 255, 0.11);
-  --sidebar-ring: #8fa395;
+  --sidebar-ring: #7f95a6;
 }
 
 @layer base {
