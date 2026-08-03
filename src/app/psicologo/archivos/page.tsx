@@ -21,7 +21,7 @@ export default async function ArchivosPage() {
   const [inicial, usoTotal, { data: modulos }] = await Promise.all([
     listarCarpeta(''),
     obtenerUsoTotal(),
-    supabase.from('modulos').select('id, titulo, programas(titulo)').order('titulo'),
+    supabase.from('modulos').select('id, titulo, programa_id, programas(titulo)').order('orden'),
   ])
 
   // Si el listado principal falla (bucket sin configurar), el uso total va a fallar
