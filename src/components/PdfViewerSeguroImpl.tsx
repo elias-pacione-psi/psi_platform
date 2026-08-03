@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import { Loader2, ZoomIn, ZoomOut, ShieldAlert } from 'lucide-react'
+import { Loader2, ZoomIn, ZoomOut, ShieldAlert, Maximize, Minimize } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 // Worker propio (mismo origen que la app): no depende de un CDN de terceros.
@@ -27,8 +27,28 @@ export default function PdfViewerSeguroImpl({ url }: { url: string }) {
   const [error, setError] = useState(false)
   const [pageWidth, setPageWidth] = useState(0)
   const [escala, setEscala] = useState(1)
+  const [pantallaCompleta, setPantallaCompleta] = useState(false)
+  const contenedorRef = useRef<HTMLDivElement>(null)
   const pageAreaRef = useRef<HTMLDivElement>(null)
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({})
+
+  // El estado no se toca a mano en el toggle: se escucha el evento, así que salir con
+  // Escape (que no pasa por el botón) también deja el componente en sync.
+  useEffect(() => {
+    const alCambiar = () => setPantallaCompleta(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', alCambiar)
+    return () => document.removeEventListener('fullscreenchange', alCambiar)
+  }, [])
+
+  const togglePantallaCompleta = () => {
+    if (!document.fullscreenElement) {
+      contenedorRef.current?.requestFullscreen().catch((err) => {
+        console.error('No se pudo entrar en pantalla completa:', err)
+      })
+    } else {
+      document.exitFullscreen()
+    }
+  }
 
   useEffect(() => {
     const el = pageAreaRef.current
@@ -86,25 +106,35 @@ export default function PdfViewerSeguroImpl({ url }: { url: string }) {
   const anchoPagina = Math.max(anchoBase, 200) * escala
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+    // El contenedor de pantalla completa incluye la barra de herramientas, no solo las
+    // páginas: si no, el zoom y el indicador de página desaparecen justo cuando el
+    // documento se ve más grande.
+    <div
+      ref={contenedorRef}
+      className={`space-y-3 ${pantallaCompleta ? 'h-screen bg-crema p-4 flex flex-col' : ''}`}
+    >
+      <div className="flex items-center justify-between gap-3 flex-wrap shrink-0">
         <span className="text-sm text-muted-foreground font-medium">
           {numPages ? `Página ${paginaVisible} de ${numPages}` : 'Cargando...'}
         </span>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={() => setEscala(s => Math.max(0.6, +(s - 0.2).toFixed(1)))} disabled={!numPages}>
+          <Button variant="outline" size="icon" onClick={() => setEscala(s => Math.max(0.6, +(s - 0.2).toFixed(1)))} disabled={!numPages} title="Alejar">
             <ZoomOut className="w-4 h-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={() => setEscala(s => Math.min(2, +(s + 0.2).toFixed(1)))} disabled={!numPages}>
+          <Button variant="outline" size="icon" onClick={() => setEscala(s => Math.min(2, +(s + 0.2).toFixed(1)))} disabled={!numPages} title="Acercar">
             <ZoomIn className="w-4 h-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={togglePantallaCompleta} className="font-semibold">
+            {pantallaCompleta ? <Minimize className="w-4 h-4 mr-2" /> : <Maximize className="w-4 h-4 mr-2" />}
+            {pantallaCompleta ? 'Salir de pantalla completa' : 'Pantalla completa'}
           </Button>
         </div>
       </div>
 
       <div
         ref={pageAreaRef}
-        className="w-full overflow-auto flex flex-col items-center bg-muted rounded-xl border border-border select-none"
-        style={{ maxHeight: '80vh' }}
+        className={`w-full overflow-auto flex flex-col items-center bg-muted rounded-xl border border-border select-none ${pantallaCompleta ? 'flex-1 min-h-0' : ''}`}
+        style={pantallaCompleta ? undefined : { maxHeight: '80vh' }}
         onContextMenu={(e) => e.preventDefault()}
       >
         <Document

@@ -114,7 +114,10 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
                     <Settings2 className="w-4 h-4 mr-2" />
                     Editar
                   </Button>
-                  <Button variant="default" size="sm" onClick={() => router.push(`/psicologo/programas/${programa.id}`)} className="font-sans bg-noche hover:bg-noche/90">
+                  {/* bg-marca/text-crema y no bg-noche: `noche` no gira con el tema y
+                      variant="default" deja el texto en primary-foreground, que en oscuro
+                      es casi el mismo tono que el fondo del botón (ilegible). */}
+                  <Button variant="default" size="sm" onClick={() => router.push(`/psicologo/programas/${programa.id}`)} className="font-sans bg-marca hover:bg-marca/90 text-crema">
                     Contenido
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>

@@ -114,6 +114,42 @@ const alumnoSchema = z.object({
     .optional().or(z.literal('')),
 })
 
+// Invita por email y deja el perfil creado con rol 'alumno'. Sale de crearAlumnoDirecto
+// para que aprobar una solicitud del formulario público haga exactamente lo mismo que
+// crear el alumno a mano: mismo invite, mismo redirect a /configurar-password, mismo rol
+// forzado (el rol NUNCA sale de la metadata del invite — ver handle_new_user en schema.sql).
+async function invitarComoAlumno(datos: {
+  nombre: string
+  email: string
+  telefono: string | null
+  link_videollamada: string | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any
+}): Promise<{ id: string } | { error: string }> {
+  const { nombre, email, telefono, link_videollamada, supabaseAdmin } = datos
+
+  const { data: invited, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+    data: { nombre, telefono },
+    redirectTo: INVITE_REDIRECT,
+  })
+
+  if (inviteError) return { error: inviteError.message }
+  if (!invited?.user) return { error: 'No se pudo crear el usuario' }
+
+  const { error: perfilError } = await supabaseAdmin.from('alumnos').upsert({
+    id: invited.user.id,
+    email,
+    nombre,
+    telefono,
+    link_videollamada,
+    rol: 'alumno',
+    estado: 'activo',
+  }, { onConflict: 'id' })
+  if (perfilError) return { error: perfilError.message }
+
+  return { id: invited.user.id }
+}
+
 export async function crearAlumnoDirecto(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -127,39 +163,100 @@ export async function crearAlumnoDirecto(formData: FormData) {
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' }
 
   const { nombre, email } = parsed.data
-  const telefono = parsed.data.telefono || null
-  const link_videollamada = parsed.data.link_videollamada || null
   const programas = formData.getAll('programas') as string[]
 
   const supabaseAdmin = createAdminClient()
 
-  const { data: invited, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-    data: { nombre, telefono },
-    redirectTo: INVITE_REDIRECT,
-  })
-
-  if (inviteError) return { error: inviteError.message }
-  if (!invited?.user) return { error: 'No se pudo crear el usuario' }
-
-  const newId = invited.user.id
-
-  const { error: perfilError } = await supabaseAdmin.from('alumnos').upsert({
-    id: newId,
-    email,
+  const creado = await invitarComoAlumno({
     nombre,
-    telefono,
-    link_videollamada,
-    rol: 'alumno',
-    estado: 'activo',
-  }, { onConflict: 'id' })
-  if (perfilError) return { error: perfilError.message }
+    email,
+    telefono: parsed.data.telefono || null,
+    link_videollamada: parsed.data.link_videollamada || null,
+    supabaseAdmin,
+  })
+  if ('error' in creado) return { error: creado.error }
 
   if (programas.length > 0) {
-    await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', newId)
-    const asignaciones = programas.map(programa_id => ({ alumno_id: newId, programa_id }))
+    await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', creado.id)
+    const asignaciones = programas.map(programa_id => ({ alumno_id: creado.id, programa_id }))
     const { error: progErr } = await supabaseAdmin.from('programas_asignados').insert(asignaciones)
     if (progErr) return { error: progErr.message }
   }
+
+  revalidatePath('/psicologo/alumnos')
+  return { success: true }
+}
+
+// Aprobar = invitar a la persona que llenó el formulario público y marcar la solicitud
+// como resuelta. `objetivos` NO se copia al perfil a propósito: es texto libre que la
+// persona escribió sobre su situación, y el modelo del alumno es cuenta + contenido +
+// agenda + progreso educativo (Ley 25.326). Queda donde ya estaba, en la solicitud.
+export async function aprobarSolicitud(solicitudId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  if (!solicitudId) return { error: 'Falta la solicitud' }
+
+  const supabaseAdmin = createAdminClient()
+
+  const { data: solicitud, error: errorSolicitud } = await supabaseAdmin
+    .from('solicitudes_registro')
+    .select('id, nombre, email, telefono, estado')
+    .eq('id', solicitudId)
+    .maybeSingle()
+
+  if (errorSolicitud) return { error: errorSolicitud.message }
+  if (!solicitud) return { error: 'Esa solicitud ya no existe.' }
+  if (solicitud.estado !== 'pendiente') return { error: 'Esa solicitud ya fue resuelta.' }
+
+  const parsed = alumnoSchema.safeParse({
+    nombre: solicitud.nombre ?? '',
+    email: solicitud.email ?? '',
+    telefono: solicitud.telefono ?? '',
+    link_videollamada: '',
+  })
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Los datos de la solicitud no son válidos' }
+
+  const { data: yaExiste } = await supabaseAdmin
+    .from('alumnos')
+    .select('id')
+    .eq('email', parsed.data.email)
+    .maybeSingle()
+  if (yaExiste) return { error: 'Ya hay una cuenta con ese email. Revisá la pestaña Activos.' }
+
+  const creado = await invitarComoAlumno({
+    nombre: parsed.data.nombre,
+    email: parsed.data.email,
+    telefono: parsed.data.telefono || null,
+    link_videollamada: null,
+    supabaseAdmin,
+  })
+  if ('error' in creado) return { error: creado.error }
+
+  const { error: errorEstado } = await supabaseAdmin
+    .from('solicitudes_registro')
+    .update({ estado: 'aprobada' })
+    .eq('id', solicitudId)
+  if (errorEstado) return { error: errorEstado.message }
+
+  revalidatePath('/psicologo/alumnos')
+  return { success: true }
+}
+
+// La solicitud no se borra: queda con estado 'rechazada' para que salga de la bandeja
+// sin perder el registro de que esa persona escribió alguna vez.
+export async function rechazarSolicitud(solicitudId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  if (!solicitudId) return { error: 'Falta la solicitud' }
+
+  const supabaseAdmin = createAdminClient()
+  const { error } = await supabaseAdmin
+    .from('solicitudes_registro')
+    .update({ estado: 'rechazada' })
+    .eq('id', solicitudId)
+    .eq('estado', 'pendiente')
+
+  if (error) return { error: error.message }
 
   revalidatePath('/psicologo/alumnos')
   return { success: true }
