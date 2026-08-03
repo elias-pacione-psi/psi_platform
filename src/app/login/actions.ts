@@ -27,7 +27,7 @@ export async function login(formData: FormData) {
       .select('rol')
       .eq('id', data.user.id)
       .single()
-    if (perfil?.rol === 'psicologo') destino = '/psicologo/alumnos'
+    if (perfil?.rol === 'psicologo') destino = '/psicologo'
   }
 
   revalidatePath('/', 'layout')

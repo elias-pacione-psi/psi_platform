@@ -50,6 +50,11 @@ const itemsAlumno = [
 
 const itemsPsicologo = [
   {
+    title: "Inicio",
+    url: "/psicologo",
+    icon: Home,
+  },
+  {
     title: "Alumnos",
     url: "/psicologo/alumnos",
     icon: Users,
@@ -86,6 +91,13 @@ const itemsPsicologo = [
   },
 ]
 
+// El item raíz de cada sección ("/psicologo", "/alumno") se marca activo solo en su
+// propia URL: con startsWith a secas, "Inicio" quedaría prendido en todas las páginas de
+// la sección al mismo tiempo que el item real.
+function estaActivo(pathname: string, url: string, raiz: string) {
+  return pathname === url || (url !== raiz && pathname.startsWith(url))
+}
+
 export function AppSidebar({ userRole }: { userRole?: string }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -113,7 +125,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {itemsPsicologo.map((item) => {
-                    const isActive = pathname.startsWith(item.url)
+                    const isActive = estaActivo(pathname, item.url, "/psicologo")
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
@@ -131,12 +143,12 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
 
             <SidebarGroup>
               <SidebarGroupLabel className="text-tinta/70 flex items-center justify-between">
-                <span>Vista Alumno</span>
+                <span>Alumno</span>
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {itemsAlumno.map((item) => {
-                    const isActive = pathname === item.url || (item.url !== "/alumno" && pathname.startsWith(item.url))
+                    const isActive = estaActivo(pathname, item.url, "/alumno")
                     return (
                       <SidebarMenuItem key={`demo-${item.title}`}>
                         <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
@@ -158,7 +170,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {itemsAlumno.map((item) => {
-                  const isActive = pathname === item.url || (item.url !== "/alumno" && pathname.startsWith(item.url))
+                  const isActive = estaActivo(pathname, item.url, "/alumno")
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
