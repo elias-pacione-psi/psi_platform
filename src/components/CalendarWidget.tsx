@@ -133,14 +133,14 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const eventPropGetter = (event: any) => {
-    let backgroundColor = '#2f7d6d'; // Verde marca (sesiones)
+    let backgroundColor = '#5a6d7d'; // Azul medio de marca (sesiones)
     let color = 'white';
 
     if (event.type === 'feriado') {
       backgroundColor = '#cbd5e1'; // Slate 300 (gris opaco)
       color = '#334155'; // Slate 700
     } else if (event.tipo === 'presencial') {
-      backgroundColor = '#1f3d3a'; // Tinta (presencial)
+      backgroundColor = '#2f3e46'; // Petróleo (presencial)
     }
 
     return {

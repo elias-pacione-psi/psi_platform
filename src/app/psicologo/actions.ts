@@ -8,6 +8,7 @@ import { BUCKET_MATERIALES } from '@/utils/supabase/recursos'
 import { borrarDeR2, extraerKeyDeR2 } from '@/utils/r2'
 import { esMarcadorR2 } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
+import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 
 // URL base para los redirects de invitación (localhost en dev, VERCEL_URL/SITE_URL en prod)
 function baseUrl() {
@@ -613,28 +614,103 @@ export async function revisarEntrega(entregaId: string, comentario: string) {
 // COHORTES
 // ============================================================
 
+// Una comisión puede cursar VARIOS programas (tabla puente cohortes_programas). La
+// columna vieja cohortes.programa_id quedó nullable por compatibilidad de deploy, pero
+// ya no se lee ni se escribe desde acá: la fuente de verdad es la tabla puente.
+async function guardarProgramasDeCohorte(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  cohorteId: string,
+  programaIds: string[],
+): Promise<{ error: string } | { ok: true }> {
+  const { error: errorBorrado } = await supabaseAdmin
+    .from('cohortes_programas')
+    .delete()
+    .eq('cohorte_id', cohorteId)
+    .not('programa_id', 'in', `(${programaIds.join(',')})`)
+  if (errorBorrado) return { error: errorBorrado.message }
+
+  const { error } = await supabaseAdmin
+    .from('cohortes_programas')
+    .upsert(
+      programaIds.map((programa_id) => ({ cohorte_id: cohorteId, programa_id })),
+      { onConflict: 'cohorte_id,programa_id' },
+    )
+  if (error) return { error: error.message }
+
+  return { ok: true }
+}
+
+// Los inscriptos de una comisión tienen acceso a TODOS sus programas. Se recalcula acá y
+// no solo al inscribir, para que sumarle un programa a una comisión que ya tiene gente
+// adentro les llegue sin volver a tocar la inscripción.
+async function sincronizarAccesosDeCohorte(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  cohorteId: string,
+): Promise<void> {
+  const [{ data: inscriptos }, { data: programas }] = await Promise.all([
+    supabaseAdmin.from('cohortes_alumnos').select('alumno_id').eq('cohorte_id', cohorteId),
+    supabaseAdmin.from('cohortes_programas').select('programa_id').eq('cohorte_id', cohorteId),
+  ])
+
+  if (!inscriptos?.length || !programas?.length) return
+
+  const accesos = inscriptos.flatMap((i: { alumno_id: string }) =>
+    programas.map((p: { programa_id: string }) => ({ alumno_id: i.alumno_id, programa_id: p.programa_id })),
+  )
+  await supabaseAdmin.from('programas_asignados').upsert(accesos, { onConflict: 'alumno_id,programa_id' })
+}
+
 export async function guardarCohorte(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
   const id = formData.get('id') as string | null
-  const programa_id = formData.get('programa_id') as string
   const nombre = (formData.get('nombre') as string)?.trim()
+  const programaIds = (formData.getAll('programas') as string[]).filter(Boolean)
   const fecha_inicio = (formData.get('fecha_inicio') as string) || null
   const fecha_fin = (formData.get('fecha_fin') as string) || null
 
-  if (!nombre || !programa_id) return { error: 'Nombre y programa son obligatorios' }
+  const hora_inicio = (formData.get('hora_inicio') as string) || null
+  const hora_fin = (formData.get('hora_fin') as string) || null
+  const dias = (formData.getAll('dias_semana') as string[])
+    .map(Number)
+    .filter((d) => Number.isInteger(d) && d >= 0 && d <= 6)
+  const dias_semana = dias.length > 0 ? [...new Set(dias)].sort() : null
 
+  if (!nombre) return { error: 'El nombre es obligatorio' }
+  if (programaIds.length === 0) return { error: 'Elegí al menos un programa' }
+  if (fecha_inicio && fecha_fin && fecha_fin < fecha_inicio) {
+    return { error: 'La fecha de fin no puede ser anterior a la de inicio' }
+  }
+  // Mismo check que la tabla, pero con un mensaje que se entiende.
+  if (hora_inicio && hora_fin && hora_fin <= hora_inicio) {
+    return { error: 'La hora de fin tiene que ser posterior a la de inicio' }
+  }
+  if (dias_semana && !hora_inicio) return { error: 'Si elegís días, poné también la hora de inicio' }
+
+  const campos = { nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin }
+  const supabaseAdmin = createAdminClient()
+
+  let cohorteId = id
   if (id) {
-    const { error } = await supabase.from('cohortes').update({ nombre, programa_id, fecha_inicio, fecha_fin }).eq('id', id)
+    const { error } = await supabase.from('cohortes').update(campos).eq('id', id)
     if (error) return { error: error.message }
   } else {
-    const { error } = await supabase.from('cohortes').insert({ nombre, programa_id, fecha_inicio, fecha_fin })
+    const { data, error } = await supabase.from('cohortes').insert(campos).select('id').single()
     if (error) return { error: error.message }
+    cohorteId = data.id
   }
 
+  const guardados = await guardarProgramasDeCohorte(supabaseAdmin, cohorteId as string, programaIds)
+  if ('error' in guardados) return { error: guardados.error }
+
+  await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId as string)
+
   revalidatePath('/psicologo/cohortes')
+  revalidatePath('/alumno/programas')
   return { success: true }
 }
 
@@ -647,57 +723,152 @@ export async function eliminarCohorte(id: string) {
   if (error) return { error: error.message }
 
   revalidatePath('/psicologo/cohortes')
+  revalidatePath('/psicologo/agenda')
   return { success: true }
 }
 
-// Inscribe alumnos a una cohorte y les da acceso al programa de la cohorte.
+// Inscribe alumnos a una comisión y les da acceso a todos sus programas.
 export async function inscribirAlumnosEnCohorte(cohorteId: string, alumnoIds: string[]) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
-  const { supabase } = auth
-
-  const { data: cohorte } = await supabase.from('cohortes').select('programa_id').eq('id', cohorteId).single()
-  if (!cohorte) return { error: 'Cohorte no encontrada' }
 
   const supabaseAdmin = createAdminClient()
   if (alumnoIds.length > 0) {
     const inscripciones = alumnoIds.map(alumno_id => ({ cohorte_id: cohorteId, alumno_id }))
-    const { error: e1 } = await supabaseAdmin.from('cohortes_alumnos').upsert(inscripciones, { onConflict: 'cohorte_id,alumno_id' })
-    if (e1) return { error: e1.message }
-
-    const accesos = alumnoIds.map(alumno_id => ({ alumno_id, programa_id: cohorte.programa_id }))
-    const { error: e2 } = await supabaseAdmin.from('programas_asignados').upsert(accesos, { onConflict: 'alumno_id,programa_id' })
-    if (e2) return { error: e2.message }
+    const { error } = await supabaseAdmin.from('cohortes_alumnos').upsert(inscripciones, { onConflict: 'cohorte_id,alumno_id' })
+    if (error) return { error: error.message }
   }
 
+  await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId)
+
   revalidatePath('/psicologo/cohortes')
+  revalidatePath('/alumno/programas')
   return { success: true }
 }
 
 export async function quitarAlumnoDeCohorte(cohorteId: string, alumnoId: string) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
-  const { supabase } = auth
 
-  const { data: cohorte } = await supabase.from('cohortes').select('programa_id').eq('id', cohorteId).single()
   const supabaseAdmin = createAdminClient()
+
+  const { data: programasDeEsta } = await supabaseAdmin
+    .from('cohortes_programas').select('programa_id').eq('cohorte_id', cohorteId)
+
   await supabaseAdmin.from('cohortes_alumnos').delete().eq('cohorte_id', cohorteId).eq('alumno_id', alumnoId)
 
-  // Si ya no está en ninguna otra cohorte del mismo programa, revocar acceso al programa
-  if (cohorte) {
-    const { data: otras } = await supabaseAdmin
-      .from('cohortes_alumnos')
-      .select('cohortes(programa_id)')
-      .eq('alumno_id', alumnoId)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sigueEnPrograma = (otras || []).some((o: any) => o.cohortes?.programa_id === cohorte.programa_id)
-    if (!sigueEnPrograma) {
-      await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', alumnoId).eq('programa_id', cohorte.programa_id)
+  // Se revoca solo lo que el alumno ya no tenga por otra comisión. Con varios programas
+  // por comisión esto deja de ser un booleano: hay que restar conjuntos, porque dos
+  // comisiones distintas pueden compartir parte de los programas.
+  const idsDeEsta = (programasDeEsta ?? []).map((p: { programa_id: string }) => p.programa_id)
+  if (idsDeEsta.length > 0) {
+    const { data: otrasCohortes } = await supabaseAdmin
+      .from('cohortes_alumnos').select('cohorte_id').eq('alumno_id', alumnoId)
+
+    const idsOtras = (otrasCohortes ?? []).map((c: { cohorte_id: string }) => c.cohorte_id)
+    let conservados: string[] = []
+    if (idsOtras.length > 0) {
+      const { data: programasQueSiguen } = await supabaseAdmin
+        .from('cohortes_programas').select('programa_id').in('cohorte_id', idsOtras)
+      conservados = (programasQueSiguen ?? []).map((p: { programa_id: string }) => p.programa_id)
+    }
+
+    const aRevocar = idsDeEsta.filter((p: string) => !conservados.includes(p))
+    if (aRevocar.length > 0) {
+      await supabaseAdmin
+        .from('programas_asignados').delete().eq('alumno_id', alumnoId).in('programa_id', aRevocar)
     }
   }
 
   revalidatePath('/psicologo/cohortes')
+  revalidatePath('/alumno/programas')
   return { success: true }
+}
+
+// Agenda las clases que salen del horario de la comisión, entre su fecha de inicio y la
+// de fin. Son filas normales de agenda_sesiones con cohorte_id: la policy agenda_select
+// ya hace que las vea cada inscripto, así que no hace falta una fila por alumno.
+//
+// Idempotente y no destructiva: lee lo que ya está agendado para esa comisión y solo
+// inserta los horarios que faltan. Volver a apretar el botón no duplica, y las clases del
+// horario viejo (o las cargadas a mano desde Agenda) no se tocan — si el horario cambió,
+// la UI avisa cuáles quedaron fuera y el borrado es una decisión aparte.
+export async function generarClasesDeCohorte(cohorteId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { data: cohorte, error: errorCohorte } = await supabase
+    .from('cohortes')
+    .select('id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin')
+    .eq('id', cohorteId)
+    .single()
+
+  if (errorCohorte || !cohorte) return { error: 'No se encontró la comisión' }
+  if (!horarioCompleto(cohorte)) {
+    return { error: 'Faltan datos del horario: días, hora de inicio y las dos fechas.' }
+  }
+
+  const fechas = fechasDeClases(cohorte)
+  if (fechas.length === 0) return { error: 'Ese horario no cae ningún día dentro del rango de fechas.' }
+  if (fechas.length >= MAXIMO_CLASES) {
+    return { error: `El rango genera más de ${MAXIMO_CLASES} clases. Acortá las fechas.` }
+  }
+
+  const { data: yaAgendadas, error: errorAgenda } = await supabase
+    .from('agenda_sesiones')
+    .select('fecha_hora')
+    .eq('cohorte_id', cohorteId)
+  if (errorAgenda) return { error: errorAgenda.message }
+
+  // Se compara por instante y no por string: la misma hora puede venir escrita distinto
+  // ("+00:00" vs "Z", con o sin microsegundos) según cómo se haya guardado.
+  const existentes = new Set((yaAgendadas ?? []).map((s: { fecha_hora: string }) => new Date(s.fecha_hora).getTime()))
+  const faltantes = fechas.filter((f) => !existentes.has(new Date(f).getTime()))
+
+  if (faltantes.length === 0) {
+    return { success: true, creadas: 0, total: fechas.length }
+  }
+
+  const duracion = duracionMinutos(cohorte.hora_inicio as string, cohorte.hora_fin)
+  const { error } = await supabase.from('agenda_sesiones').insert(
+    faltantes.map((fecha_hora) => ({
+      cohorte_id: cohorteId,
+      alumno_id: null,
+      fecha_hora,
+      tipo: 'presencial',
+      duracion_minutos: duracion,
+    })),
+  )
+  if (error) return { error: error.message }
+
+  revalidatePath('/psicologo/cohortes')
+  revalidatePath('/psicologo/agenda')
+  revalidatePath('/alumno/agenda')
+  return { success: true, creadas: faltantes.length, total: fechas.length }
+}
+
+// Borra solo las clases FUTURAS de la comisión. Es la salida para cuando se cambió el
+// horario y quedaron agendadas las del anterior; el pasado no se toca, porque son clases
+// que efectivamente ocurrieron.
+export async function borrarClasesFuturasDeCohorte(cohorteId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { data, error } = await supabase
+    .from('agenda_sesiones')
+    .delete()
+    .eq('cohorte_id', cohorteId)
+    .gte('fecha_hora', new Date().toISOString())
+    .select('id')
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/psicologo/cohortes')
+  revalidatePath('/psicologo/agenda')
+  revalidatePath('/alumno/agenda')
+  return { success: true, borradas: data?.length ?? 0 }
 }
 
 // ============================================================
@@ -809,9 +980,12 @@ export async function agregarSesionUnica(formData: FormData) {
   const fecha_hora = formData.get('fecha_hora') as string
   if (!fecha_hora) return { error: 'Falta la fecha y hora' }
 
+  // "YYYY-MM-DDTHH:mm" sin zona: se interpreta como hora de Argentina, igual que el
+  // horario de las comisiones. Con `new Date(str)` quedaba en la zona del servidor.
+  const [diaUnica, horaUnica] = fecha_hora.split('T')
   const { error } = await supabase
     .from('agenda_sesiones')
-    .insert({ ...destino, fecha_hora: new Date(fecha_hora).toISOString() })
+    .insert({ ...destino, fecha_hora: instanteArgentina(diaUnica, horaUnica) })
 
   if (error) return { error: error.message }
 
@@ -833,18 +1007,18 @@ export async function generarSesionesRecurrentes(formData: FormData) {
   if (isNaN(dia_semana) || !hora || isNaN(semanas)) return { error: 'Datos inválidos' }
   if (semanas < 1 || semanas > 52) return { error: 'Cantidad de semanas fuera de rango' }
 
-  const sesiones = []
+  // El recorrido va sobre fechas ancladas en UTC (el día de la semana no puede depender
+  // de la zona del runtime) y la hora se aplica con instanteArgentina, igual que las
+  // clases de comisión — si no, la misma "21:00" cae en dos instantes distintos según por
+  // dónde se haya agendado.
   const hoy = new Date()
-  const fechaCalculada = new Date(hoy)
-  fechaCalculada.setDate(hoy.getDate() + (dia_semana + 7 - hoy.getDay()) % 7)
-  if (fechaCalculada < hoy) fechaCalculada.setDate(fechaCalculada.getDate() + 7)
+  const cursor = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate()))
+  cursor.setUTCDate(cursor.getUTCDate() + ((dia_semana + 7 - cursor.getUTCDay()) % 7))
 
-  const [horas, minutos] = hora.split(':')
+  const sesiones = []
   for (let i = 0; i < semanas; i++) {
-    const sesionDate = new Date(fechaCalculada)
-    sesionDate.setHours(parseInt(horas), parseInt(minutos), 0, 0)
-    sesiones.push({ ...destino, fecha_hora: sesionDate.toISOString() })
-    fechaCalculada.setDate(fechaCalculada.getDate() + 7)
+    sesiones.push({ ...destino, fecha_hora: instanteArgentina(cursor.toISOString().slice(0, 10), hora) })
+    cursor.setUTCDate(cursor.getUTCDate() + 7)
   }
 
   const { error } = await supabase.from('agenda_sesiones').insert(sesiones)
