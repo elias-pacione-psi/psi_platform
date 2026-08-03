@@ -70,7 +70,7 @@ export default async function PsicologoHomePage() {
   const secciones = [
     { titulo: 'Alumnos', descripcion: 'Cuentas, contacto y programas asignados', url: '/psicologo/alumnos', icon: Users, dato: `${alumnosActivos ?? 0} ${alumnosActivos === 1 ? 'activo' : 'activos'}` },
     { titulo: 'Programas', descripcion: 'Módulos y lecciones de cada formación', url: '/psicologo/programas', icon: LayoutList, dato: `${totalProgramas ?? 0} ${totalProgramas === 1 ? 'programa' : 'programas'}` },
-    { titulo: 'Cohortes', descripcion: 'Grupos que cursan juntos', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'cohorte' : 'cohortes'}` },
+    { titulo: 'Comisiones', descripcion: 'Camadas que cursan juntas', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'comisión' : 'comisiones'}` },
     { titulo: 'Biblioteca', descripcion: 'Material suelto, con acceso por alumno', url: '/psicologo/biblioteca', icon: Library, dato: `${totalRecursos ?? 0} ${totalRecursos === 1 ? 'recurso' : 'recursos'}` },
     { titulo: 'Archivos', descripcion: 'El bucket: subir y organizar el material', url: '/psicologo/archivos', icon: FolderCog, dato: 'Gestor' },
     { titulo: 'Agenda', descripcion: 'Sesiones únicas o recurrentes', url: '/psicologo/agenda', icon: Calendar, dato: 'Calendario' },
@@ -148,13 +148,13 @@ export default async function PsicologoHomePage() {
           {proximaSesion?.fecha_hora ? (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <p className="text-tinta font-semibold capitalize">
+                <p className="text-tinta font-semibold first-letter:uppercase">
                   {new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', {
                     weekday: 'long', day: 'numeric', month: 'long',
                   })}
                   {' · '}
                   {new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', {
-                    hour: '2-digit', minute: '2-digit',
+                    hour: '2-digit', minute: '2-digit', hour12: false,
                   })}
                   {' hs'}
                 </p>

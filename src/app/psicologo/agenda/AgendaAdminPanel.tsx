@@ -27,7 +27,7 @@ export function AgendaAdminPanel({ alumnos, cohortes }: { alumnos: Item[], cohor
 
   // Agrega alumno_id|cohorte_id + tipo al formData según el destino elegido
   const aplicarDestino = (formData: FormData): boolean => {
-    if (!destino) { toast.error('Primero elegí un destino (alumno o cohorte).'); return false }
+    if (!destino) { toast.error('Primero elegí un destino (alumno o comisión).'); return false }
     const [clase, id] = destino.split(':')
     formData.append(clase === 'cohorte' ? 'cohorte_id' : 'alumno_id', id)
     formData.append('tipo', tipo)
@@ -99,12 +99,12 @@ export function AgendaAdminPanel({ alumnos, cohortes }: { alumnos: Item[], cohor
           <Label className="font-bold text-tinta text-sm">1. Destino</Label>
           <Select value={destino} onValueChange={(v) => setDestino(v || '')} disabled={isPending} items={destinoItems}>
             <SelectTrigger className="bg-muted border-border">
-              <SelectValue placeholder="Alumno o cohorte..." />
+              <SelectValue placeholder="Alumno o comisión..." />
             </SelectTrigger>
             <SelectContent>
               {cohortes.length > 0 && (
                 <>
-                  <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Cohortes</div>
+                  <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Comisiones</div>
                   {cohortes.map(c => <SelectItem key={c.id} value={`cohorte:${c.id}`}>👥 {c.nombre}</SelectItem>)}
                 </>
               )}

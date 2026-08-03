@@ -19,7 +19,10 @@ export type EventoCalendario = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function armarSesion(sesion: any, titulo: string): EventoCalendario {
   const start = new Date(sesion.fecha_hora)
-  const end = new Date(start.getTime() + 60 * 60 * 1000) // 1 hr
+  // Duración real de la sesión. Antes era 1 hora fija para todo, lo que dibujaba mal las
+  // clases de comisión: una cursada de 8 a 12 aparecía como un bloque de una hora.
+  const minutos = sesion.duracion_minutos ?? 60
+  const end = new Date(start.getTime() + minutos * 60 * 1000)
   // Enlace de la sesión, o el del alumno como fallback en sesiones individuales virtuales
   const enlace = sesion.enlace || sesion.alumnos?.link_videollamada || null
   return {
@@ -50,7 +53,7 @@ export async function obtenerEventosCalendario(): Promise<EventoCalendario[]> {
   // 1. SESIONES (RLS ya limita al alumno a las suyas + las de su cohorte)
   const { data: sesiones } = await supabase
     .from('agenda_sesiones')
-    .select('id, fecha_hora, alumno_id, cohorte_id, tipo, lugar, enlace, alumnos(nombre, link_videollamada), cohortes(nombre)')
+    .select('id, fecha_hora, duracion_minutos, alumno_id, cohorte_id, tipo, lugar, enlace, alumnos(nombre, link_videollamada), cohortes(nombre)')
 
   if (sesiones) {
     sesiones.forEach(sesion => {
@@ -58,12 +61,12 @@ export async function obtenerEventosCalendario(): Promise<EventoCalendario[]> {
       if (esPsicologo) {
         titulo = sesion.cohorte_id
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? `Cohorte: ${(sesion.cohortes as any)?.nombre || ''}`
+          ? `Comisión: ${(sesion.cohortes as any)?.nombre || ''}`
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           : `Sesión - ${(sesion.alumnos as any)?.nombre || 'Alumno'}`
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        titulo = sesion.cohorte_id ? `${(sesion.cohortes as any)?.nombre || 'Cohorte'}` : 'Sesión'
+        titulo = sesion.cohorte_id ? `${(sesion.cohortes as any)?.nombre || 'Comisión'}` : 'Sesión'
       }
       eventos.push(armarSesion(sesion, titulo))
     })

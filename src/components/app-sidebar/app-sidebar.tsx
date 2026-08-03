@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, LogOut, Users, FolderHeart, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog } from "lucide-react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -32,9 +32,12 @@ const itemsAlumno = [
     icon: LayoutList,
   },
   {
-    title: "Materiales",
+    // Mismo nombre e ícono que "Biblioteca" del panel del psicólogo: es la misma
+    // sección vista desde el otro lado, y llamarla distinto hacía parecer que eran
+    // dos cosas.
+    title: "Biblioteca",
     url: "/alumno/materiales",
-    icon: FolderHeart,
+    icon: Library,
   },
   {
     title: "Tareas",
@@ -65,7 +68,7 @@ const itemsPsicologo = [
     icon: LayoutList,
   },
   {
-    title: "Cohortes",
+    title: "Comisiones",
     url: "/psicologo/cohortes",
     icon: GraduationCap,
   },
