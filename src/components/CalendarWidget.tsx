@@ -173,7 +173,12 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
       />
 
       <AlertDialog open={detalleDialog.open} onOpenChange={(open) => setDetalleDialog({ open, selectedEvent: open ? detalleDialog.selectedEvent : null })}>
-        <AlertDialogContent>
+        {/* Más ancho que el max-w-sm del default: este diálogo llega a tener tres
+            botones en el pie ("Cerrar" + las dos de borrado), que a 384px se salían
+            por fuera de la tarjeta. El prefijo data-[size=default] es el mismo que usa
+            AlertDialogContent, para que twMerge lo reemplace en vez de pelear por
+            especificidad. */}
+        <AlertDialogContent className="data-[size=default]:sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-tinta font-serif text-2xl">
               {detalleDialog.selectedEvent?.title || 'Detalle del evento'}
@@ -214,7 +219,10 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
             </div>
           )}
 
-          <AlertDialogFooter className="mt-4 sm:justify-center gap-2">
+          {/* flex-wrap además del ancho: el título del evento y la cantidad de botones
+              cambian según el caso, y sin esto cualquier etiqueta un poco más larga
+              vuelve a desbordar. */}
+          <AlertDialogFooter className="mt-4 flex-wrap sm:justify-center gap-2">
             <AlertDialogCancel>Cerrar</AlertDialogCancel>
 
             {esPsicologo && detalleDialog.selectedEvent?.type === 'sesion' && (

@@ -38,7 +38,7 @@ function formatearBytes(bytes: number): string {
   return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${unidades[i]}`
 }
 
-type Modulo = { id: string; titulo: string; programas: { titulo: string } | null }
+type Modulo = { id: string; titulo: string; programa_id: string; programas: { titulo: string } | null }
 
 export function ArchivosClient({
   inicial,
@@ -63,8 +63,23 @@ export function ArchivosClient({
   const [renombrando, setRenombrando] = useState<{ tipo: 'archivo' | 'carpeta'; item: ObjetoR2 | CarpetaR2 } | null>(null)
   const [nombreNuevo, setNombreNuevo] = useState('')
   const [asignando, setAsignando] = useState<ObjetoR2 | null>(null)
+  const [programaElegido, setProgramaElegido] = useState('')
   const [moduloElegido, setModuloElegido] = useState('')
   const [tituloLeccion, setTituloLeccion] = useState('')
+
+  // Los módulos vienen planos; el curso sale de agruparlos. Antes el diálogo mostraba
+  // una sola lista con todos los módulos de todos los cursos mezclados, que con más de
+  // un programa es imposible de leer.
+  const programasDisponibles = [...new Map(
+    modulos.map((m) => [m.programa_id, { id: m.programa_id, titulo: m.programas?.titulo ?? 'Sin curso' }]),
+  ).values()].sort((a, b) => a.titulo.localeCompare(b.titulo))
+
+  const modulosDelPrograma = modulos.filter((m) => m.programa_id === programaElegido)
+
+  // base-ui resuelve la etiqueta que muestra el trigger desde `items`: sin esto, una vez
+  // elegida la opción el campo mostraba el value crudo (el uuid) en vez del nombre.
+  const itemsProgramas = Object.fromEntries(programasDisponibles.map((p) => [p.id, p.titulo]))
+  const itemsModulos = Object.fromEntries(modulosDelPrograma.map((m) => [m.id, m.titulo]))
 
   async function navegar(nuevoPrefijo: string) {
     setCargando(true)
@@ -494,13 +509,41 @@ export function ArchivosClient({
               <Input value={tituloLeccion} onChange={(e) => setTituloLeccion(e.target.value)} className="bg-card border-border" />
             </div>
             <div className="space-y-2">
-              <Label className="font-bold text-tinta">Módulo</Label>
-              <Select value={moduloElegido} onValueChange={(v) => setModuloElegido(v || '')}>
-                <SelectTrigger className="bg-card border-border"><SelectValue placeholder="Elegí un módulo" /></SelectTrigger>
+              <Label className="font-bold text-tinta">Curso</Label>
+              <Select
+                value={programaElegido}
+                onValueChange={(v) => { setProgramaElegido(v || ''); setModuloElegido('') }}
+                items={itemsProgramas}
+              >
+                <SelectTrigger className="bg-card border-border"><SelectValue placeholder="Elegí un curso" /></SelectTrigger>
                 <SelectContent>
-                  {modulos.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>{m.programas?.titulo} · {m.titulo}</SelectItem>
+                  {programasDisponibles.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>{p.titulo}</SelectItem>
                   ))}
+                  {programasDisponibles.length === 0 && (
+                    <SelectItem value="none" disabled>No hay cursos con módulos todavía</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="font-bold text-tinta">Módulo</Label>
+              <Select
+                value={moduloElegido}
+                onValueChange={(v) => setModuloElegido(v || '')}
+                disabled={!programaElegido}
+                items={itemsModulos}
+              >
+                <SelectTrigger className="bg-card border-border">
+                  <SelectValue placeholder={programaElegido ? 'Elegí un módulo' : 'Primero elegí el curso'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {modulosDelPrograma.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>{m.titulo}</SelectItem>
+                  ))}
+                  {programaElegido && modulosDelPrograma.length === 0 && (
+                    <SelectItem value="none" disabled>Este curso no tiene módulos</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
