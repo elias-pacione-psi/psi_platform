@@ -31,9 +31,12 @@ export default async function AdminAlumnosPage() {
     supabase
       .from('lecciones')
       .select('id, programa_id'),
+    // Solo las pendientes: una vez aprobada o rechazada, la solicitud sale de la bandeja
+    // (la fila queda en la tabla, pero el panel muestra lo que falta resolver).
     supabaseAdmin
       .from('solicitudes_registro')
       .select('*')
+      .eq('estado', 'pendiente')
       .order('created_at', { ascending: false })
   ])
 

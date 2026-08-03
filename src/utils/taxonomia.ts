@@ -10,6 +10,8 @@ export function tipoMedioPorTipoContenido(tipoContenido: string): string | null 
   if (tipoContenido.endsWith('_audio')) return 'audio'
   if (tipoContenido.endsWith('_pdf')) return 'pdf'
   if (tipoContenido === 'drive_image') return 'imagen'
+  // r2_imagen: lo que la carpeta "Biblioteca R2/Otros" publica como recurso de biblioteca.
+  if (tipoContenido.endsWith('_imagen')) return 'imagen'
   if (tipoContenido === 'texto_markdown') return 'markdown'
   if (tipoContenido === 'quiz') return 'quiz'
   if (tipoContenido === 'entrega') return 'entrega'

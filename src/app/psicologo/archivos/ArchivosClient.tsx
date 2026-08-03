@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import {
   Folder, File as FileIcon, ChevronRight, Loader2, FolderPlus, Upload,
-  Trash2, Pencil, Download, ExternalLink, BookPlus, Check,
+  Trash2, Pencil, Download, ExternalLink, BookPlus, Check, Library, Lock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,7 +21,12 @@ import {
   listarCarpeta, pedirSubidaMaterial, pedirVistaPrevia, pedirDescargaArchivo,
   crearCarpeta, contarContenidoCarpeta, borrarCarpeta, renombrarArchivo,
   renombrarCarpeta, asignarComoLeccion, borrarMultiples, obtenerUsoTotal,
+  sincronizarBiblioteca,
 } from './actions'
+import {
+  esCarpetaFijaBibliotecaR2, esZonaBibliotecaR2, seccionBibliotecaR2,
+  PREFIJO_BIBLIOTECA_R2, SECCIONES_BIBLIOTECA_R2,
+} from '@/utils/r2-marcador'
 import type { CarpetaR2, ListadoR2, ObjetoR2 } from '@/utils/r2'
 
 const TIPOS_ACEPTADOS = '.pdf,.txt,.md,.jpg,.jpeg,.png,.webp,.gif,.svg,.mp3,.m4a,.ogg,.oga,.wav,.mp4,.webm,.mov,.doc,.docx,.ppt,.pptx'
@@ -76,9 +81,17 @@ export function ArchivosClient({
 
   async function handleSubir(files: FileList | null) {
     if (!files || files.length === 0) return
-    setSubiendo({ hecho: 0, total: files.length })
 
-    for (let i = 0; i < files.length; i++) {
+    // `files` es el FileList vivo del <input>: limpiar el input más abajo lo deja en 0,
+    // así que el total se guarda ahora y no se vuelve a leer de ahí.
+    const total = files.length
+    setSubiendo({ hecho: 0, total })
+
+    // Se cuentan las que realmente entraron: con `i` se anunciaba "Subida completa"
+    // aunque hubieran fallado todas (cada archivo hace `continue` con su propio error).
+    let subidos = 0
+
+    for (let i = 0; i < total; i++) {
       const file = files[i]
       const res = await pedirSubidaMaterial(prefijo, file.name, file.type, file.size)
       if ('error' in res) {
@@ -92,12 +105,26 @@ export function ArchivosClient({
         toast.error(`${file.name}: error subiendo (${err instanceof Error ? err.message : 'desconocido'})`)
         continue
       }
-      setSubiendo({ hecho: i + 1, total: files.length })
+      subidos++
+      setSubiendo({ hecho: subidos, total })
     }
 
     setSubiendo(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
-    toast.success('Subida completa')
+
+    if (subidos === 0) return // los errores ya se mostraron uno por uno
+
+    const resumen = subidos === total ? 'Subida completa' : `${subidos} de ${total} subido(s)`
+
+    // Lo subido a Biblioteca R2 tiene que aparecer del otro lado sin un paso extra.
+    if (esZonaBibliotecaR2(prefijo)) {
+      const res = await sincronizarBiblioteca()
+      if ('error' in res) toast.error(`${resumen}, pero no se pudo publicar en Biblioteca: ${res.error}`)
+      else toast.success(res.agregados > 0 ? `${resumen} · ${res.agregados} publicado(s) en Biblioteca` : resumen)
+    } else {
+      toast.success(resumen)
+    }
+
     navegar(prefijo)
   }
 
@@ -204,6 +231,19 @@ export function ArchivosClient({
 
   const tramos = prefijo.split('/').filter(Boolean)
 
+  // La leyenda aparece en Inicio (donde se ve la carpeta) y adentro de ella, que es donde
+  // hace falta saber qué pasa con lo que se sube.
+  const enBiblioteca = esZonaBibliotecaR2(prefijo)
+  const seccionActual = seccionBibliotecaR2(prefijo)
+  const mostrarLeyenda = prefijo === '' || enBiblioteca
+
+  // "Seleccionar todo" no puede alcanzar las carpetas fijas: el borrado múltiple las
+  // ignora, y marcarlas dejaría el contador diciendo que van a borrarse cosas que no.
+  const seleccionables = [
+    ...listado.carpetas.filter((c) => !esCarpetaFijaBibliotecaR2(c.prefijo)).map((c) => c.prefijo),
+    ...listado.archivos.map((a) => a.key),
+  ]
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card border border-border rounded-2xl p-4">
@@ -240,6 +280,39 @@ export function ArchivosClient({
         </div>
       </div>
 
+      {mostrarLeyenda && (
+        <div className="flex gap-3 bg-marca/10 border border-marca/30 rounded-2xl p-4 font-sans text-sm">
+          <Library className="w-5 h-5 text-marca shrink-0 mt-0.5" />
+          <div className="space-y-2 text-tinta">
+            <p className="font-bold">
+              La carpeta <span className="font-mono">Biblioteca R2</span> está enlazada con la sección Biblioteca.
+            </p>
+            <p className="text-muted-foreground">
+              Lo que subas ahí aparece solo en <b>Biblioteca</b>, listo para asignar a tus alumnos —
+              no hace falta volver a cargarlo. Si borrás un archivo de la carpeta, también sale de
+              Biblioteca. La carpeta y sus secciones no se pueden borrar ni renombrar.
+            </p>
+            {seccionActual ? (
+              <p className="text-muted-foreground">
+                Estás en <b>{seccionActual.carpeta}</b>: lo que subas acá se ve en la pestaña{' '}
+                <b>{seccionActual.pestana}</b> del alumno. Acepta {seccionActual.extensiones.join(', ')}.
+              </p>
+            ) : (
+              <p className="text-muted-foreground">
+                Cada subcarpeta es una pestaña de la vista del alumno:{' '}
+                {SECCIONES_BIBLIOTECA_R2.map((s, i) => (
+                  <span key={s.carpeta}>
+                    {i > 0 && ' · '}
+                    <b>{s.carpeta}</b> → {s.pestana}
+                  </span>
+                ))}
+                .
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-1 flex-wrap text-sm font-sans px-1">
         <button onClick={() => navegar('')} className="text-tinta hover:text-marca font-bold hover:underline">
           Inicio
@@ -268,20 +341,8 @@ export function ArchivosClient({
               <TableRow>
                 <TableHead className="w-10">
                   <Checkbox
-                    checked={
-                      (listado.carpetas.length > 0 || listado.archivos.length > 0) &&
-                      seleccion.size === listado.carpetas.length + listado.archivos.length
-                    }
-                    onCheckedChange={(v) => {
-                      if (v) {
-                        const nuevaSeleccion = new Set<string>()
-                        listado.carpetas.forEach(c => nuevaSeleccion.add(c.prefijo))
-                        listado.archivos.forEach(a => nuevaSeleccion.add(a.key))
-                        setSeleccion(nuevaSeleccion)
-                      } else {
-                        setSeleccion(new Set())
-                      }
-                    }}
+                    checked={seleccionables.length > 0 && seleccion.size === seleccionables.length}
+                    onCheckedChange={(v) => setSeleccion(v ? new Set(seleccionables) : new Set())}
                   />
                 </TableHead>
                 <TableHead className="font-bold text-tinta">Nombre</TableHead>
@@ -291,17 +352,28 @@ export function ArchivosClient({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listado.carpetas.map((c) => (
+              {listado.carpetas.map((c) => {
+                // Las carpetas del espejo de Biblioteca no se ofrecen para borrar ni
+                // renombrar (el server lo rechaza igual; acá se saca el botón para no
+                // ofrecer algo que va a fallar) ni entran en la selección múltiple.
+                const fija = esCarpetaFijaBibliotecaR2(c.prefijo)
+                return (
                 <TableRow key={c.prefijo} className="hover:bg-muted/50">
                   <TableCell>
-                    <Checkbox
-                      checked={seleccion.has(c.prefijo)}
-                      onCheckedChange={(v) => toggleSeleccion(c.prefijo, v as boolean)}
-                    />
+                    {!fija && (
+                      <Checkbox
+                        checked={seleccion.has(c.prefijo)}
+                        onCheckedChange={(v) => toggleSeleccion(c.prefijo, v as boolean)}
+                      />
+                    )}
                   </TableCell>
                   <TableCell>
                     <button onClick={() => navegar(c.prefijo)} className="flex items-center gap-2 text-tinta hover:text-marca font-semibold">
-                      <Folder className="w-4 h-4 text-marca shrink-0" /> {c.nombre}
+                      {fija ? <Library className="w-4 h-4 text-marca shrink-0" /> : <Folder className="w-4 h-4 text-marca shrink-0" />}
+                      {c.nombre}
+                      {c.prefijo === PREFIJO_BIBLIOTECA_R2 && (
+                        <span className="text-xs font-normal text-muted-foreground">· sección Biblioteca</span>
+                      )}
                     </button>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">{formatearBytes(c.tamano)}</TableCell>
@@ -309,15 +381,24 @@ export function ArchivosClient({
                     {c.modificado ? new Date(c.modificado).toLocaleDateString('es-AR') : '—'}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => { setRenombrando({ tipo: 'carpeta', item: c }); setNombreNuevo(c.nombre) }}>
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleBorrarCarpeta(c)} className="text-red-600 dark:text-red-400">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    {fija ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground pr-2" title="Carpeta fija: enlazada con la sección Biblioteca">
+                        <Lock className="w-3.5 h-3.5" /> Fija
+                      </span>
+                    ) : (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={() => { setRenombrando({ tipo: 'carpeta', item: c }); setNombreNuevo(c.nombre) }}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleBorrarCarpeta(c)} className="text-red-600 dark:text-red-400">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
-              ))}
+                )
+              })}
               {listado.archivos.map((a) => (
                 <TableRow key={a.key} className="hover:bg-muted/50">
                   <TableCell>

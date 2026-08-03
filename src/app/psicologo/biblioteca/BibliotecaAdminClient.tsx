@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Loader2, Plus, Trash2, FileText, FileVideo, FileAudio, ExternalLink, Library, Users } from 'lucide-react'
+import { Loader2, Plus, Trash2, FileText, FileVideo, FileAudio, FileImage, ExternalLink, Library, Users } from 'lucide-react'
 import { toast } from 'sonner'
 import { crearRecursoBiblioteca, eliminarRecursoBiblioteca, asignarRecursoBiblioteca } from '../actions'
 import { Checkbox } from "@/components/ui/checkbox"
@@ -126,6 +126,7 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
     if (tipo.includes('video')) return <FileVideo className="w-4 h-4 text-blue-600 dark:text-blue-400" />;
     if (tipo.includes('audio')) return <FileAudio className="w-4 h-4 text-purple-600 dark:text-purple-400" />;
     if (tipo.includes('pdf')) return <FileText className="w-4 h-4 text-marca" />;
+    if (tipo.includes('imagen') || tipo.includes('image')) return <FileImage className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
     return <ExternalLink className="w-4 h-4 text-muted-foreground" />;
   }
 
@@ -257,7 +258,8 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
                       <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground">
                         {rec.tipo_contenido.includes('pdf') ? 'PDF' :
                          rec.tipo_contenido.includes('video') ? 'Video' :
-                         rec.tipo_contenido.includes('audio') ? 'Audio' : 'Link'}
+                         rec.tipo_contenido.includes('audio') ? 'Audio' :
+                         rec.tipo_contenido.includes('imagen') ? 'Imagen' : 'Link'}
                       </span>
                       {rec.origen && (
                         <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400" title="De dónde viene el archivo">

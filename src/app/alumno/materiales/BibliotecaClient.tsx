@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { PlayCircle, FileText, FileAudio, FileVideo, ExternalLink, X, Maximize, Minimize } from 'lucide-react'
+import { PlayCircle, FileText, FileAudio, FileVideo, FileImage, ExternalLink, X, Maximize, Minimize } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRef, useEffect } from 'react'
 import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
@@ -39,6 +39,7 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
     if (tipo.includes('video')) return <FileVideo className="w-5 h-5 text-marca" />;
     if (tipo.includes('audio')) return <FileAudio className="w-5 h-5 text-marca" />;
     if (tipo.includes('pdf')) return <FileText className="w-5 h-5 text-marca" />;
+    if (tipo.includes('imagen') || tipo.includes('image')) return <FileImage className="w-5 h-5 text-marca" />;
     return <ExternalLink className="w-5 h-5 text-marca" />;
   }
 
@@ -164,6 +165,19 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
                   ) : selectedRecurso.tipo_contenido === 'r2_audio' || selectedRecurso.tipo_contenido === 'supabase_audio' ? (
                     <div className="w-full h-full flex items-center justify-center bg-muted p-8 relative z-0">
                       <audio src={selectedRecurso.url_recurso} controls className="w-full max-w-2xl" />
+                    </div>
+                  ) : selectedRecurso.tipo_contenido === 'r2_imagen' ? (
+                    /* Imagen del bucket (carpeta "Biblioteca R2/Otros"): <img> directo y no
+                       iframe — el iframe genérico de más abajo asume una página de preview
+                       de Drive/Dropbox, no un archivo propio. */
+                    <div className="w-full h-full flex items-center justify-center bg-muted p-4 relative z-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={selectedRecurso.url_recurso}
+                        alt={selectedRecurso.titulo}
+                        className="max-w-full max-h-full object-contain select-none"
+                        onContextMenu={(e) => e.preventDefault()}
+                      />
                     </div>
                   ) : selectedRecurso.tipo_contenido === 'r2_pdf' || selectedRecurso.tipo_contenido === 'supabase_pdf' ? (
                     /* Sin sandbox: sandbox bloquea el plugin nativo de PDF del navegador

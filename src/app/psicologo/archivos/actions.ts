@@ -17,7 +17,17 @@ import {
   r2Configurado,
   type ListadoR2,
 } from '@/utils/r2'
-import { marcarKeyR2, PREFIJO_ENTREGAS_R2 } from '@/utils/r2-marcador'
+import {
+  marcarKeyR2,
+  esCarpetaFijaBibliotecaR2,
+  esZonaBibliotecaR2,
+  extensionDe,
+  seccionBibliotecaR2,
+  PREFIJO_BIBLIOTECA_R2,
+  PREFIJO_ENTREGAS_R2,
+  SECCIONES_BIBLIOTECA_R2,
+} from '@/utils/r2-marcador'
+import { sincronizarBibliotecaR2 } from '@/utils/supabase/biblioteca-r2'
 import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
 import { tipoMedioPorTipoContenido } from '@/utils/taxonomia'
 
@@ -83,6 +93,34 @@ function esZonaDeEntregas(ruta: string): boolean {
   return ruta.startsWith(PREFIJO_ENTREGAS_R2)
 }
 
+// "Biblioteca R2" y sus carpetas de sección son la referencia que usa la sincronización
+// con la sección Biblioteca: si se borran o se renombran, los recursos que colgaban de
+// ahí dejan de tener sección y desaparecen del lado del alumno. Adentro se sube y se
+// borra con normalidad; lo que está congelado es la estructura, no el contenido.
+function errorSiCarpetaFijaBiblioteca(prefijo: string): string | null {
+  return esCarpetaFijaBibliotecaR2(prefijo)
+    ? 'Esta carpeta está enlazada con la sección Biblioteca: no se puede borrar ni renombrar.'
+    : null
+}
+
+// Un archivo que no encaja en ninguna sección quedaría en el bucket sin aparecer nunca
+// del lado del alumno — mejor rechazarlo al subir que dejarlo invisible.
+function errorSubidaEnBiblioteca(prefijo: string, nombreArchivo: string): string | null {
+  if (!esZonaBibliotecaR2(prefijo)) return null
+
+  const seccion = seccionBibliotecaR2(`${prefijo}${nombreArchivo}`)
+  if (!seccion) {
+    return `Elegí una de las carpetas de sección (${SECCIONES_BIBLIOTECA_R2.map((s) => s.carpeta).join(', ')}): los archivos sueltos en la raíz no se publican.`
+  }
+
+  const extension = extensionDe(nombreArchivo)
+  if (!(seccion.extensiones as readonly string[]).includes(extension)) {
+    return `"${seccion.carpeta}" acepta ${seccion.extensiones.join(', ')}. Un archivo .${extension} va en otra sección.`
+  }
+
+  return null
+}
+
 export async function listarCarpeta(prefijo: string): Promise<{ error: string } | ListadoR2> {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -127,10 +165,13 @@ export async function pedirSubidaMaterial(
   const nombre = nombreArchivo.replace(/[/\\]/g, '_').replace(/^\.+/, '').trim()
   if (!nombre) return { error: 'Nombre de archivo inválido.' }
 
-  const extension = nombre.split('.').pop()?.toLowerCase() ?? ''
+  const extension = extensionDe(nombre)
   if (!permitidas.includes(extension)) {
     return { error: `La extensión ".${extension}" no coincide con el tipo ${contentType}.` }
   }
+
+  const errorBiblioteca = errorSubidaEnBiblioteca(prefijo, nombre)
+  if (errorBiblioteca) return { error: errorBiblioteca }
 
   const key = `${prefijo}${nombre}`
   if (!keyValida(key)) return { error: 'Nombre de archivo o ruta inválida.' }
@@ -210,6 +251,11 @@ export async function crearCarpeta(prefijoPadre: string, nombre: string) {
   if (esZonaDeEntregas(prefijo)) {
     return { error: 'No se puede crear carpetas dentro de las entregas de alumnos.' }
   }
+  // Adentro de una sección sí (para ordenar por tema); al lado de las secciones no, porque
+  // no habría pestaña del lado del alumno donde mostrar lo que se guarde ahí.
+  if (prefijoPadre === PREFIJO_BIBLIOTECA_R2) {
+    return { error: 'Las secciones de Biblioteca son fijas. Creá la carpeta dentro de una de ellas.' }
+  }
 
   try {
     await crearCarpetaR2(prefijo)
@@ -248,6 +294,8 @@ export async function borrarCarpeta(prefijo: string) {
   if (esZonaDeEntregas(prefijo)) {
     return { error: 'Las entregas de alumnos se gestionan desde Entregas.' }
   }
+  const errorFija = errorSiCarpetaFijaBiblioteca(prefijo)
+  if (errorFija) return { error: errorFija }
 
   try {
     const keys = await listarKeysRecursivo(prefijo)
@@ -257,11 +305,28 @@ export async function borrarCarpeta(prefijo: string) {
     }
 
     await borrarDeR2(keys)
+    if (esZonaBibliotecaR2(prefijo)) await sincronizarBiblioteca()
     return { success: true, borrados: keys.filter((k) => !k.endsWith('/')).length }
   } catch (err) {
     console.error('No se pudo borrar la carpeta:', err)
     return { error: 'No se pudo borrar la carpeta.' }
   }
+}
+
+// Vuelve a alinear la sección Biblioteca con lo que hay en la carpeta "Biblioteca R2" del
+// bucket. La llaman las acciones que tocan esa zona y el cliente después de subir; la
+// sección Biblioteca también la corre al abrirse, para tomar lo que se haya subido desde
+// el panel de Cloudflare.
+export async function sincronizarBiblioteca() {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+
+  const res = await sincronizarBibliotecaR2(auth.supabase)
+  if ('error' in res) return res
+
+  revalidatePath('/psicologo/biblioteca')
+  revalidatePath('/alumno/materiales')
+  return res
 }
 
 // Actualiza las referencias de lecciones/biblioteca que apuntaban a `keyVieja`, para que
@@ -313,6 +378,11 @@ export async function renombrarArchivo(key: string, nuevoNombre: string) {
   if (!keyValida(keyNueva)) return { error: 'Nombre inválido.' }
   if (keyNueva === key) return { success: true, keyNueva }
 
+  // Cambiar la extensión acá puede sacar al archivo de su sección de biblioteca (y con
+  // eso, de la vista del alumno) sin que nadie lo note. Se valida igual que al subir.
+  const errorBiblioteca = errorSubidaEnBiblioteca(carpeta, limpio)
+  if (errorBiblioteca) return { error: errorBiblioteca }
+
   if (await existeEnR2(keyNueva)) {
     return { error: 'Ya existe un archivo con ese nombre en esta carpeta.' }
   }
@@ -325,6 +395,9 @@ export async function renombrarArchivo(key: string, nuevoNombre: string) {
   }
 
   const referenciasActualizadas = await actualizarReferenciasR2(supabase, key, keyNueva)
+  // El título del recurso de biblioteca sale del nombre del archivo: sin esto quedaría
+  // con el nombre viejo hasta la próxima vez que se abra Biblioteca.
+  if (esZonaBibliotecaR2(keyNueva)) await sincronizarBiblioteca()
   return { success: true, keyNueva, referenciasActualizadas }
 }
 
@@ -388,6 +461,7 @@ export async function borrarObjetos(keys: string[]) {
 
   try {
     await borrarDeR2(keys)
+    if (keys.some(esZonaBibliotecaR2)) await sincronizarBiblioteca()
     return { success: true, borrados: keys.length }
   } catch (err) {
     console.error('No se pudieron borrar objetos de R2:', err)
@@ -407,6 +481,7 @@ export async function borrarMultiples(seleccion: { id: string; tipo: 'archivo' |
 
     for (const item of seleccion) {
       if (esZonaDeEntregas(item.id)) continue
+      if (esCarpetaFijaBibliotecaR2(item.id)) continue
 
       if (item.tipo === 'archivo') {
         if (keyValida(item.id)) keysParaBorrar.push(item.id)
@@ -420,6 +495,7 @@ export async function borrarMultiples(seleccion: { id: string; tipo: 'archivo' |
 
     const uniqueKeys = Array.from(new Set(keysParaBorrar))
     await borrarDeR2(uniqueKeys)
+    if (uniqueKeys.some(esZonaBibliotecaR2)) await sincronizarBiblioteca()
 
     return { success: true, borrados: uniqueKeys.length }
   } catch (err) {
@@ -436,6 +512,8 @@ export async function renombrarCarpeta(prefijo: string, nuevoNombre: string) {
   if (!r2Configurado()) return { error: 'El almacenamiento no está configurado.' }
   if (!prefijoValido(prefijo) || prefijo === '') return { error: 'Carpeta inválida.' }
   if (esZonaDeEntregas(prefijo)) return { error: 'Las entregas de alumnos no se pueden renombrar.' }
+  const errorFijaRename = errorSiCarpetaFijaBiblioteca(prefijo)
+  if (errorFijaRename) return { error: errorFijaRename }
 
   const limpio = nuevoNombre.replace(/[/\\]/g, '_').trim()
   if (!limpio) return { error: 'Poné un nombre para la carpeta.' }
@@ -469,6 +547,7 @@ export async function renombrarCarpeta(prefijo: string, nuevoNombre: string) {
       )
     }
 
+    if (esZonaBibliotecaR2(prefijoNuevo) || esZonaBibliotecaR2(prefijo)) await sincronizarBiblioteca()
     return { success: true, prefijoNuevo, referenciasActualizadas }
   } catch (err) {
     console.error('No se pudo renombrar la carpeta:', err)

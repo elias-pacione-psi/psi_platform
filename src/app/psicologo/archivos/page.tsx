@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { listarCarpeta, obtenerUsoTotal } from './actions'
+import { asegurarCarpetasBibliotecaR2 } from '@/utils/supabase/biblioteca-r2'
 import { ArchivosClient } from './ArchivosClient'
 
 export const metadata = { title: 'Archivos' }
@@ -12,6 +13,10 @@ export default async function ArchivosPage() {
 
   const { data: perfil } = await supabase.from('alumnos').select('rol').eq('id', user.id).single()
   if (perfil?.rol !== 'psicologo') redirect('/alumno')
+
+  // Antes de listar: si el bucket todavía no tiene la estructura de Biblioteca (bucket
+  // nuevo, o alguien la borró desde el panel de Cloudflare), se recrea sola.
+  await asegurarCarpetasBibliotecaR2()
 
   const [inicial, usoTotal, { data: modulos }] = await Promise.all([
     listarCarpeta(''),

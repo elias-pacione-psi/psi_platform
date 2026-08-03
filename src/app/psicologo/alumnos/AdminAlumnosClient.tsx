@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import {
   Table,
   TableBody,
@@ -9,20 +9,64 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserActionsCell } from './UserActionsCell'
 import { CrearAlumnoDialog } from './CrearAlumnoDialog'
-import { Video } from 'lucide-react'
+import { Check, Loader2, X } from 'lucide-react'
+import { toast } from 'sonner'
+import { aprobarSolicitud, rechazarSolicitud } from '../actions'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: { alumnos: any[], todosLosProgramas: any[], solicitudes?: any[] }) {
   const [searchTerm, setSearchTerm] = useState('')
+  const [isPending, startTransition] = useTransition()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [porAprobar, setPorAprobar] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [porRechazar, setPorRechazar] = useState<any>(null)
 
   const activos = alumnos.filter(a => a.estado === 'activo' || !a.estado)
   const suspendidos = alumnos.filter(a => a.estado === 'suspendido')
   const eliminados = alumnos.filter(a => a.estado === 'eliminado')
   const consultas = solicitudes || []
+
+  const handleAprobar = () => {
+    if (!porAprobar) return
+    startTransition(async () => {
+      const res = await aprobarSolicitud(porAprobar.id)
+      if (res?.error) {
+        toast.error(res.error)
+      } else {
+        toast.success(`Invitación enviada a ${porAprobar.email}`)
+        setPorAprobar(null)
+      }
+    })
+  }
+
+  const handleRechazar = () => {
+    if (!porRechazar) return
+    startTransition(async () => {
+      const res = await rechazarSolicitud(porRechazar.id)
+      if (res?.error) {
+        toast.error(res.error)
+      } else {
+        toast.success('Solicitud descartada')
+        setPorRechazar(null)
+      }
+    })
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderUsersTable = (users: any[], stateType: string) => {
@@ -104,13 +148,14 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
               <TableHead className="font-heading font-semibold text-tinta">Contacto</TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Teléfono</TableHead>
               <TableHead className="font-heading font-semibold text-tinta max-w-sm">Motivo / Objetivos</TableHead>
-              <TableHead className="text-right font-heading font-semibold text-tinta">Fecha</TableHead>
+              <TableHead className="font-heading font-semibold text-tinta">Fecha</TableHead>
+              <TableHead className="text-right font-heading font-semibold text-tinta">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {lista.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">No hay solicitudes nuevas.</TableCell>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No hay solicitudes nuevas.</TableCell>
               </TableRow>
             ) : lista.map((req) => (
               <TableRow key={req.id}>
@@ -124,12 +169,33 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
                 <TableCell className="text-muted-foreground text-sm whitespace-pre-wrap">
                   {req.objetivos || '-'}
                 </TableCell>
-                <TableCell className="text-right text-muted-foreground text-sm">
+                <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                   {new Date(req.created_at).toLocaleDateString('es-AR', {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric'
                   })}
+                </TableCell>
+                <TableCell className="text-right whitespace-nowrap space-x-2">
+                  <Button
+                    size="sm"
+                    onClick={() => setPorAprobar(req)}
+                    disabled={isPending}
+                    className="font-sans bg-marca hover:bg-marca/90 text-crema"
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Aprobar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPorRechazar(req)}
+                    disabled={isPending}
+                    className="font-sans text-red-600 dark:text-red-400 border-red-200 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-950/40"
+                    title="Descartar solicitud"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -181,6 +247,53 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
           {renderConsultasTable(consultas)}
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!porAprobar} onOpenChange={(abierto) => !abierto && setPorAprobar(null)}>
+        <AlertDialogContent className="bg-crema">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Aprobar esta solicitud?</AlertDialogTitle>
+            <AlertDialogDescription className="font-sans text-muted-foreground">
+              Se crea la cuenta de <b>{porAprobar?.nombre}</b> y se manda una invitación a{' '}
+              <b>{porAprobar?.email}</b> para que elija su contraseña. Después le asignás
+              programas desde la pestaña Activos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending} className="font-sans">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); handleAprobar() }}
+              disabled={isPending}
+              className="bg-marca hover:bg-marca/90 text-crema font-sans"
+            >
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+              Aprobar e invitar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!porRechazar} onOpenChange={(abierto) => !abierto && setPorRechazar(null)}>
+        <AlertDialogContent className="bg-crema">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Descartar esta solicitud?</AlertDialogTitle>
+            <AlertDialogDescription className="font-sans text-muted-foreground">
+              La solicitud de <b>{porRechazar?.nombre}</b> sale de la bandeja. No se manda
+              ningún aviso a esa persona.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending} className="font-sans">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); handleRechazar() }}
+              disabled={isPending}
+              className="bg-red-600 hover:bg-red-700 text-white font-sans"
+            >
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <X className="w-4 h-4 mr-2" />}
+              Descartar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
