@@ -29,7 +29,7 @@ export function LandingClient() {
     <section id="contacto" className="bg-crema py-20 px-6 md:px-10 border-t border-border">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl md:text-4xl text-tinta font-heading font-bold mb-4 border-l-8 border-marca pl-5">
-          Consultas y Turnos
+          Consultas
         </h2>
         <p className="text-muted-foreground mb-10 max-w-2xl font-serif">
           ¿Interesado en comenzar tu proceso terapéutico? Completá este formulario y nos pondremos en contacto a la brevedad para coordinar una primera entrevista.

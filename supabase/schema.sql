@@ -178,7 +178,7 @@ create index if not exists idx_entregas_alumno on public.entregas (alumno_id);
 create index if not exists idx_agenda_alumno_fecha on public.agenda_sesiones (alumno_id, fecha_hora);
 create index if not exists idx_agenda_cohorte_fecha on public.agenda_sesiones (cohorte_id, fecha_hora);
 
--- Solicitudes de contacto del formulario público de la landing ("Consultas y Turnos").
+-- Solicitudes de contacto del formulario público de la landing ("Consultas").
 -- NO crea cuenta ni es registro público de alumnos: el psicólogo revisa acá y, si
 -- corresponde, invita manualmente con crearAlumnoDirecto (el alta sigue siendo por
 -- invitación). `objetivos` es el motivo de consulta que cuenta el interesado — dato

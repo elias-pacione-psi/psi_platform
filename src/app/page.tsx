@@ -12,6 +12,12 @@ const conceptos = [
   { titulo: 'Cercanía', texto: 'Una identidad cálida y humana que prioriza el vínculo y la confianza.' },
 ]
 
+// Navegación de la landing. Todavía no tienen destino: son los rótulos de las
+// secciones que se van a configurar después, en el orden en que van de izquierda a
+// derecha. Van como <button> y no como <Link href="#">, porque un ancla vacía cambia
+// la URL y no lleva a ningún lado — esto avisa que la sección está por venir.
+const SECCIONES_NAV = ['Ebooks', 'Cursos', 'Formaciones', 'Supervisiones', 'Terapia individual']
+
 const prestaciones = [
   { icono: FolderHeart, titulo: 'Material a tu medida', texto: 'Solo ves el contenido que Elias preparó para vos, organizado en programas y una biblioteca de apoyo.' },
   { icono: Calendar, titulo: 'Tus encuentros', texto: 'La agenda de tus próximos encuentros, presenciales o virtuales, con acceso directo a la videollamada.' },
@@ -23,19 +29,39 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
       <header className="w-full sticky top-0 z-50 bg-crema/85 backdrop-blur-sm border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-3">
           <div className="flex items-center gap-3">
             <BrandMark className="w-11 h-7 shrink-0 text-tinta" />
             <span className="flex flex-col leading-tight">
               <span className="font-heading font-semibold text-lg tracking-tight text-tinta">Elias Pacione</span>
-              <span className="font-serif text-xs text-muted-foreground -mt-0.5">Psicología con sentido.</span>
+              {/* La bajada se cae en pantallas chicas: con la nav ya ocupando una fila
+                  propia, mantenerla partía la cabecera en tres y se comía media pantalla. */}
+              <span className="hidden sm:block font-serif text-xs text-muted-foreground -mt-0.5">Psicología con sentido.</span>
             </span>
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* En lg+ va entre la marca y el toggle, alineada a la derecha para que el
+              último rótulo quede pegado al botón de tema. Abajo de lg pasa a una fila
+              propia con scroll horizontal: cinco secciones no entran al lado del
+              logo en un teléfono, y esconderlas las volvería inalcanzables. */}
+          <nav className="order-last w-full flex items-center gap-1 overflow-x-auto lg:order-none lg:w-auto lg:flex-1 lg:justify-end lg:overflow-visible">
+            {SECCIONES_NAV.map((seccion) => (
+              <button
+                key={seccion}
+                type="button"
+                title="Sección en preparación"
+                className="whitespace-nowrap rounded-full px-3 py-2 font-sans text-sm text-tinta/80 transition-colors hover:bg-sage/30 hover:text-tinta"
+              >
+                {seccion}
+              </button>
+            ))}
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <ThemeToggle />
             <Link
               href="/login"
-              className="bg-marca text-crema px-6 py-2.5 rounded-full font-medium text-sm transition-colors hover:bg-tinta"
+              className="bg-marca text-crema px-4 sm:px-6 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-colors hover:bg-tinta"
             >
               Ingresar
             </Link>
@@ -43,20 +69,12 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* HERO — el fondo del brandbook: crema con la sombra de hojas cayendo
-          desde arriba a la izquierda. La textura sale del propio PDF. */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-24 -left-32 w-[62rem] h-[34rem] opacity-30 dark:opacity-[0.12] bg-no-repeat bg-cover"
-          style={{
-            backgroundImage: 'url(/brand/leaf-shadow.png)',
-            // sin esta máscara el PNG corta en seco y se ve el rectángulo
-            WebkitMaskImage: 'radial-gradient(ellipse at 28% 30%, #000 30%, transparent 68%)',
-            maskImage: 'radial-gradient(ellipse at 28% 30%, #000 30%, transparent 68%)',
-          }}
-        />
-        <div className="relative max-w-3xl mx-auto text-center px-6 pt-28 pb-24">
+      {/* HERO — lienzo liso. Antes tenía la sombra de hojas del brandbook
+          (/brand/leaf-shadow.png) difuminada arriba a la izquierda; se sacó a
+          pedido. El fondo lo pone `bg-crema` del <main>, que ya gira con el
+          tema, así que el equivalente oscuro sale solo. */}
+      <section className="border-b border-border">
+        <div className="max-w-3xl mx-auto text-center px-6 pt-28 pb-24">
           <BrandMark className="w-24 h-16 mx-auto mb-10 text-tinta" />
           <h1 className="text-tinta text-4xl md:text-5xl font-heading font-semibold mb-6 leading-[1.15] tracking-tight">
             No estás solo en tu proceso
