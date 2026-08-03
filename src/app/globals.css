@@ -85,7 +85,7 @@
   /* Paleta impresa en el board de la Propuesta 2: #5A6D7D azul medio,
      #7F95A6 azul claro, #D6DEE5 azul pálido, #F7F6F3 hueso, #A8B79F verde,
      #2F3E46 petróleo. */
-  --crema: #f7f6f3;
+  --crema: #f1f0eb;
   --tinta: #2f3e46;
   --sage: #a8b79f;
   --sage-hondo: #7f95a6;
@@ -94,7 +94,7 @@
      board, el azul medio #5A6D7D es el único que sirve para ese rol sin
      retoques: 4.96:1 sobre el hueso y 5.36:1 con texto blanco encima
      (verificado). El verde y el azul claro se quedan como superficie. */
-  --marca: #5a6d7d;
+  --marca: #4e6478;
 
   --card: #ffffff;
   --card-foreground: #2f3e46;
@@ -102,7 +102,7 @@
   --popover-foreground: #2f3e46;
   --primary: #2f3e46;
   --primary-foreground: #f7f6f3;
-  --secondary: #f7f6f3;
+  --secondary: #f1f0eb;
   --secondary-foreground: #2f3e46;
   --muted: #eceff2;
   --muted-foreground: #5f6d77;
@@ -111,8 +111,8 @@
   --destructive: #b3372f;
   --border: #dce3e8;
   --input: #dce3e8;
-  --ring: #5a6d7d;
-  --chart-1: #5a6d7d;
+  --ring: #4e6478;
+  --chart-1: #4e6478;
   --chart-2: #7f95a6;
   --chart-3: #a8b79f;
   --chart-4: #d6dee5;
@@ -125,7 +125,7 @@
   --sidebar-accent: #e8edf1;
   --sidebar-accent-foreground: #2f3e46;
   --sidebar-border: #dce3e8;
-  --sidebar-ring: #5a6d7d;
+  --sidebar-ring: #4e6478;
 }
 
 .dark {
@@ -137,12 +137,13 @@
   --tinta: #f7f6f3;
   --gris-calido: #5a6d7d;
   /* Sobre fondo oscuro el azul medio queda demasiado apagado para ser acción,
-     así que la marca sube al azul claro del board: #7F95A6 da 4.83:1 contra el
-     fondo, tanto como texto/ícono como de fondo de botón con texto oscuro
-     encima (verificado). */
+     así que la marca sube al azul claro del board, un punto más brillante:
+     #8BA3B5 da 5.72:1 contra el fondo (el #7F95A6 impreso daba 4.83:1 y quedaba
+     apagado), tanto como texto/ícono como de fondo de botón con texto oscuro
+     encima. */
   --sage: #7f95a6;
   --sage-hondo: #a8b79f;
-  --marca: #7f95a6;
+  --marca: #8ba3b5;
 
   --card: #26323a;
   --card-foreground: #f7f6f3;
@@ -159,20 +160,20 @@
   --destructive: #ff6b5e;
   --border: rgba(255, 255, 255, 0.11);
   --input: rgba(255, 255, 255, 0.16);
-  --ring: #7f95a6;
-  --chart-1: #7f95a6;
+  --ring: #8ba3b5;
+  --chart-1: #8ba3b5;
   --chart-2: #a8b79f;
   --chart-3: #a3b0b8;
   --chart-4: #5a6d7d;
   --chart-5: #2c3a43;
   --sidebar: #182126;
   --sidebar-foreground: #f7f6f3;
-  --sidebar-primary: #7f95a6;
+  --sidebar-primary: #8ba3b5;
   --sidebar-primary-foreground: #1e282e;
   --sidebar-accent: #2c3a43;
   --sidebar-accent-foreground: #f7f6f3;
   --sidebar-border: rgba(255, 255, 255, 0.11);
-  --sidebar-ring: #7f95a6;
+  --sidebar-ring: #8ba3b5;
 }
 
 @layer base {
