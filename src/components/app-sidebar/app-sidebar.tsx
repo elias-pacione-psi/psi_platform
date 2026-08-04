@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog } from "lucide-react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -71,6 +71,14 @@ const itemsPsicologo = [
     title: "Comisiones",
     url: "/psicologo/cohortes",
     icon: GraduationCap,
+  },
+  {
+    // El único producto con venta directa (ver docs/plan-modelo-comercial.md) — separado
+    // de Biblioteca/Archivos porque acá se fija precio y se administra la vidriera
+    // pública, no solo se sube material para alumnos ya asignados.
+    title: "Ebooks",
+    url: "/psicologo/ebooks",
+    icon: BookOpen,
   },
   {
     title: "Entregas",
