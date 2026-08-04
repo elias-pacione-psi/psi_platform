@@ -22,15 +22,18 @@ const command = new PutBucketCorsCommand({
       {
         AllowedHeaders: ['*'],
         AllowedMethods: ['GET', 'PUT', 'POST', 'DELETE', 'HEAD'],
-        // Agregar acá el dominio real de producción (Vercel y/o dominio propio) antes
-        // del primer deploy — si no, la subida funciona en local pero falla en prod.
-        // eliaspacione.com (y su www) sumados el 2026-08-04: sin esto, el PUT presignado
-        // directo al bucket desde el dominio propio fallaba con "NetworkError" en el
-        // navegador — CORS lo bloquea antes de que la request salga, así que el error
-        // que se ve no menciona CORS para nada.
+        // Sincronizado el 2026-08-04 con la config real del bucket (Cloudflare
+        // Dashboard → R2 → el bucket → Settings → CORS Policy — la fuente de verdad,
+        // ya que el token de este entorno no tiene permiso para leerla ni escribirla:
+        // GetBucketCorsCommand da AccessDenied). Sin esto no correr este script a
+        // ciegas: pisaría orígenes reales (como localhost:5000) que no estaban acá.
+        // eliaspacione.com (y su www) sumados en esta misma sincronización: sin ellos,
+        // el PUT presignado directo al bucket desde el dominio propio fallaba con
+        // "NetworkError" en el navegador — CORS lo bloquea antes de que la request
+        // salga, así que el error que se ve no menciona CORS para nada.
         AllowedOrigins: [
           'http://localhost:3000',
-          'https://psi-platform-git-main-psi12.vercel.app',
+          'http://localhost:5000',
           'https://psi-platform-ten.vercel.app',
           'https://eliaspacione.com',
           'https://www.eliaspacione.com',
