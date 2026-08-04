@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { FolderHeart, Calendar, ShieldCheck } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -12,11 +13,19 @@ const conceptos = [
   { titulo: 'Cercanía', texto: 'Una identidad cálida y humana que prioriza el vínculo y la confianza.' },
 ]
 
-// Navegación de la landing. Todavía no tienen destino: son los rótulos de las
-// secciones que se van a configurar después, en el orden en que van de izquierda a
-// derecha. Van como <button> y no como <Link href="#">, porque un ancla vacía cambia
-// la URL y no lleva a ningún lado — esto avisa que la sección está por venir.
-const SECCIONES_NAV = ['Ebooks', 'Cursos', 'Formaciones', 'Supervisiones', 'Terapia individual']
+// Navegación de la landing, en el orden en que van de izquierda a derecha. Ebooks es
+// el único producto con compra directa — tiene su propia vidriera. Los otros cuatro
+// bajan al formulario de Consultas con el interés ya elegido en el desplegable (mismos
+// valores que el check `solicitudes_interes_valido` de la migración
+// 2026-08-04-ebooks-y-desplegable-interes.sql), porque no se venden online: los sigue
+// coordinando Elias a mano — ver docs/plan-modelo-comercial.md.
+const SECCIONES_NAV = [
+  { titulo: 'Ebooks', href: '/ebooks' },
+  { titulo: 'Cursos', href: '/?interes=curso#contacto' },
+  { titulo: 'Formaciones', href: '/?interes=formacion#contacto' },
+  { titulo: 'Supervisiones', href: '/?interes=supervision#contacto' },
+  { titulo: 'Terapia individual', href: '/?interes=terapia_individual#contacto' },
+]
 
 const prestaciones = [
   { icono: FolderHeart, titulo: 'Material a tu medida', texto: 'Solo ves el contenido que Elias preparó para vos, organizado en programas y una biblioteca de apoyo.' },
@@ -46,14 +55,13 @@ export default function LandingPage() {
               logo en un teléfono, y esconderlas las volvería inalcanzables. */}
           <nav className="order-last w-full flex items-center gap-1 overflow-x-auto lg:order-none lg:w-auto lg:flex-1 lg:justify-end lg:overflow-visible">
             {SECCIONES_NAV.map((seccion) => (
-              <button
-                key={seccion}
-                type="button"
-                title="Sección en preparación"
+              <Link
+                key={seccion.titulo}
+                href={seccion.href}
                 className="whitespace-nowrap rounded-full px-3 py-2 font-sans text-sm text-tinta/80 transition-colors hover:bg-gris-calido/60 hover:text-tinta"
               >
-                {seccion}
-              </button>
+                {seccion.titulo}
+              </Link>
             ))}
           </nav>
 
@@ -128,7 +136,13 @@ export default function LandingPage() {
       </section>
 
       {/* Formulario de Contacto */}
-      <LandingClient />
+      {/* Suspense: LandingClient usa useSearchParams() (para preseleccionar el interés
+          que trajo el botón de nav), y Next exige envolver eso en un límite de Suspense
+          para poder generar la página como estática. Sin fallback visible — el formulario
+          está debajo del pliegue y la hidratación es casi instantánea. */}
+      <Suspense>
+        <LandingClient />
+      </Suspense>
 
       <footer className="bg-noche text-nieve/70 py-12 px-6">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">

@@ -4,11 +4,17 @@ import { z } from 'zod'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 
+// Mismos cinco valores que el check `solicitudes_interes_valido` de la migración
+// 2026-08-04-ebooks-y-desplegable-interes.sql. Si se agrega una opción acá, hay que
+// sumarla ahí (y en utils/taxonomia-labels.ts, para la etiqueta del panel).
+const INTERESES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'otro'] as const
+
 // Endpoint público (formulario de la landing): validamos y acotamos todo para evitar spam/basura en la DB
 const solicitudSchema = z.object({
   nombre: z.string().trim().min(1, 'El nombre es obligatorio').max(100),
   email: z.string().trim().toLowerCase().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'El email no es válido').max(254),
   telefono: z.string().trim().max(30),
+  interes: z.enum(INTERESES, { message: 'Elegí una opción' }),
   objetivos: z.string().trim().max(1000),
 })
 
@@ -19,6 +25,7 @@ export async function crearSolicitud(formData: FormData) {
     nombre: formData.get('nombre') ?? '',
     email: formData.get('email') ?? '',
     telefono: formData.get('telefono') ?? '',
+    interes: formData.get('interes') ?? '',
     objetivos: formData.get('objetivos') ?? '',
   })
 
@@ -26,7 +33,7 @@ export async function crearSolicitud(formData: FormData) {
     return { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' }
   }
 
-  const { nombre, email, telefono, objetivos } = parsed.data
+  const { nombre, email, telefono, interes, objetivos } = parsed.data
 
   // Anti-spam
   const supabaseAdmin = createAdminClient()
@@ -52,6 +59,7 @@ export async function crearSolicitud(formData: FormData) {
       nombre,
       email,
       telefono: telefono || null,
+      interes,
       objetivos: objetivos || null,
       estado: 'pendiente',
     })
