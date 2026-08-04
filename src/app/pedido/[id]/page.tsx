@@ -20,7 +20,7 @@ export default async function PedidoPage({ params }: Props) {
 
   const { data: orden } = await supabaseAdmin
     .from('ordenes')
-    .select('id, estado, email_comprador, ebooks(titulo, slug)')
+    .select('id, estado, email_comprador, alumno_id, ebooks(titulo, slug)')
     .eq('id', id)
     .maybeSingle()
 
@@ -58,6 +58,18 @@ export default async function PedidoPage({ params }: Props) {
               <h1 className="text-2xl font-heading font-semibold text-tinta mb-2">¡Listo, {ebook?.titulo}!</h1>
               <p className="text-muted-foreground mb-6">Tu pago se acreditó. Ya podés descargar tu ebook.</p>
               <DescargarBoton ordenId={orden.id} />
+              {!orden.alumno_id && (
+                <p className="text-sm text-muted-foreground mt-6 pt-6 border-t border-border">
+                  ¿Querés no depender de este link?{' '}
+                  <Link
+                    href={`/crear-cuenta?email=${encodeURIComponent(orden.email_comprador)}`}
+                    className="text-marca underline underline-offset-2 hover:opacity-80"
+                  >
+                    Creá una cuenta
+                  </Link>{' '}
+                  y volvé a descargarlo cuando quieras.
+                </p>
+              )}
             </>
           )}
 

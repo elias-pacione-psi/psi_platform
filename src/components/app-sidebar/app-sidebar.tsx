@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen } from "lucide-react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -38,6 +38,14 @@ const itemsAlumno = [
     title: "Biblioteca",
     url: "/alumno/materiales",
     icon: Library,
+  },
+  {
+    // Solo tiene contenido para quien creó una cuenta después de comprar un ebook (fase
+    // 5 del modelo comercial) — para el resto queda con la lista vacía, igual que
+    // Entregas o Agenda si todavía no hay nada cargado.
+    title: "Mis compras",
+    url: "/alumno/compras",
+    icon: ShoppingBag,
   },
   {
     title: "Tareas",
