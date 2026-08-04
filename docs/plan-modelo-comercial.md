@@ -1,6 +1,9 @@
 # Plan — de plataforma por invitación a venta directa
 
-Estado: **decidido, sin implementar**. Fecha: 2026-08-04.
+Estado: **las 6 fases implementadas y mergeadas a `main`** (2026-08-04, mismo día:
+PRs #7 a #12). Quedan 3 bloqueos externos antes de que un comprador real pueda
+completar una venta — ninguno es código, los tres están detallados abajo en
+"## 10. Bloqueos externos, no resueltos por código".
 
 Decisiones tomadas (Lucas, 2026-08-04):
 - **Solo los ebooks se venden online.** Cursos, formaciones, supervisiones y
@@ -214,10 +217,43 @@ biblioteca. Todo eso sigue igual — solo cambia cómo llega la gente.
 Las fases 1 y 2 no tocan pagos ni datos sensibles, así que se pueden hacer ya
 mientras se resuelve lo legal en paralelo.
 
-## 9. Preguntas abiertas
+## 9. Preguntas abiertas (resueltas o superadas por la implementación)
 
-1. **Proveedor de pago** y quién emite la factura. Bloquea la fase 4.
-2. **Precios**: ¿solo ARS? ¿Se vende al exterior?
-3. **¿Qué pasa con `AGENTS.md`?** Si los ebooks se pueden comprar sin cuenta y el
-   registro público llega recién en la fase 5, la prohibición sigue en pie más
-   tiempo del que parecía. Igual hay que decidir el texto nuevo.
+1. ~~Proveedor de pago y quién emite la factura.~~ Se implementó contra Mercado
+   Pago (lo más natural para Argentina), pero **sin credenciales reales** — ver
+   bloqueo 2 abajo. Quién factura sigue sin decidir (bloqueo 3).
+2. **Precios**: quedó solo ARS. Vender al exterior no se implementó.
+3. ~~¿Qué pasa con AGENTS.md?~~ Resuelto: la prohibición de registro público
+   quedó acotada (no eliminada) a la fase 5, con fecha y referencia a este plan.
+
+## 10. Bloqueos externos, no resueltos por código
+
+Las 6 fases están implementadas, pero un comprador real todavía no puede
+completar una compra por tres cosas que nadie más que Lucas/Elias puede resolver:
+
+1. **La migración SQL no está corrida en producción.**
+   `supabase/snippets/2026-08-04-ebooks-y-desplegable-interes.sql` — sin esto,
+   `ebooks`/`ordenes`/`solicitudes_registro.interes` no existen y toda la fase 1
+   en adelante falla. Es aditiva e idempotente, se puede correr con producción
+   como está. Correrla en
+   `https://supabase.com/dashboard/project/urevyngawcybyrfvahgk/sql/new`
+   (¡ojo con confundir el proyecto — ver `reference-github-repo` en la memoria!).
+
+2. **No hay credenciales de Mercado Pago.** `MERCADOPAGO_ACCESS_TOKEN` y
+   `MERCADOPAGO_WEBHOOK_SECRET` (ver `.env.example`) no están configuradas.
+   Mientras tanto, el botón "Comprar" degrada solo a "próximamente" en toda la
+   plataforma — no hay riesgo en dejar esto así por un tiempo. El código de
+   `utils/mercadopago.ts` / `api/webhooks/mercadopago` sigue el contrato
+   documentado de Checkout Pro pero **nunca corrió contra un pago real**:
+   probarlo contra el sandbox de Mercado Pago antes de pasar a producción.
+
+3. **`enable_signup` de Supabase Auth no está sincronizado en el proyecto real.**
+   `supabase/config.toml` ya dice `true` (con el guardrail real viviendo en la
+   aplicación, no en este flag — ver el comentario ahí), pero ese archivo describe
+   la configuración deseada, no la aplica sola contra el proyecto hosteado. Hace
+   falta `supabase config push` (si el CLI está linkeado) o replicarlo a mano:
+   Dashboard → Authentication → "Allow new users to sign up", en el proyecto
+   `urevyngawcybyrfvahgk`.
+
+Ninguno de los tres bloquea que el resto de la plataforma (cursos, comisiones,
+agenda, todo lo que ya existía) siga funcionando exactamente igual que antes.
