@@ -18,3 +18,15 @@ export const LABEL_ORIGEN: Record<string, string> = {
   supabase: 'Supabase',
   externo: 'Externo',
 }
+
+// Qué eligió la persona en el desplegable del formulario público de Consultas
+// (solicitudes_registro.interes). Mismos valores que el check de la migración
+// 2026-08-04-ebooks-y-desplegable-interes.sql — si se agrega una opción, hay que
+// sumarla en los dos lugares.
+export const LABEL_INTERES: Record<string, string> = {
+  curso: 'Curso asincrónico',
+  formacion: 'Formación con clases en vivo',
+  supervision: 'Supervisión',
+  terapia_individual: 'Terapia individual',
+  otro: 'Otro / no especificado',
+}

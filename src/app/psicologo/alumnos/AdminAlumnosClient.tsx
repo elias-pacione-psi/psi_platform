@@ -27,6 +27,7 @@ import { CrearAlumnoDialog } from './CrearAlumnoDialog'
 import { Check, Loader2, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { aprobarSolicitud, rechazarSolicitud } from '../actions'
+import { LABEL_INTERES } from '@/utils/taxonomia-labels'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: { alumnos: any[], todosLosProgramas: any[], solicitudes?: any[] }) {
@@ -146,6 +147,7 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
           <TableHeader className="bg-muted">
             <TableRow>
               <TableHead className="font-heading font-semibold text-tinta">Contacto</TableHead>
+              <TableHead className="font-heading font-semibold text-tinta">Interés</TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Teléfono</TableHead>
               <TableHead className="font-heading font-semibold text-tinta max-w-sm">Motivo / Objetivos</TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Fecha</TableHead>
@@ -155,13 +157,22 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
           <TableBody>
             {lista.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No hay solicitudes nuevas.</TableCell>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No hay solicitudes nuevas.</TableCell>
               </TableRow>
             ) : lista.map((req) => (
               <TableRow key={req.id}>
                 <TableCell>
                   <div className="font-medium text-tinta">{req.nombre}</div>
                   <div className="text-muted-foreground text-sm">{req.email}</div>
+                </TableCell>
+                <TableCell className="text-sm">
+                  {req.interes ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-marca/10 text-marca whitespace-nowrap">
+                      {LABEL_INTERES[req.interes] ?? req.interes}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">
                   {req.telefono || '-'}
