@@ -50,7 +50,7 @@ export default function LandingPage() {
                 key={seccion}
                 type="button"
                 title="Sección en preparación"
-                className="whitespace-nowrap rounded-full px-3 py-2 font-sans text-sm text-tinta/80 transition-colors hover:bg-sage/30 hover:text-tinta"
+                className="whitespace-nowrap rounded-full px-3 py-2 font-sans text-sm text-tinta/80 transition-colors hover:bg-gris-calido/60 hover:text-tinta"
               >
                 {seccion}
               </button>
@@ -93,7 +93,11 @@ export default function LandingPage() {
       </section>
 
       {/* CONCEPTOS — pausa, escucha, contención, cercanía */}
-      <section className="bg-sage/25 dark:bg-card border-b border-border">
+      {/* Fondo con el azul pálido del board (--gris-calido) y no con --sage: el
+          sage es el único verde de una paleta por lo demás azul, y al 25% sobre el
+          lienzo la mezcla daba un oliva que no pertenecía a ninguna de las dos
+          familias. */}
+      <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
             {conceptos.map(({ titulo, texto }) => (
