@@ -20,7 +20,7 @@ const conceptos = [
 // 2026-08-04-ebooks-y-desplegable-interes.sql), porque no se venden online: los sigue
 // coordinando Elias a mano — ver docs/plan-modelo-comercial.md.
 const SECCIONES_NAV = [
-  { titulo: 'Ebooks', href: '/ebooks' },
+  { titulo: 'ebooks', href: '/ebooks' },
   { titulo: 'Cursos', href: '/?interes=curso#contacto' },
   { titulo: 'Formaciones', href: '/?interes=formacion#contacto' },
   { titulo: 'Supervisiones', href: '/?interes=supervision#contacto' },

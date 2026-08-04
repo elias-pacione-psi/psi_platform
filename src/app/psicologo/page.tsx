@@ -74,7 +74,7 @@ export default async function PsicologoHomePage() {
     { titulo: 'Programas', descripcion: 'Módulos y lecciones de cada formación', url: '/psicologo/programas', icon: LayoutList, dato: `${totalProgramas ?? 0} ${totalProgramas === 1 ? 'programa' : 'programas'}` },
     { titulo: 'Comisiones', descripcion: 'Camadas que cursan juntas', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'comisión' : 'comisiones'}` },
     { titulo: 'Biblioteca', descripcion: 'Material suelto, con acceso por alumno', url: '/psicologo/biblioteca', icon: Library, dato: `${totalRecursos ?? 0} ${totalRecursos === 1 ? 'recurso' : 'recursos'}` },
-    { titulo: 'Ebooks', descripcion: 'El único producto con compra directa', url: '/psicologo/ebooks', icon: BookOpen, dato: `${totalEbooksPublicados ?? 0} ${totalEbooksPublicados === 1 ? 'publicado' : 'publicados'}` },
+    { titulo: 'ebooks', descripcion: 'El único producto con compra directa', url: '/psicologo/ebooks', icon: BookOpen, dato: `${totalEbooksPublicados ?? 0} ${totalEbooksPublicados === 1 ? 'publicado' : 'publicados'}` },
     { titulo: 'Archivos', descripcion: 'El bucket: subir y organizar el material', url: '/psicologo/archivos', icon: FolderCog, dato: 'Gestor' },
     { titulo: 'Agenda', descripcion: 'Sesiones únicas o recurrentes', url: '/psicologo/agenda', icon: Calendar, dato: 'Calendario' },
   ]

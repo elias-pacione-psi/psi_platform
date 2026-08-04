@@ -84,7 +84,7 @@ const itemsPsicologo = [
     // El único producto con venta directa (ver docs/plan-modelo-comercial.md) — separado
     // de Biblioteca/Archivos porque acá se fija precio y se administra la vidriera
     // pública, no solo se sube material para alumnos ya asignados.
-    title: "Ebooks",
+    title: "ebooks",
     url: "/psicologo/ebooks",
     icon: BookOpen,
   },

@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { resolverUrlRecurso } from '@/utils/r2'
 import { BrandMark } from '@/components/BrandMark'
 
-export const metadata = { title: 'Ebooks | Elias Pacione' }
+export const metadata = { title: 'ebooks | Elias Pacione' }
 
 // Página pública, sin guard de sesión: es la vidriera. La policy ebooks_select ya
 // restringe lo que devuelve esta consulta a estado='publicado' para quien no está
@@ -40,7 +40,7 @@ export default async function EbooksPage() {
       </header>
 
       <div className="max-w-5xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-heading font-semibold text-tinta mb-3">Ebooks</h1>
+        <h1 className="text-4xl font-heading font-semibold text-tinta mb-3">ebooks</h1>
         <p className="text-tinta/70 max-w-2xl mb-12 font-serif">
           Material para leer a tu ritmo. Comprás y lo tenés al instante.
         </p>

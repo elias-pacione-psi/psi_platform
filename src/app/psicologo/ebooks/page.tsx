@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { resolverUrlRecurso } from '@/utils/r2'
 import { EbooksAdminClient } from './EbooksAdminClient'
 
-export const metadata = { title: 'Ebooks | Elias Pacione' }
+export const metadata = { title: 'ebooks | Elias Pacione' }
 
 export default async function EbooksAdminPage() {
   const supabase = await createClient()
@@ -25,7 +25,7 @@ export default async function EbooksAdminPage() {
     console.error('Error cargando ebooks:', error)
     return (
       <div className="space-y-6 max-w-6xl mx-auto">
-        <h1 className="text-4xl font-heading font-bold text-tinta">Ebooks</h1>
+        <h1 className="text-4xl font-heading font-bold text-tinta">ebooks</h1>
         <div className="bg-red-50 dark:bg-red-950/20 border border-red-300 dark:border-red-900 text-red-700 dark:text-red-400 rounded-2xl p-6 font-sans space-y-2">
           <p className="font-bold">No se pudieron cargar los ebooks.</p>
           <p className="text-sm">{error.message}</p>
@@ -50,7 +50,7 @@ export default async function EbooksAdminPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-4xl font-heading font-bold text-tinta">Ebooks</h1>
+        <h1 className="text-4xl font-heading font-bold text-tinta">ebooks</h1>
         <p className="text-muted-foreground mt-2 font-sans">
           El único producto que se compra directo desde la web. El resto del contenido
           (cursos, formaciones) sigue asignándose desde Programas y Comisiones.
