@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { resolverUrlRecurso } from '@/utils/r2'
+import { mercadoPagoConfigurado } from '@/utils/mercadopago'
 import { BrandMark } from '@/components/BrandMark'
 import { ComprarEbookButton } from '@/components/ComprarEbookButton'
 
@@ -69,7 +70,7 @@ export default async function EbookDetallePage({ params }: Props) {
               <p className="text-tinta/80 font-serif leading-relaxed mb-8 whitespace-pre-wrap">{ebook.descripcion}</p>
             )}
             <div className="mt-auto max-w-sm">
-              <ComprarEbookButton />
+              <ComprarEbookButton ebookId={ebook.id} pagosHabilitados={mercadoPagoConfigurado()} />
             </div>
           </div>
         </div>
