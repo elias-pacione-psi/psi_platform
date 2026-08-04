@@ -24,10 +24,16 @@ const command = new PutBucketCorsCommand({
         AllowedMethods: ['GET', 'PUT', 'POST', 'DELETE', 'HEAD'],
         // Agregar acá el dominio real de producción (Vercel y/o dominio propio) antes
         // del primer deploy — si no, la subida funciona en local pero falla en prod.
+        // eliaspacione.com (y su www) sumados el 2026-08-04: sin esto, el PUT presignado
+        // directo al bucket desde el dominio propio fallaba con "NetworkError" en el
+        // navegador — CORS lo bloquea antes de que la request salga, así que el error
+        // que se ve no menciona CORS para nada.
         AllowedOrigins: [
           'http://localhost:3000',
           'https://psi-platform-git-main-psi12.vercel.app',
           'https://psi-platform-ten.vercel.app',
+          'https://eliaspacione.com',
+          'https://www.eliaspacione.com',
         ],
         ExposeHeaders: ['ETag'],
         MaxAgeSeconds: 3600,
