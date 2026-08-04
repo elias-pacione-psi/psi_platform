@@ -94,7 +94,7 @@ export function VentasClient({ filas, totalVentas, ingresosCentavos }: { filas: 
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="font-bold text-tinta">Comprador</TableHead>
-                <TableHead className="font-bold text-tinta">Ebook</TableHead>
+                <TableHead className="font-bold text-tinta">ebook</TableHead>
                 <TableHead className="font-bold text-tinta">Precio</TableHead>
                 <TableHead className="font-bold text-tinta">Estado</TableHead>
                 <TableHead className="font-bold text-tinta">Fecha</TableHead>
