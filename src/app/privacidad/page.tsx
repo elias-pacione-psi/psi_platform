@@ -40,7 +40,11 @@ const secciones = [
   },
   {
     titulo: '8. Seguridad',
-    contenido: '[COMPLETAR: resumir las medidas técnicas — acceso solo por invitación, sesiones autenticadas, reglas de acceso por fila en la base de datos, archivos servidos con enlaces firmados temporales — sin prometer garantías absolutas.]',
+    contenido: '[COMPLETAR: resumir las medidas técnicas — sesiones autenticadas, reglas de acceso por fila en la base de datos, archivos servidos con enlaces firmados temporales — sin prometer garantías absolutas.]',
+  },
+  {
+    titulo: '9. Compra de ebooks',
+    contenido: '[COMPLETAR: al comprar un ebook se guarda el email de la compra, el ebook elegido, el precio pagado y una referencia de la operación con el procesador de pagos (Mercado Pago u otro que se defina) — nunca el número de tarjeta ni datos de la tarjeta en sí, que el procesador de pago maneja directamente. Detallar acá qué datos ve el procesador de pago, si se emite factura y quién la emite, y que la compra no requiere crear una cuenta (el registro es opcional, posterior al pago).]',
   },
 ]
 

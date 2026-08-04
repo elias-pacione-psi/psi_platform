@@ -28,7 +28,10 @@ export async function updateSession(request: NextRequest) {
   // '/' se compara exacto: con startsWith('/') toda ruta sería pública y el guard nunca redirigiría.
   // '/ebooks' es la vidriera pública (fase 2 del modelo comercial): sin esto, cualquiera sin
   // sesión que entrara a comprar rebotaba a /login antes de ver el catálogo.
-  const publicRoutes = ['/login', '/recuperar-contrasena', '/auth/confirm', '/configurar-password', '/privacidad', '/ebooks']
+  const publicRoutes = [
+    '/login', '/recuperar-contrasena', '/auth/confirm', '/configurar-password',
+    '/privacidad', '/terminos', '/arrepentimiento', '/ebooks',
+  ]
   const esRutaPublica = request.nextUrl.pathname === '/'
     || publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 

@@ -158,10 +158,19 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="text-sm space-y-2 md:text-right">
-            <p>&copy; {new Date().getFullYear()} Elias Pacione. Plataforma privada de material para alumnos.</p>
-            <p>
+            <p>&copy; {new Date().getFullYear()} Elias Pacione.</p>
+            {/* El "Botón de Arrepentimiento" tiene que estar visible en la home
+                (Resolución 424/2020) para quien compra un ebook — no puede ir escondido
+                dentro de otra página. Va acá junto a los otros dos links legales. */}
+            <p className="flex flex-wrap gap-x-4 gap-y-1 md:justify-end">
               <Link href="/privacidad" className="underline hover:text-nieve transition-colors">
                 Política de privacidad
+              </Link>
+              <Link href="/terminos" className="underline hover:text-nieve transition-colors">
+                Términos y condiciones
+              </Link>
+              <Link href="/arrepentimiento" className="underline hover:text-nieve transition-colors">
+                Botón de arrepentimiento
               </Link>
             </p>
           </div>
