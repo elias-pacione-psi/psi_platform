@@ -9,12 +9,7 @@ import { borrarDeR2, extraerKeyDeR2 } from '@/utils/r2'
 import { esMarcadorR2 } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
-
-// URL base para los redirects de invitación (localhost en dev, VERCEL_URL/SITE_URL en prod)
-function baseUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-}
+import { baseUrl } from '@/utils/site-url'
 
 // Los invitados deben pasar por /configurar-password antes de entrar al portal
 const INVITE_REDIRECT = `${baseUrl()}/auth/confirm?next=/configurar-password`

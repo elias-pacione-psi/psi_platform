@@ -30,7 +30,12 @@ export async function updateSession(request: NextRequest) {
   // sesión que entrara a comprar rebotaba a /login antes de ver el catálogo.
   const publicRoutes = [
     '/login', '/recuperar-contrasena', '/auth/confirm', '/configurar-password',
-    '/privacidad', '/terminos', '/arrepentimiento', '/ebooks',
+    '/privacidad', '/terminos', '/arrepentimiento', '/ebooks', '/pedido',
+    // El webhook de Mercado Pago (api/webhooks/mercadopago) lo llama el servidor de
+    // Mercado Pago, sin ninguna sesión de esta app — la propia ruta valida la firma de
+    // la notificación, así que redirigirla a /login antes de que corra ese código sería
+    // el mismo tipo de bug que ya apareció con /ebooks, /terminos y /arrepentimiento.
+    '/api',
   ]
   const esRutaPublica = request.nextUrl.pathname === '/'
     || publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
