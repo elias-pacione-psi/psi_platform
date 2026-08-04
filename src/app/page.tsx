@@ -30,7 +30,10 @@ const SECCIONES_NAV = [
 const prestaciones = [
   { icono: FolderHeart, titulo: 'Material a tu medida', texto: 'Solo ves el contenido que Elias preparó para vos, organizado en programas y una biblioteca de apoyo.' },
   { icono: Calendar, titulo: 'Tus encuentros', texto: 'La agenda de tus próximos encuentros, presenciales o virtuales, con acceso directo a la videollamada.' },
-  { icono: ShieldCheck, titulo: 'Privado', texto: 'Acceso únicamente por invitación. Acá no se publica ni se comparte nada de lo tuyo.' },
+  // "Acceso únicamente por invitación" quedó desactualizado: los ebooks se compran
+  // directo, sin invitación. Lo que sigue siendo cierto —y lo que importa acá— es que
+  // nada de lo que un alumno hace en la plataforma se publica ni se comparte.
+  { icono: ShieldCheck, titulo: 'Privado', texto: 'Tu actividad en la plataforma no se publica ni se comparte con nadie.' },
 ]
 
 // Landing sobria
