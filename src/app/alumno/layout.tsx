@@ -19,10 +19,14 @@ export default async function AlumnoLayout({
       .single()
 
     if (alumno) {
-      if (alumno.estado === 'suspendido') {
+      // Se compara contra 'activo' y no contra 'suspendido': cambiarEstadoAlumno() no
+      // borra la fila cuando el estado pasa a 'eliminado', sólo actualiza la columna, así
+      // que preguntar por el estado malo dejaba pasar a los eliminados. La lista de
+      // estados bloqueados no hay que mantenerla; la de permitidos sí, y es uno solo.
+      if (alumno.estado !== 'activo') {
         return (
           <div className="flex h-screen w-full items-center justify-center bg-crema px-6 text-center">
-            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">Tu cuenta está suspendida. Comunicate con tu psicólogo.</h1>
+            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">Tu cuenta no está activa. Comunicate con tu psicólogo.</h1>
           </div>
         )
       }

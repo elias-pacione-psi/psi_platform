@@ -65,6 +65,10 @@ const HOSTS_DROPBOX = ['www.dropbox.com', 'dropbox.com', 'dl.dropboxusercontent.
 // Path dentro de un bucket (tipos supabase_*): sin esquema ni traversal
 const RE_PATH_BUCKET = /^[a-zA-Z0-9][a-zA-Z0-9_\-./]*$/
 
+// Para los ids que terminan interpolados en filtros de PostgREST, donde un caracter suelto
+// cambia el significado de la query en vez de fallar.
+const RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 function esUrlHttps(valor: string, hosts?: string[]): boolean {
   let url: URL
   try { url = new URL(valor) } catch { return false }
@@ -618,6 +622,11 @@ async function guardarProgramasDeCohorte(
   cohorteId: string,
   programaIds: string[],
 ): Promise<{ error: string } | { ok: true }> {
+  // Los ids se interpolan crudos en el filtro `in` de PostgREST unas líneas más abajo, así
+  // que tienen que ser uuids y no strings arbitrarios: un valor con ')' o ',' reescribe el
+  // filtro y el borrado deja de alcanzar lo que debería. Vienen de formData.getAll().
+  if (!programaIds.every((id) => RE_UUID.test(id))) return { error: 'Programa inválido' }
+
   const { error: errorBorrado } = await supabaseAdmin
     .from('cohortes_programas')
     .delete()

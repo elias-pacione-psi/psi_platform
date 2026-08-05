@@ -8,7 +8,10 @@ export async function subirEntregaAR2(
   file: File,
   leccionId: string
 ): Promise<{ key: string } | { error: string }> {
-  const res = await obtenerUrlSubidaEntregaR2(file.name, file.type, leccionId)
+  // El tamaño va al servidor para que lo valide contra su propio tope antes de firmar
+  // nada: es un dato del cliente, así que es una cota blanda, pero sin mandarlo la subida
+  // no tenía ningún límite del lado de la app.
+  const res = await obtenerUrlSubidaEntregaR2(file.name, file.type, leccionId, file.size)
   if (!res.success || !res.url || !res.key) {
     return { error: res.error || 'No se pudo generar la URL de subida a R2' }
   }

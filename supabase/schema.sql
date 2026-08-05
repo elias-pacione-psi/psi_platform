@@ -461,11 +461,21 @@ create policy "progreso_select" on public.progreso_lecciones
   for select to authenticated
   using (alumno_id = auth.uid() or public.es_psicologo());
 
+-- El WITH CHECK exige además que la lección sea de un programa asignado: antes sólo
+-- pedía "esto es mío", así que se podía marcar progreso sobre cualquier leccion_id del
+-- sistema. El USING queda sin ese chequeo a propósito — si el psicólogo revoca un
+-- programa, las filas viejas tienen que seguir siendo borrables y legibles por su dueño.
 drop policy if exists "progreso_write_propio" on public.progreso_lecciones;
 create policy "progreso_write_propio" on public.progreso_lecciones
   for all to authenticated
   using (alumno_id = auth.uid())
-  with check (alumno_id = auth.uid());
+  with check (
+    alumno_id = auth.uid()
+    and exists (
+      select 1 from public.lecciones l
+      where l.id = leccion_id and public.tiene_acceso_programa(l.programa_id)
+    )
+  );
 
 -- quiz_preguntas: SOLO el psicólogo tiene acceso directo. El alumno nunca lee esta
 -- tabla vía API (contiene respuesta_correcta). El servidor usa service-role para
@@ -503,26 +513,46 @@ create policy "entregas_select" on public.entregas
 -- antes de esta función, la policy solo exigía alumno_id = auth.uid(), así que alguien
 -- que llamara a la API de Supabase directo (sin pasar por la server action) podía
 -- registrar como propia la key de otro alumno y después leerla firmada desde Tareas.
+-- `set search_path` fijo como en el resto de las funciones del archivo: ésta decide una
+-- policy, no es el lugar para dejar la resolución de `like`/`||` al search_path del caller.
 create or replace function public.archivo_url_pertenece_alumno(url text)
 returns boolean
 language sql
 stable
+set search_path = public, pg_catalog
 as $$
   select
     url like ('r2key://entregas/' || auth.uid()::text || '/%')
     or url like (auth.uid()::text || '/%')
 $$;
 
+-- Al chequeo de "el archivo es mío" se le suma "la lección me corresponde": sin eso se
+-- podían crear entregas apuntando a cualquier leccion_id del sistema. Igual que en
+-- progreso_lecciones, sólo en el WITH CHECK, para no dejar filas viejas sin poder borrar.
 drop policy if exists "entregas_insert_propio" on public.entregas;
 create policy "entregas_insert_propio" on public.entregas
   for insert to authenticated
-  with check (alumno_id = auth.uid() and public.archivo_url_pertenece_alumno(archivo_url));
+  with check (
+    alumno_id = auth.uid()
+    and public.archivo_url_pertenece_alumno(archivo_url)
+    and exists (
+      select 1 from public.lecciones l
+      where l.id = leccion_id and public.tiene_acceso_programa(l.programa_id)
+    )
+  );
 
 drop policy if exists "entregas_update_propio" on public.entregas;
 create policy "entregas_update_propio" on public.entregas
   for update to authenticated
   using (alumno_id = auth.uid())
-  with check (alumno_id = auth.uid() and public.archivo_url_pertenece_alumno(archivo_url));
+  with check (
+    alumno_id = auth.uid()
+    and public.archivo_url_pertenece_alumno(archivo_url)
+    and exists (
+      select 1 from public.lecciones l
+      where l.id = leccion_id and public.tiene_acceso_programa(l.programa_id)
+    )
+  );
 
 drop policy if exists "entregas_update_psicologo" on public.entregas;
 create policy "entregas_update_psicologo" on public.entregas
@@ -560,9 +590,13 @@ insert into storage.buckets (id, name, public)
 values ('materiales', 'materiales', false)
 on conflict (id) do update set public = false;
 
-insert into storage.buckets (id, name, public)
-values ('entregas', 'entregas', false)
-on conflict (id) do update set public = false;
+-- Tope duro de 100 MB por archivo, espejo de TAMANO_MAXIMO_ENTREGA_BYTES en
+-- src/app/alumno/actions.ts. El de la action es una cota blanda (el tamaño lo declara el
+-- cliente); éste es el que no se puede mentir. Nota: las entregas nuevas van a R2, que no
+-- hereda este límite — allá el equivalente es una regla del bucket.
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('entregas', 'entregas', false, 104857600)
+on conflict (id) do update set public = false, file_size_limit = 104857600;
 
 -- materiales: solo el psicólogo escribe/lee directo
 drop policy if exists "materiales_select_psicologo" on storage.objects;

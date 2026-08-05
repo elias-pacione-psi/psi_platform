@@ -172,16 +172,21 @@ enable_refresh_token_rotation = true
 # Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
 # Requires enable_refresh_token_rotation = true.
 refresh_token_reuse_interval = 10
-# Portal cerrado por defecto: los alumnos entran solo por invitación del psicólogo
-# (inviteUserByEmail usa la admin API y no depende de este flag). Se habilita en
-# true a partir de la decisión del 2026-08-04 (ver AGENTS.md y
-# docs/plan-modelo-comercial.md, fase 5) — pero SIGUE ACOTADO: Supabase por sí solo no
-# sabe distinguir "alguien que pagó un ebook" de "cualquiera en internet", así que el
-# guardrail real vive en la aplicación (crearCuentaComprador en
-# app/crear-cuenta/actions.ts exige al menos una orden 'pagada' con ese email antes de
-# llamar a signUp — sin eso, devuelve error y ni intenta crear la cuenta). Si se vuelve
-# a cerrar el portal del todo, este flag es el que hay que volver a false.
-enable_signup = true
+# Portal cerrado: los alumnos entran solo por invitación del psicólogo o por compra de un
+# ebook. Los dos caminos usan la admin API (inviteUserByEmail / createUser) y NO dependen
+# de este flag, así que dejarlo en false no rompe ninguno de los dos.
+#
+# Estuvo en true entre el 2026-08-04 y la auditoría del 2026-08-05, apoyado en que el
+# guardrail real vivía en crearCuentaComprador() (exige una orden 'pagada' con ese email).
+# El razonamiento tenía un agujero: la anon key viaja en el bundle del navegador, así que
+# cualquiera podía hacer un POST directo a /auth/v1/signup y saltearse esa función entera.
+# El flag es la única capa que puede distinguir "hay un endpoint público de alta" de "no
+# lo hay" — una validación en la aplicación no puede cerrar una puerta que está al lado.
+#
+# OJO: este archivo sólo configura el stack LOCAL (`supabase start`). El cambio que
+# realmente cierra el endpoint en producción es el toggle del dashboard:
+# Authentication → Sign In / Providers → "Allow new users to sign up" = OFF.
+enable_signup = false
 # Allow/disallow anonymous sign-ins to your project.
 enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
