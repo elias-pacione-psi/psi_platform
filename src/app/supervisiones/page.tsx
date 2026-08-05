@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users } from 'lucide-react'
-import { AvisoPreview } from '../_components/AvisoPreview'
-import { ImagenMuestra } from '../_components/ImagenMuestra'
+import { ImagenMuestra } from '@/components/ImagenMuestra'
+
+export const metadata = { title: 'Supervisiones | Elias Pacione' }
 
 const PASOS = [
   {
@@ -21,11 +22,9 @@ const PASOS = [
   },
 ]
 
-export default function TestSupervisionesPage() {
+export default function SupervisionesPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <AvisoPreview servicioActual="Supervisiones" />
-
       <header className="w-full border-b border-border px-6 py-4">
         <div className="max-w-5xl mx-auto">
           <Link href="/" className="text-sm text-marca hover:text-tinta transition-colors">

@@ -15,16 +15,17 @@ const conceptos = [
 
 // Navegación de la landing, en el orden en que van de izquierda a derecha. Ebooks es
 // el único producto con compra directa — tiene su propia vidriera. Los otros cuatro
-// bajan al formulario de Consultas con el interés ya elegido en el desplegable (mismos
-// valores que el check `solicitudes_interes_valido` de la migración
+// bajan a una página propia que explica el servicio; el CTA de esa página baja al
+// formulario de Consultas con el interés ya elegido en el desplegable (mismos valores
+// que el check `solicitudes_interes_valido` de la migración
 // 2026-08-04-ebooks-y-desplegable-interes.sql), porque no se venden online: los sigue
 // coordinando Elias a mano — ver docs/plan-modelo-comercial.md.
 const SECCIONES_NAV = [
   { titulo: 'ebooks', href: '/ebooks' },
-  { titulo: 'Cursos', href: '/?interes=curso#contacto' },
-  { titulo: 'Formaciones', href: '/?interes=formacion#contacto' },
-  { titulo: 'Supervisiones', href: '/?interes=supervision#contacto' },
-  { titulo: 'Terapia individual', href: '/?interes=terapia_individual#contacto' },
+  { titulo: 'Cursos', href: '/cursos' },
+  { titulo: 'Formaciones', href: '/formaciones' },
+  { titulo: 'Supervisiones', href: '/supervisiones' },
+  { titulo: 'Terapia individual', href: '/terapia-individual' },
 ]
 
 const prestaciones = [

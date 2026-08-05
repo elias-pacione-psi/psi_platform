@@ -31,9 +31,9 @@ export async function updateSession(request: NextRequest) {
   const publicRoutes = [
     '/login', '/recuperar-contrasena', '/auth/confirm', '/configurar-password',
     '/privacidad', '/terminos', '/arrepentimiento', '/ebooks', '/pedido', '/crear-cuenta',
-    // Páginas de prueba de contenido (src/app/test/**): borrador sin datos ni
-    // funcionalidad real, para que Lucas/Elias las revisen sin tener que loguearse.
-    '/test',
+    // Páginas de explicación de cada servicio, enlazadas desde la nav de la landing.
+    // Ninguna vende online: su CTA baja al mismo formulario de Consultas.
+    '/cursos', '/formaciones', '/supervisiones', '/terapia-individual',
     // El webhook de Mercado Pago (api/webhooks/mercadopago) lo llama el servidor de
     // Mercado Pago, sin ninguna sesión de esta app — la propia ruta valida la firma de
     // la notificación, así que redirigirla a /login antes de que corra ese código sería

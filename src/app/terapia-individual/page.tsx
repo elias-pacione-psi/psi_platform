@@ -1,31 +1,30 @@
 import Link from 'next/link'
-import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock } from 'lucide-react'
-import { AvisoPreview } from '../_components/AvisoPreview'
-import { ImagenMuestra } from '../_components/ImagenMuestra'
+import { HeartHandshake, UserRound, MessageCircleHeart, ArrowRight, ShieldCheck } from 'lucide-react'
+import { ImagenMuestra } from '@/components/ImagenMuestra'
+
+export const metadata = { title: 'Terapia individual | Elias Pacione' }
 
 const PASOS = [
   {
-    icono: BookOpen,
-    titulo: 'Elias arma el programa',
-    texto: 'Módulos y lecciones organizados, con video, lecturas y material de apoyo.',
+    icono: MessageCircleHeart,
+    titulo: 'Primera consulta',
+    texto: 'Nos conocemos y charlamos sobre qué te trae a buscar este espacio.',
   },
   {
-    icono: Clock,
-    titulo: 'Avanzás a tu ritmo',
-    texto: 'Sin horarios fijos ni clases en vivo: entrás cuando podés y retomás donde quedaste.',
+    icono: UserRound,
+    titulo: 'Definimos la modalidad',
+    texto: 'Presencial o virtual, con la frecuencia que mejor te acomode.',
   },
   {
-    icono: ClipboardCheck,
-    titulo: 'Quiz de comprensión',
-    texto: 'Cada módulo cierra con un quiz corto. Necesitás 70% para pasar al siguiente.',
+    icono: HeartHandshake,
+    titulo: 'Sesiones con continuidad',
+    texto: 'Encuentros periódicos, en un espacio pensado para vos.',
   },
 ]
 
-export default function TestCursosPage() {
+export default function TerapiaIndividualPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <AvisoPreview servicioActual="Cursos" />
-
       <header className="w-full border-b border-border px-6 py-4">
         <div className="max-w-5xl mx-auto">
           <Link href="/" className="text-sm text-marca hover:text-tinta transition-colors">
@@ -39,23 +38,23 @@ export default function TestCursosPage() {
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-16 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="font-sans text-xs font-semibold tracking-[0.14em] uppercase text-marca mb-4">
-              Curso asincrónico
+              Terapia individual
             </p>
             <h1 className="text-tinta text-4xl md:text-5xl font-heading font-semibold mb-5 leading-[1.15] tracking-tight">
-              Aprendé a tu ritmo, cuando puedas
+              Un espacio propio para tu proceso
             </h1>
             <p className="font-serif text-tinta/75 text-lg leading-relaxed mb-8">
-              Contenido grabado y organizado en módulos y lecciones, para ir avanzando
-              cuando tengas tiempo — sin horarios fijos que cumplir.
+              Acompañamiento psicológico individual, presencial o virtual, en un
+              espacio confidencial pensado a tu ritmo.
             </p>
             <Link
-              href="/?interes=curso#contacto"
+              href="/?interes=terapia_individual#contacto"
               className="inline-flex items-center gap-2 bg-tinta text-crema px-8 py-3.5 rounded-full font-medium text-base transition-colors hover:bg-marca"
             >
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={PlayCircle} etiqueta="Lección grabada" variante="marca" />
+          <ImagenMuestra icon={HeartHandshake} etiqueta="Encuentro terapéutico" variante="marca" />
         </div>
       </section>
 
@@ -63,13 +62,13 @@ export default function TestCursosPage() {
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es un curso asincrónico?
+            ¿Qué es la terapia individual?
           </h2>
           <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es contenido ya grabado — videos, lecturas y ejercicios — que vas viendo
-            cuando quieras, en el orden en que Elias lo pensó. No hay clases en vivo ni
-            fechas de inscripción: entrás con tu usuario y avanzás lección por lección.
-            Es la opción para quien prefiere aprender solo, a su propio ritmo.
+            Es un espacio de encuentro, uno a uno, para acompañarte en lo que estés
+            atravesando — con escucha, contención y un vínculo de confianza. No hay una
+            fórmula única: la frecuencia y la modalidad se piensan juntos, según tu
+            momento y tus tiempos.
           </p>
         </div>
       </section>
@@ -95,19 +94,21 @@ export default function TestCursosPage() {
         </div>
       </section>
 
-      {/* PARA QUIÉN ES + imágenes */}
+      {/* PRIVACIDAD + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={BookOpen} etiqueta="Módulo con material de apoyo" variante="sage" className="md:order-2" />
+          <ImagenMuestra icon={UserRound} etiqueta="Espacio individual" variante="sage" className="md:order-2" />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-              ¿Para quién es?
+              Un espacio confidencial
             </h2>
-            <ul className="font-serif text-tinta/75 text-base leading-relaxed space-y-3">
-              <li>· Para quien tiene una agenda apretada y necesita flexibilidad de horarios.</li>
-              <li>· Para quien prefiere estudiar solo, sin la dinámica de un grupo.</li>
-              <li>· Para quien ya tiene una base y quiere profundizar un tema puntual.</li>
-            </ul>
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="w-6 h-6 text-marca shrink-0 mt-1" strokeWidth={1.5} />
+              <p className="font-serif text-tinta/75 text-base leading-relaxed">
+                Lo que se conversa en sesión queda entre vos y Elias. Nada de tu proceso
+                se publica ni se comparte con nadie.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -116,14 +117,14 @@ export default function TestCursosPage() {
       <section className="bg-tinta">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
           <h2 className="text-crema text-2xl md:text-3xl font-heading font-semibold mb-4 tracking-tight">
-            ¿Te interesa este curso?
+            ¿Querés empezar tu proceso?
           </h2>
           <p className="font-serif text-crema/75 text-base leading-relaxed mb-8">
-            Los cursos no se compran online: contanos qué te interesa y Elias te
-            escribe para coordinar el acceso.
+            Contanos brevemente qué te trae por acá y Elias te escribe para coordinar
+            una primera consulta.
           </p>
           <Link
-            href="/?interes=curso#contacto"
+            href="/?interes=terapia_individual#contacto"
             className="inline-flex items-center gap-2 bg-crema text-tinta px-8 py-3.5 rounded-full font-medium text-base transition-colors hover:bg-marca hover:text-crema"
           >
             Quiero más información <ArrowRight className="w-4 h-4" />

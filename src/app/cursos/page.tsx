@@ -1,31 +1,30 @@
 import Link from 'next/link'
-import { Presentation, Users, CalendarCheck, ArrowRight, BookOpen } from 'lucide-react'
-import { AvisoPreview } from '../_components/AvisoPreview'
-import { ImagenMuestra } from '../_components/ImagenMuestra'
+import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock } from 'lucide-react'
+import { ImagenMuestra } from '@/components/ImagenMuestra'
+
+export const metadata = { title: 'Cursos | Elias Pacione' }
 
 const PASOS = [
   {
-    icono: CalendarCheck,
-    titulo: 'Te inscribís en una cohorte',
-    texto: 'Cada comisión tiene fecha de inicio y un grupo con el que recorrés la formación.',
-  },
-  {
-    icono: Presentation,
-    titulo: 'Asistís a los encuentros en vivo',
-    texto: 'Clases presenciales o virtuales, con espacio para preguntar e intercambiar.',
-  },
-  {
     icono: BookOpen,
-    titulo: 'Tenés programa + ebook',
-    texto: 'El contenido completo queda disponible junto con un ebook de acompañamiento.',
+    titulo: 'Elias arma el programa',
+    texto: 'Módulos y lecciones organizados, con video, lecturas y material de apoyo.',
+  },
+  {
+    icono: Clock,
+    titulo: 'Avanzás a tu ritmo',
+    texto: 'Sin horarios fijos ni clases en vivo: entrás cuando podés y retomás donde quedaste.',
+  },
+  {
+    icono: ClipboardCheck,
+    titulo: 'Quiz de comprensión',
+    texto: 'Cada módulo cierra con un quiz corto. Necesitás 70% para pasar al siguiente.',
   },
 ]
 
-export default function TestFormacionesPage() {
+export default function CursosPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <AvisoPreview servicioActual="Formaciones" />
-
       <header className="w-full border-b border-border px-6 py-4">
         <div className="max-w-5xl mx-auto">
           <Link href="/" className="text-sm text-marca hover:text-tinta transition-colors">
@@ -39,23 +38,23 @@ export default function TestFormacionesPage() {
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-16 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="font-sans text-xs font-semibold tracking-[0.14em] uppercase text-marca mb-4">
-              Formación con clases en vivo
+              Curso asincrónico
             </p>
             <h1 className="text-tinta text-4xl md:text-5xl font-heading font-semibold mb-5 leading-[1.15] tracking-tight">
-              Un recorrido en grupo, con encuentros en vivo
+              Aprendé a tu ritmo, cuando puedas
             </h1>
             <p className="font-serif text-tinta/75 text-lg leading-relaxed mb-8">
-              Formación por comisiones: clases en vivo con un grupo, programa
-              estructurado y un ebook que acompaña todo el recorrido.
+              Contenido grabado y organizado en módulos y lecciones, para ir avanzando
+              cuando tengas tiempo — sin horarios fijos que cumplir.
             </p>
             <Link
-              href="/?interes=formacion#contacto"
+              href="/?interes=curso#contacto"
               className="inline-flex items-center gap-2 bg-tinta text-crema px-8 py-3.5 rounded-full font-medium text-base transition-colors hover:bg-marca"
             >
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={Presentation} etiqueta="Clase en vivo" variante="marca" />
+          <ImagenMuestra icon={PlayCircle} etiqueta="Lección grabada" variante="marca" />
         </div>
       </section>
 
@@ -63,13 +62,13 @@ export default function TestFormacionesPage() {
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es una formación?
+            ¿Qué es un curso asincrónico?
           </h2>
           <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es un recorrido junto a un grupo (la cohorte), con clases en vivo —
-            presenciales o virtuales— además del programa y la biblioteca de apoyo que
-            también tienen los cursos. La diferencia está en el encuentro: hay fechas
-            fijas, intercambio con otros y devolución personalizada en los trabajos.
+            Es contenido ya grabado — videos, lecturas y ejercicios — que vas viendo
+            cuando quieras, en el orden en que Elias lo pensó. No hay clases en vivo ni
+            fechas de inscripción: entrás con tu usuario y avanzás lección por lección.
+            Es la opción para quien prefiere aprender solo, a su propio ritmo.
           </p>
         </div>
       </section>
@@ -98,15 +97,15 @@ export default function TestFormacionesPage() {
       {/* PARA QUIÉN ES + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={Users} etiqueta="Grupo de la cohorte" variante="sage" className="md:order-2" />
+          <ImagenMuestra icon={BookOpen} etiqueta="Módulo con material de apoyo" variante="sage" className="md:order-2" />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               ¿Para quién es?
             </h2>
             <ul className="font-serif text-tinta/75 text-base leading-relaxed space-y-3">
-              <li>· Para quien aprende mejor con la estructura de fechas fijas.</li>
-              <li>· Para quien busca intercambiar con otros que están en lo mismo.</li>
-              <li>· Para quien quiere devolución personalizada, no solo material grabado.</li>
+              <li>· Para quien tiene una agenda apretada y necesita flexibilidad de horarios.</li>
+              <li>· Para quien prefiere estudiar solo, sin la dinámica de un grupo.</li>
+              <li>· Para quien ya tiene una base y quiere profundizar un tema puntual.</li>
             </ul>
           </div>
         </div>
@@ -116,14 +115,14 @@ export default function TestFormacionesPage() {
       <section className="bg-tinta">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
           <h2 className="text-crema text-2xl md:text-3xl font-heading font-semibold mb-4 tracking-tight">
-            ¿Te interesa esta formación?
+            ¿Te interesa este curso?
           </h2>
           <p className="font-serif text-crema/75 text-base leading-relaxed mb-8">
-            La inscripción no es online: contanos qué te interesa y Elias te escribe
-            con las próximas fechas de comisión.
+            Los cursos no se compran online: contanos qué te interesa y Elias te
+            escribe para coordinar el acceso.
           </p>
           <Link
-            href="/?interes=formacion#contacto"
+            href="/?interes=curso#contacto"
             className="inline-flex items-center gap-2 bg-crema text-tinta px-8 py-3.5 rounded-full font-medium text-base transition-colors hover:bg-marca hover:text-crema"
           >
             Quiero más información <ArrowRight className="w-4 h-4" />

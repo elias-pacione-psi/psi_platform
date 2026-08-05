@@ -3,8 +3,8 @@ import { cn } from '@/lib/utils'
 
 // No hay fotografía propia todavía (ver public/ — solo assets de marca), así que
 // estas tarjetas hacen de placeholder honesto: se rotulan como "imagen de
-// muestra" en vez de simular una foto real, para que quien revise el contenido
-// no las confunda con el asset final.
+// muestra" en vez de simular una foto real, para que no se confundan con el
+// asset final el día que haya fotografía propia.
 const FONDOS = {
   marca: 'from-marca/25 via-marca/10 to-transparent',
   sage: 'from-sage/50 via-sage/15 to-transparent',
