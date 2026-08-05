@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { HeartHandshake, UserRound, MessageCircleHeart, ArrowRight, ShieldCheck } from 'lucide-react'
 import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Terapia individual | Elias Pacione' }
 
@@ -25,13 +26,7 @@ const PASOS = [
 export default function TerapiaIndividualPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <header className="w-full border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="text-sm text-marca hover:text-tinta transition-colors">
-            ← Volver al inicio
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* HERO */}
       <section className="border-b border-border">

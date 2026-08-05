@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Presentation, Users, CalendarCheck, ArrowRight, BookOpen } from 'lucide-react'
 import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Formaciones | Elias Pacione' }
 
@@ -25,13 +26,7 @@ const PASOS = [
 export default function FormacionesPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <header className="w-full border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="text-sm text-marca hover:text-tinta transition-colors">
-            ← Volver al inicio
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* HERO */}
       <section className="border-b border-border">
