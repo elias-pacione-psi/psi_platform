@@ -1,9 +1,26 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { AdminAlumnosClient } from './AdminAlumnosClient'
 
 export default async function AdminAlumnosPage() {
   const supabase = await createClient()
+
+  // Mismo chequeo que psicologo/page.tsx, y por el mismo motivo: abajo se lee
+  // solicitudes_registro con service-role (esa tabla no tiene policy de lectura a
+  // propósito), y un permiso que saltea RLS no puede apoyarse sólo en el redirect del
+  // layout. Que Next aborte el render al redirigir es un detalle de orquestación, no una
+  // decisión de este archivo — y las consultas admin se ejecutan igual antes de eso.
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const { data: perfil } = await supabase
+    .from('alumnos')
+    .select('rol')
+    .eq('id', user.id)
+    .single()
+  if (perfil?.rol !== 'psicologo') redirect('/alumno')
+
   const supabaseAdmin = createAdminClient()
 
   const [

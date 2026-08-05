@@ -8,7 +8,17 @@ import { responderQuiz } from '@/app/alumno/actions'
 import { toast } from 'sonner'
 
 type Pregunta = { id: string, pregunta: string, opciones: string[] }
-type Resultado = { puntaje: number, total: number, aprobado: boolean, solucion: Record<string, { correcta: string, acertada: boolean }> }
+// `correcta` es opcional a propósito: el servidor sólo la manda cuando ya no puede usarse
+// para reintentar (aprobado o sin intentos restantes). Mientras queden, llega sólo
+// `acertada` — el alumno ve qué falló, no cuál era la buena.
+type Solucion = { correcta?: string, acertada: boolean }
+type Resultado = {
+  puntaje: number
+  total: number
+  aprobado: boolean
+  intentosRestantes: number
+  solucion: Record<string, Solucion>
+}
 
 export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pregunta[], leccionId: string, programaId: string }) {
   const [respuestas, setRespuestas] = useState<Record<string, string>>({})
@@ -25,7 +35,13 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
     startTransition(async () => {
       const r = await responderQuiz(leccionId, programaId, respuestas)
       if (r?.error) { toast.error(r.error); return }
-      if (r?.success) setResultado({ puntaje: r.puntaje!, total: r.total!, aprobado: r.aprobado!, solucion: r.solucion! })
+      if (r?.success) setResultado({
+        puntaje: r.puntaje!,
+        total: r.total!,
+        aprobado: r.aprobado!,
+        intentosRestantes: r.intentosRestantes!,
+        solucion: r.solucion!,
+      })
     })
   }
 
@@ -42,7 +58,11 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
                 {resultado.puntaje} / {resultado.total} — {Math.round((resultado.puntaje / resultado.total) * 100)}%
               </p>
               <p className="text-sm text-muted-foreground">
-                {resultado.aprobado ? '¡Aprobado! La lección quedó completada.' : 'No alcanzaste el 70%. Repasá y volvé a intentar.'}
+                {resultado.aprobado
+                  ? '¡Aprobado! La lección quedó completada.'
+                  : resultado.intentosRestantes > 0
+                    ? `No alcanzaste el 70%. Repasá y volvé a intentar — te ${resultado.intentosRestantes === 1 ? 'queda 1 intento' : `quedan ${resultado.intentosRestantes} intentos`}.`
+                    : 'No alcanzaste el 70% y usaste todos tus intentos. Abajo están las respuestas correctas; escribile a tu instructor.'}
               </p>
             </div>
           </CardContent>
@@ -58,10 +78,18 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
               <div className="space-y-2">
                 {p.opciones.map((op) => {
                   const elegida = respuestas[p.id] === op
+                  // Se distingue "ésta era la correcta" de "la tuya estuvo bien": cuando el
+                  // servidor no manda `correcta` (todavía quedan intentos), lo único que se
+                  // sabe de cada pregunta es `acertada`. Comparar contra un `correcta`
+                  // undefined pintaría de rojo hasta la opción que el alumno acertó.
+                  const esLaCorrecta = sol?.correcta !== undefined && op === sol.correcta
+                  const marcarBien = esLaCorrecta || (elegida && sol?.acertada === true)
+                  const marcarMal = elegida && sol?.acertada === false
+
                   let estilo = 'border-border hover:border-marca/40'
                   if (resultado && sol) {
-                    if (op === sol.correcta) estilo = 'border-marca bg-marca/10'
-                    else if (elegida) estilo = 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40'
+                    if (marcarBien) estilo = 'border-marca bg-marca/10'
+                    else if (marcarMal) estilo = 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/40'
                   } else if (elegida) {
                     estilo = 'border-marca bg-marca/5'
                   }
@@ -77,8 +105,8 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
                         className="accent-marca"
                       />
                       <span className="text-sm text-tinta flex-1">{op}</span>
-                      {resultado && sol && op === sol.correcta && <CheckCircle2 className="w-4 h-4 text-marca" />}
-                      {resultado && sol && elegida && op !== sol.correcta && <XCircle className="w-4 h-4 text-red-500 dark:text-red-400" />}
+                      {resultado && sol && marcarBien && <CheckCircle2 className="w-4 h-4 text-marca" />}
+                      {resultado && sol && marcarMal && <XCircle className="w-4 h-4 text-red-500 dark:text-red-400" />}
                     </label>
                   )
                 })}
@@ -90,9 +118,12 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
 
       <div className="flex justify-end">
         {resultado ? (
-          !resultado.aprobado && (
+          // Sin intentos restantes no se ofrece reintentar: el servidor lo rechazaría igual
+          // (MAXIMO_INTENTOS_QUIZ en alumno/actions.ts), y un botón que sólo sirve para
+          // recibir un error es peor que no tenerlo.
+          !resultado.aprobado && resultado.intentosRestantes > 0 && (
             <Button onClick={reintentar} className="bg-marca hover:bg-marca/90 text-crema px-8 h-12 rounded-xl">
-              <RotateCcw className="w-4 h-4 mr-2" /> Reintentar
+              <RotateCcw className="w-4 h-4 mr-2" /> Reintentar ({resultado.intentosRestantes})
             </Button>
           )
         ) : (

@@ -10,9 +10,14 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { toast } from 'sonner'
 
-// Debe coincidir con la política de Supabase (supabase/config.toml → [auth]): si
-// difieren, una contraseña que pasa esta validación puede ser rechazada igual por el
-// servidor, con un error genérico que no le explica al alumno qué le falta.
+// OJO — hoy esta validación es MÁS ESTRICTA que el servidor, no un espejo de él.
+// Verificado contra producción el 2026-08-05: el endpoint acepta "abcdef" (6 caracteres,
+// sin mayúscula, número ni símbolo). supabase/config.toml declara 12 + complejidad, pero
+// ese archivo sólo configura el stack local; producción quedó en el default de Supabase.
+// Como updateUser() se llama desde el navegador, cualquiera puede saltear esta pantalla y
+// ponerse una contraseña de 6 caracteres. Mientras el dashboard no se alinee
+// (Authentication → Policies), esto es una recomendación y no un límite — ver la sección
+// 5 de supabase/snippets/2026-08-05-hardening-auditoria.sql.
 const MIN_LEN = 12
 const REQUISITOS: { regex: RegExp; label: string }[] = [
   { regex: /[a-z]/, label: 'una minúscula' },

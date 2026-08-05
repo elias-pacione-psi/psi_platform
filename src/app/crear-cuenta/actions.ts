@@ -30,10 +30,11 @@ const REQUISITOS: { regex: RegExp; label: string }[] = [
   { regex: /[^A-Za-z0-9]/, label: 'un símbolo' },
 ]
 
-// Mismo esquema (largo y requisitos) que /configurar-password: si difiere, una
-// contraseña que pasa acá podría ser rechazada por Supabase igual (o al revés, esta
-// pantalla podría ser más floja que la política real) — ver supabase/config.toml
-// [auth] minimum_password_length / password_requirements.
+// Mismo esquema (largo y requisitos) que /configurar-password. Verificado contra
+// producción el 2026-08-05: el servidor es MÁS FLOJO que esto (acepta 6 caracteres sin
+// requisitos), así que acá el chequeo sí muerde — es el único que aplica en el alta por
+// compra. Alinear el dashboard igual (Authentication → Policies), porque el cambio de
+// contraseña posterior pasa por el navegador y no por esta función.
 function errorEnPassword(password: string): string | null {
   if (password.length < MIN_LEN) return `La contraseña tiene que tener al menos ${MIN_LEN} caracteres.`
   const faltantes = REQUISITOS.filter((r) => !r.regex.test(password)).map((r) => r.label)
@@ -68,27 +69,45 @@ export async function crearCuentaComprador(formData: FormData) {
     return { error: 'No encontramos ninguna compra confirmada con ese email.' }
   }
 
-  // Con el cliente del usuario (no admin): así, si Supabase no exige confirmar el email
-  // (enable_confirmations = false en supabase/config.toml), la sesión que arma signUp
-  // queda puesta en la cookie de esta respuesta y la persona entra ya logueada.
-  const supabase = await createClient()
-  const { data, error } = await supabase.auth.signUp({
+  // Con admin.createUser() y NO con signUp(): el endpoint público /auth/v1/signup queda
+  // DESHABILITADO en el dashboard a propósito (Authentication → Sign In / Providers →
+  // "Allow new users to sign up" = OFF, espejado en supabase/config.toml).
+  //
+  // Con signUp() abierto, el chequeo de tieneCompraPagada() de arriba era decorativo: la
+  // anon key viaja en el bundle del navegador, así que cualquiera podía hacer un POST a
+  // /auth/v1/signup salteándose esta función entera y quedarse con una sesión
+  // `authenticated` sin haber comprado nada. Con eso no llegaba a los datos de otros
+  // alumnos (la RLS aguanta), pero sí a escribir progreso y entregas sin límite y a subir
+  // archivos al bucket de R2 — o sea, a la factura de Cloudflare. Además rompía la regla
+  // de AGENTS.md: el alta es por invitación del psicólogo o por compra, nunca abierta.
+  //
+  // Ahora el alta sólo existe donde ya se validó la compra, y eso lo garantiza Supabase
+  // (no hay endpoint público que crear cuentas) y no sólo el orden de las líneas de acá.
+  // email_confirm: true porque la identidad ya está probada — pagó con este email.
+  const { data: creado, error: errorCreacion } = await supabaseAdmin.auth.admin.createUser({
     email,
     password,
-    options: { data: { nombre } }, // handle_new_user() lee esto para el nombre inicial del perfil
+    email_confirm: true,
+    user_metadata: { nombre }, // handle_new_user() lo lee para el nombre inicial del perfil
   })
-  if (error) return { error: error.message }
-  if (!data.user) return { error: 'No se pudo crear la cuenta. Intentá de nuevo.' }
+  if (errorCreacion) return { error: errorCreacion.message }
+  if (!creado.user) return { error: 'No se pudo crear la cuenta. Intentá de nuevo.' }
 
   // Con admin client: recién creada, esta cuenta no tiene forma de pasar la policy de
   // `ordenes` por su cuenta (ordenes_select_propia exige alumno_id = auth.uid(), que es
   // justo la columna que se está por completar acá).
   await supabaseAdmin
     .from('ordenes')
-    .update({ alumno_id: data.user.id })
+    .update({ alumno_id: creado.user.id })
     .eq('email_comprador', email)
     .eq('estado', 'pagada')
     .is('alumno_id', null)
 
-  return { success: true, haySesion: Boolean(data.session) }
+  // createUser() no deja cookie de sesión (corre con service-role, fuera de esta request).
+  // Se inicia sesión aparte con el cliente del usuario para que la persona entre ya
+  // logueada, que es lo que antes hacía signUp() de arrastre.
+  const supabase = await createClient()
+  const { data: sesion } = await supabase.auth.signInWithPassword({ email, password })
+
+  return { success: true, haySesion: Boolean(sesion?.session) }
 }

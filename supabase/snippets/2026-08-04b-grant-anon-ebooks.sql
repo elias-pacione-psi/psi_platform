@@ -23,6 +23,12 @@
 -- — todo lo que el checkout público toca en esa tabla pasa por service-role
 -- (ver app/ebooks/actions.ts), nunca por el cliente anon directo.
 
+-- SUPERSEDIDO POR 2026-08-05-hardening-auditoria.sql (sección 4): este grant es sobre
+-- TODA la tabla, y en la auditoría del 2026-08-05 se comprobó que eso le mostraba a
+-- cualquiera (anon) la columna archivo_key — la key de R2 del PDF que se vende. El
+-- snippet nuevo lo reemplaza por un grant por columna. Si corrés este archivo después
+-- de aquél, volvés a abrir archivo_key: correlos en orden, o directamente saltate éste.
+
 begin;
 
 grant select on public.ebooks to anon;

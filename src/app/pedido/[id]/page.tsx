@@ -9,6 +9,17 @@ export const metadata = { title: 'Tu pedido | Elias Pacione' }
 
 type Props = { params: Promise<{ id: string }> }
 
+// El id de la orden funciona como capability URL: quien lo tiene, ve la página. Sirve para
+// confirmar la compra, pero no hay motivo para que además muestre el email completo de
+// quien pagó — con el link reenviado o en el historial de un navegador compartido, eso es
+// un dato personal de más (Ley 25.326). Alcanza con que la persona reconozca el suyo.
+function enmascararEmail(email: string): string {
+  const [usuario, dominio] = email.split('@')
+  if (!dominio) return '•••'
+  const visible = usuario.slice(0, 2)
+  return `${visible}${'•'.repeat(Math.max(usuario.length - 2, 1))}@${dominio}`
+}
+
 // Página pública a la que Mercado Pago devuelve a quien compró (back_urls de la
 // preferencia, en utils/mercadopago.ts) — sin sesión, así que se lee con admin client.
 // El id de la orden (un uuid, imposible de adivinar) es lo único que hace falta para
@@ -61,13 +72,16 @@ export default async function PedidoPage({ params }: Props) {
               {!orden.alumno_id && (
                 <p className="text-sm text-muted-foreground mt-6 pt-6 border-t border-border">
                   ¿Querés no depender de este link?{' '}
+                  {/* Se manda el id de la orden y no el email: un email en el query string
+                      viaja al historial del navegador, a los logs del server y al Referer.
+                      /crear-cuenta lo resuelve server-side desde esta misma orden. */}
                   <Link
-                    href={`/crear-cuenta?email=${encodeURIComponent(orden.email_comprador)}`}
+                    href={`/crear-cuenta?orden=${orden.id}`}
                     className="text-marca underline underline-offset-2 hover:opacity-80"
                   >
                     Creá una cuenta
                   </Link>{' '}
-                  y volvé a descargarlo cuando quieras.
+                  con {enmascararEmail(orden.email_comprador)} y volvé a descargarlo cuando quieras.
                 </p>
               )}
             </>
