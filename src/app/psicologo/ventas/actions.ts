@@ -20,6 +20,8 @@ export async function marcarOrdenReembolsada(ordenId: string) {
   const { error } = await supabase.from('ordenes').update({ estado: 'reembolsada' }).eq('id', ordenId)
   if (error) return { error: error.message }
 
-  revalidatePath('/psicologo/ventas')
+  // La pestaña Ventas vive en /psicologo/ebooks desde la fusión con esa página —
+  // revalidar /psicologo/ventas (ahora solo un redirect) no invalidaría nada real.
+  revalidatePath('/psicologo/ebooks')
   return { success: true }
 }
