@@ -183,7 +183,7 @@ export async function listarR2(prefijo: string): Promise<ListadoR2> {
 
   const prefijosCarpetas = (res.CommonPrefixes ?? [])
     .map((p) => p.Prefix)
-    .filter((p): p is string => Boolean(p))
+    .filter((p): p is string => typeof p === 'string' && !p.slice(prefijo.length).startsWith('.'))
 
   // Una estadística por carpeta implica recorrer todo lo que cuelga de ella — en paralelo
   // para no pagar la latencia de cada una en serie.
@@ -201,7 +201,7 @@ export async function listarR2(prefijo: string): Promise<ListadoR2> {
       tamano: o.Size ?? 0,
       modificado: o.LastModified?.toISOString() ?? '',
     }))
-    .filter((o) => o.nombre !== '' && !o.nombre.endsWith('/'))
+    .filter((o) => o.nombre !== '' && !o.nombre.endsWith('/') && !o.nombre.startsWith('.'))
 
   // Se avisa en vez de mentir por omisión: con más de 1000 objetos en un nivel, la UI
   // tiene que poder decir que la lista está cortada.

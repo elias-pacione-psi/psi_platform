@@ -1,6 +1,7 @@
 'use client'
 
-import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag, Receipt } from "lucide-react"
+import { useState } from "react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, BookOpen, ShoppingBag, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -81,17 +82,12 @@ const itemsPsicologo = [
     icon: GraduationCap,
   },
   {
-    // El único producto con venta directa (ver docs/plan-modelo-comercial.md) — separado
-    // de Biblioteca/Archivos porque acá se fija precio y se administra la vidriera
-    // pública, no solo se sube material para alumnos ya asignados.
+    // El único producto con venta directa (ver docs/plan-modelo-comercial.md). Ventas
+    // vive acá adentro como pestaña: al ser el único producto que se vende, "las ventas"
+    // siempre fueron ventas de ebooks.
     title: "ebooks",
     url: "/psicologo/ebooks",
     icon: BookOpen,
-  },
-  {
-    title: "Ventas",
-    url: "/psicologo/ventas",
-    icon: Receipt,
   },
   {
     title: "Entregas",
@@ -99,14 +95,12 @@ const itemsPsicologo = [
     icon: Inbox,
   },
   {
+    // Archivos vive acá adentro como pestaña ("Todos los archivos"): es el mismo
+    // material, solo que sin curar todavía. Separarlo en dos secciones del sidebar
+    // hacía parecer que eran dos cosas distintas.
     title: "Biblioteca",
     url: "/psicologo/biblioteca",
     icon: Library,
-  },
-  {
-    title: "Archivos",
-    url: "/psicologo/archivos",
-    icon: FolderCog,
   },
   {
     title: "Agenda",
@@ -125,6 +119,10 @@ function estaActivo(pathname: string, url: string, raiz: string) {
 export function AppSidebar({ userRole }: { userRole?: string }) {
   const pathname = usePathname()
   const router = useRouter()
+  // Cerrado por defecto: es una vista previa de lo que ve un alumno, no una sección de
+  // trabajo del psicólogo. Abierta siempre, repetía "Inicio"/"Biblioteca" dos veces en
+  // la misma pantalla y se leía como si el panel tuviera secciones duplicadas.
+  const [alumnoAbierto, setAlumnoAbierto] = useState(false)
 
   const handleSignOut = async () => {
     const supabase = createClient()
@@ -166,26 +164,35 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
             </SidebarGroup>
 
             <SidebarGroup>
-              <SidebarGroupLabel className="text-tinta/70 flex items-center justify-between">
-                <span>Alumno</span>
+              <SidebarGroupLabel
+                className="text-tinta/70 flex items-center justify-between cursor-pointer select-none"
+                onClick={() => setAlumnoAbierto((v) => !v)}
+                role="button"
+                tabIndex={0}
+                aria-expanded={alumnoAbierto}
+              >
+                <span>Vista previa de alumno</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${alumnoAbierto ? 'rotate-180' : ''}`} />
               </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {itemsAlumno.map((item) => {
-                    const isActive = estaActivo(pathname, item.url, "/alumno")
-                    return (
-                      <SidebarMenuItem key={`demo-${item.title}`}>
-                        <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
-                          <Link href={item.url} className="flex items-center gap-2 w-full">
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
+              {alumnoAbierto && (
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {itemsAlumno.map((item) => {
+                      const isActive = estaActivo(pathname, item.url, "/alumno")
+                      return (
+                        <SidebarMenuItem key={`demo-${item.title}`}>
+                          <SidebarMenuButton isActive={isActive} className="font-sans hover:bg-crema hover:text-marca data-[active=true]:bg-crema data-[active=true]:text-marca data-[active=true]:font-bold transition-all duration-200">
+                            <Link href={item.url} className="flex items-center gap-2 w-full">
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      )
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              )}
             </SidebarGroup>
           </>
         ) : (
