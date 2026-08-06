@@ -183,7 +183,7 @@ export async function listarR2(prefijo: string): Promise<ListadoR2> {
 
   const prefijosCarpetas = (res.CommonPrefixes ?? [])
     .map((p) => p.Prefix)
-    .filter((p): p is string => Boolean(p) && !p.slice(prefijo.length).startsWith('.'))
+    .filter((p): p is string => typeof p === 'string' && !p.slice(prefijo.length).startsWith('.'))
 
   // Una estadística por carpeta implica recorrer todo lo que cuelga de ella — en paralelo
   // para no pagar la latencia de cada una en serie.
