@@ -1,61 +1,55 @@
 import Link from 'next/link'
-import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock } from 'lucide-react'
-import { AvisoPreview } from '../_components/AvisoPreview'
-import { ImagenMuestra } from '../_components/ImagenMuestra'
+import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users } from 'lucide-react'
+import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { SiteHeader } from '@/components/SiteHeader'
+
+export const metadata = { title: 'Supervisiones | Elias Pacione' }
 
 const PASOS = [
   {
-    icono: BookOpen,
-    titulo: 'Elias arma el programa',
-    texto: 'Módulos y lecciones organizados, con video, lecturas y material de apoyo.',
+    icono: MessagesSquare,
+    titulo: 'Primer encuentro',
+    texto: 'Coordinamos una charla inicial para entender qué necesitás revisar de tu práctica.',
   },
   {
-    icono: Clock,
-    titulo: 'Avanzás a tu ritmo',
-    texto: 'Sin horarios fijos ni clases en vivo: entrás cuando podés y retomás donde quedaste.',
+    icono: Users,
+    titulo: 'Se define la modalidad',
+    texto: 'Individual o grupal, con la frecuencia que mejor se acomode a tu momento.',
   },
   {
-    icono: ClipboardCheck,
-    titulo: 'Quiz de comprensión',
-    texto: 'Cada módulo cierra con un quiz corto. Necesitás 70% para pasar al siguiente.',
+    icono: CalendarCheck,
+    titulo: 'Encuentros periódicos',
+    texto: 'Se coordinan por fuera de la plataforma, con la agenda de Elias.',
   },
 ]
 
-export default function TestCursosPage() {
+export default function SupervisionesPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <AvisoPreview servicioActual="Cursos" />
-
-      <header className="w-full border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="text-sm text-marca hover:text-tinta transition-colors">
-            ← Volver al inicio
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* HERO */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-16 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="font-sans text-xs font-semibold tracking-[0.14em] uppercase text-marca mb-4">
-              Curso asincrónico
+              Supervisión
             </p>
             <h1 className="text-tinta text-4xl md:text-5xl font-heading font-semibold mb-5 leading-[1.15] tracking-tight">
-              Aprendé a tu ritmo, cuando puedas
+              Un espacio para pensar tu práctica con otro
             </h1>
             <p className="font-serif text-tinta/75 text-lg leading-relaxed mb-8">
-              Contenido grabado y organizado en módulos y lecciones, para ir avanzando
-              cuando tengas tiempo — sin horarios fijos que cumplir.
+              Un lugar para revisar casos, dudas técnicas y tu propio proceso
+              profesional, acompañado por alguien con más recorrido.
             </p>
             <Link
-              href="/?interes=curso#contacto"
+              href="/?interes=supervision#contacto"
               className="inline-flex items-center gap-2 bg-tinta text-crema px-8 py-3.5 rounded-full font-medium text-base transition-colors hover:bg-marca"
             >
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={PlayCircle} etiqueta="Lección grabada" variante="marca" />
+          <ImagenMuestra icon={MessagesSquare} etiqueta="Charla de supervisión" variante="marca" />
         </div>
       </section>
 
@@ -63,13 +57,13 @@ export default function TestCursosPage() {
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es un curso asincrónico?
+            ¿Qué es un espacio de supervisión?
           </h2>
           <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es contenido ya grabado — videos, lecturas y ejercicios — que vas viendo
-            cuando quieras, en el orden en que Elias lo pensó. No hay clases en vivo ni
-            fechas de inscripción: entrás con tu usuario y avanzás lección por lección.
-            Es la opción para quien prefiere aprender solo, a su propio ritmo.
+            Es un espacio de trabajo entre colegas: sirve para pensar en conjunto los
+            casos que te generan dudas, revisar decisiones clínicas y sostener tu
+            propio proceso como profesional. No reemplaza tu formación de base — la
+            complementa con la mirada de alguien externo a tu día a día.
           </p>
         </div>
       </section>
@@ -98,15 +92,15 @@ export default function TestCursosPage() {
       {/* PARA QUIÉN ES + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={BookOpen} etiqueta="Módulo con material de apoyo" variante="sage" className="md:order-2" />
+          <ImagenMuestra icon={GraduationCap} etiqueta="Encuentro entre colegas" variante="sage" className="md:order-2" />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               ¿Para quién es?
             </h2>
             <ul className="font-serif text-tinta/75 text-base leading-relaxed space-y-3">
-              <li>· Para quien tiene una agenda apretada y necesita flexibilidad de horarios.</li>
-              <li>· Para quien prefiere estudiar solo, sin la dinámica de un grupo.</li>
-              <li>· Para quien ya tiene una base y quiere profundizar un tema puntual.</li>
+              <li>· Para psicólogos en ejercicio que quieren revisar casos con otra mirada.</li>
+              <li>· Para estudiantes avanzados que están empezando sus primeras prácticas.</li>
+              <li>· Para equipos que buscan un espacio de supervisión sostenido en el tiempo.</li>
             </ul>
           </div>
         </div>
@@ -116,14 +110,14 @@ export default function TestCursosPage() {
       <section className="bg-tinta">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
           <h2 className="text-crema text-2xl md:text-3xl font-heading font-semibold mb-4 tracking-tight">
-            ¿Te interesa este curso?
+            ¿Te interesa un espacio de supervisión?
           </h2>
           <p className="font-serif text-crema/75 text-base leading-relaxed mb-8">
-            Los cursos no se compran online: contanos qué te interesa y Elias te
-            escribe para coordinar el acceso.
+            La coordinación es por fuera de la plataforma: contanos tu situación y
+            Elias te escribe para conversarlo.
           </p>
           <Link
-            href="/?interes=curso#contacto"
+            href="/?interes=supervision#contacto"
             className="inline-flex items-center gap-2 bg-crema text-tinta px-8 py-3.5 rounded-full font-medium text-base transition-colors hover:bg-marca hover:text-crema"
           >
             Quiero más información <ArrowRight className="w-4 h-4" />

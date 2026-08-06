@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { ArrowLeft, BookOpen } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { resolverUrlRecurso } from '@/utils/r2'
-import { BrandMark } from '@/components/BrandMark'
+import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'ebooks | Elias Pacione' }
 
@@ -26,18 +26,7 @@ export default async function EbooksPage() {
 
   return (
     <main className="min-h-screen bg-crema font-sans">
-      <header className="w-full bg-crema/90 backdrop-blur border-b border-tinta/10 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <BrandMark className="w-10 h-7 shrink-0 text-tinta" />
-            <span className="font-heading font-semibold text-lg tracking-tight text-tinta">Elias Pacione</span>
-          </Link>
-          <Link href="/" className="flex items-center gap-2 text-sm text-tinta/70 hover:text-tinta transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Volver al inicio
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-16">
         <h1 className="text-4xl font-heading font-semibold text-tinta mb-3">ebooks</h1>

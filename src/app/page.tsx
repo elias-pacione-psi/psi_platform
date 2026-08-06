@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { FolderHeart, Calendar, ShieldCheck } from 'lucide-react'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import { BrandMark } from '@/components/BrandMark'
+import { SiteHeader } from '@/components/SiteHeader'
 import { LandingClient } from './LandingClient'
 
 // Los cuatro conceptos que el brief define como la esencia de la marca.
@@ -11,20 +11,6 @@ const conceptos = [
   { titulo: 'Escucha', texto: 'La conversación como herramienta de encuentro y comprensión.' },
   { titulo: 'Contención', texto: 'Un espacio seguro donde lo que te pasa puede ser acompañado.' },
   { titulo: 'Cercanía', texto: 'Una identidad cálida y humana que prioriza el vínculo y la confianza.' },
-]
-
-// Navegación de la landing, en el orden en que van de izquierda a derecha. Ebooks es
-// el único producto con compra directa — tiene su propia vidriera. Los otros cuatro
-// bajan al formulario de Consultas con el interés ya elegido en el desplegable (mismos
-// valores que el check `solicitudes_interes_valido` de la migración
-// 2026-08-04-ebooks-y-desplegable-interes.sql), porque no se venden online: los sigue
-// coordinando Elias a mano — ver docs/plan-modelo-comercial.md.
-const SECCIONES_NAV = [
-  { titulo: 'ebooks', href: '/ebooks' },
-  { titulo: 'Cursos', href: '/?interes=curso#contacto' },
-  { titulo: 'Formaciones', href: '/?interes=formacion#contacto' },
-  { titulo: 'Supervisiones', href: '/?interes=supervision#contacto' },
-  { titulo: 'Terapia individual', href: '/?interes=terapia_individual#contacto' },
 ]
 
 const prestaciones = [
@@ -40,45 +26,7 @@ const prestaciones = [
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
-      <header className="w-full sticky top-0 z-50 bg-crema/85 backdrop-blur-sm border-b border-border px-6 py-4">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-3">
-          <div className="flex items-center gap-3">
-            <BrandMark className="w-11 h-7 shrink-0 text-tinta" />
-            <span className="flex flex-col leading-tight">
-              <span className="font-heading font-semibold text-lg tracking-tight text-tinta">Elias Pacione</span>
-              {/* La bajada se cae en pantallas chicas: con la nav ya ocupando una fila
-                  propia, mantenerla partía la cabecera en tres y se comía media pantalla. */}
-              <span className="hidden sm:block font-serif text-xs text-muted-foreground -mt-0.5">Psicología con sentido.</span>
-            </span>
-          </div>
-
-          {/* En lg+ va entre la marca y el toggle, alineada a la derecha para que el
-              último rótulo quede pegado al botón de tema. Abajo de lg pasa a una fila
-              propia con scroll horizontal: cinco secciones no entran al lado del
-              logo en un teléfono, y esconderlas las volvería inalcanzables. */}
-          <nav className="order-last w-full flex items-center gap-1 overflow-x-auto lg:order-none lg:w-auto lg:flex-1 lg:justify-end lg:overflow-visible">
-            {SECCIONES_NAV.map((seccion) => (
-              <Link
-                key={seccion.titulo}
-                href={seccion.href}
-                className="whitespace-nowrap rounded-full px-3 py-2 font-sans text-sm text-tinta/80 transition-colors hover:bg-gris-calido/60 hover:text-tinta"
-              >
-                {seccion.titulo}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="ml-auto flex items-center gap-2 lg:ml-0">
-            <ThemeToggle />
-            <Link
-              href="/login"
-              className="bg-marca text-crema px-4 sm:px-6 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-colors hover:bg-tinta"
-            >
-              Ingresar
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* HERO — lienzo liso. Antes tenía la sombra de hojas del brandbook
           (/brand/leaf-shadow.png) difuminada arriba a la izquierda; se sacó a
