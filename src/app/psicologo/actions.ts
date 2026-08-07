@@ -10,6 +10,10 @@ import { esMarcadorR2 } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 import { baseUrl } from '@/utils/site-url'
+import { enviarMail, enviarMailBatch, type OpcionesEmail } from '@/utils/email/resend'
+import { AsignacionProgramaEmail } from '@/emails/AsignacionProgramaEmail'
+import { EntregaRevisadaEmail } from '@/emails/EntregaRevisadaEmail'
+import { ClaseAgendadaEmail } from '@/emails/ClaseAgendadaEmail'
 
 // Los invitados deben pasar por /configurar-password antes de entrar al portal
 const INVITE_REDIRECT = `${baseUrl()}/auth/confirm?next=/configurar-password`
@@ -147,6 +151,10 @@ async function invitarComoAlumno(datos: {
   }, { onConflict: 'id' })
   if (perfilError) return { error: perfilError.message }
 
+  // El mail de bienvenida sale del Send Email Hook de Supabase Auth (ver
+  // supabase/functions/send-email), no de acá: inviteUserByEmail() ya dispara ese
+  // hook con el link de invitación real, con nuestra marca. Mandar un segundo mail
+  // desde acá duplicaría el aviso.
   return { id: invited.user.id }
 }
 
@@ -287,6 +295,13 @@ export async function actualizarAlumno(formData: FormData) {
   const programasAsignados = formData.getAll('programas') as string[]
   const supabaseAdmin = createAdminClient()
 
+  // Diff contra lo que tenía ANTES del delete, para saber qué es realmente nuevo y no
+  // re-notificar programas que el alumno ya tenía asignados.
+  const { data: previos } = await supabaseAdmin
+    .from('programas_asignados').select('programa_id').eq('alumno_id', id)
+  const idsPrevios = new Set((previos ?? []).map((p: { programa_id: string }) => p.programa_id))
+  const idsNuevos = programasAsignados.filter((pid) => !idsPrevios.has(pid))
+
   await supabaseAdmin.from('programas_asignados').delete().eq('alumno_id', id)
   if (programasAsignados.length > 0) {
     const asignaciones = programasAsignados.map(programa_id => ({ alumno_id: id, programa_id }))
@@ -295,6 +310,11 @@ export async function actualizarAlumno(formData: FormData) {
   }
 
   revalidatePath('/psicologo/alumnos')
+
+  if (idsNuevos.length > 0) {
+    await notificarAccesosNuevos(idsNuevos.map((programa_id) => ({ alumno_id: id, programa_id })))
+  }
+
   return { success: true }
 }
 
@@ -598,12 +618,44 @@ export async function revisarEntrega(entregaId: string, comentario: string) {
   if ('error' in auth) return { error: auth.error }
   const { supabase } = auth
 
+  // Leer datos del alumno y la lección ANTES de actualizar, para tenerlos en el mail
+  const { data: entregaData } = await supabase
+    .from('entregas')
+    .select('alumno_id, leccion_id, alumnos(email, nombre, estado), lecciones(titulo)')
+    .eq('id', entregaId)
+    .single()
+
+  const comentarioLimpio = comentario?.trim() || null
   const { error } = await supabase
     .from('entregas')
-    .update({ estado: 'revisada', comentario_instructor: comentario?.trim() || null })
+    .update({ estado: 'revisada', comentario_instructor: comentarioLimpio })
     .eq('id', entregaId)
 
   if (error) return { error: error.message }
+
+  // Notificar al alumno que su entrega fue revisada (fallo silencioso — la corrección
+  // ya se guardó, el mail es best-effort)
+  if (entregaData) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const alumno = entregaData.alumnos as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const leccion = entregaData.lecciones as any
+    if (alumno?.email && alumno?.nombre && alumno.estado === 'activo') {
+      await enviarMail({
+        to: alumno.email,
+        subject: `Tu entrega de "${leccion?.titulo ?? 'la actividad'}" fue revisada`,
+        tipo: 'entrega_revisada',
+        alumnoId: entregaData.alumno_id,
+        referenciaId: entregaId,
+        react: EntregaRevisadaEmail({
+          nombre: alumno.nombre,
+          tituloLeccion: leccion?.titulo ?? 'Actividad',
+          comentarioInstructor: comentarioLimpio,
+          urlEntrega: `${baseUrl()}/alumno/tareas`,
+        }),
+      })
+    }
+  }
 
   revalidatePath('/psicologo/entregas')
   return { success: true }
@@ -648,22 +700,93 @@ async function guardarProgramasDeCohorte(
 // Los inscriptos de una comisión tienen acceso a TODOS sus programas. Se recalcula acá y
 // no solo al inscribir, para que sumarle un programa a una comisión que ya tiene gente
 // adentro les llegue sin volver a tocar la inscripción.
+//
+// Devuelve los pares (alumno_id, programa_id) que agregó DE VERDAD (no los que ya
+// existían) — el upsert no distingue insert real de no-op, así que hay que leer antes
+// de escribir para saber qué es nuevo. Sin esto, notificar desde acá re-mandaría un
+// mail a toda la cohorte cada vez que se toca cualquier cosa menor de la comisión.
 async function sincronizarAccesosDeCohorte(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
   cohorteId: string,
-): Promise<void> {
+): Promise<{ alumno_id: string; programa_id: string }[]> {
   const [{ data: inscriptos }, { data: programas }] = await Promise.all([
     supabaseAdmin.from('cohortes_alumnos').select('alumno_id').eq('cohorte_id', cohorteId),
     supabaseAdmin.from('cohortes_programas').select('programa_id').eq('cohorte_id', cohorteId),
   ])
 
-  if (!inscriptos?.length || !programas?.length) return
+  if (!inscriptos?.length || !programas?.length) return []
 
   const accesos = inscriptos.flatMap((i: { alumno_id: string }) =>
     programas.map((p: { programa_id: string }) => ({ alumno_id: i.alumno_id, programa_id: p.programa_id })),
   )
+
+  const { data: existentes } = await supabaseAdmin
+    .from('programas_asignados')
+    .select('alumno_id, programa_id')
+    .in('alumno_id', inscriptos.map((i: { alumno_id: string }) => i.alumno_id))
+    .in('programa_id', programas.map((p: { programa_id: string }) => p.programa_id))
+
+  const yaExistian = new Set(
+    (existentes ?? []).map((e: { alumno_id: string; programa_id: string }) => `${e.alumno_id}:${e.programa_id}`),
+  )
+  const nuevos = accesos.filter((a: { alumno_id: string; programa_id: string }) => !yaExistian.has(`${a.alumno_id}:${a.programa_id}`))
+
   await supabaseAdmin.from('programas_asignados').upsert(accesos, { onConflict: 'alumno_id,programa_id' })
+  return nuevos
+}
+
+// Un alumno puede ganar varios programas de una (ej. se agregó un programa a una
+// cohorte con 20 inscriptos) — un solo mail por alumno con la lista completa, nunca
+// uno por programa.
+async function notificarAccesosNuevos(
+  pares: { alumno_id: string; programa_id: string }[],
+  contexto?: { nombreCohorte: string; fechaInicio: string | null; fechaFin: string | null },
+): Promise<void> {
+  if (pares.length === 0) return
+  const supabaseAdmin = createAdminClient()
+
+  const alumnoIds = [...new Set(pares.map((p) => p.alumno_id))]
+  const programaIds = [...new Set(pares.map((p) => p.programa_id))]
+
+  const [{ data: alumnos }, { data: programas }] = await Promise.all([
+    supabaseAdmin.from('alumnos').select('id, nombre, email').in('id', alumnoIds).eq('estado', 'activo'),
+    supabaseAdmin.from('programas').select('id, titulo').in('id', programaIds),
+  ])
+  if (!alumnos?.length || !programas?.length) return
+
+  const tituloPorId = new Map(
+    (programas as { id: string; titulo: string }[]).map((p) => [p.id, p.titulo]),
+  )
+  const urlPlataforma = `${baseUrl()}/alumno`
+
+  const mails: OpcionesEmail[] = (alumnos as { id: string; nombre: string; email: string }[]).flatMap((a) => {
+    const programasDeEste = pares
+      .filter((p) => p.alumno_id === a.id)
+      .map((p) => tituloPorId.get(p.programa_id))
+      .filter((t): t is string => Boolean(t))
+    if (programasDeEste.length === 0) return []
+
+    return [{
+      to: a.email,
+      subject: programasDeEste.length === 1
+        ? `Ahora tenés acceso a ${programasDeEste[0]}`
+        : `Ahora tenés acceso a ${programasDeEste.length} programas nuevos`,
+      tipo: 'asignacion_programa' as const,
+      alumnoId: a.id,
+      react: AsignacionProgramaEmail({
+        nombre: a.nombre,
+        programas: programasDeEste,
+        nombreCohorte: contexto?.nombreCohorte ?? null,
+        fechaInicio: contexto?.fechaInicio ?? null,
+        fechaFin: contexto?.fechaFin ?? null,
+        urlPlataforma,
+      }),
+    }]
+  })
+
+  const resultado = await enviarMailBatch(mails)
+  if (resultado.errores.length > 0) console.error('[notificarAccesosNuevos] Errores:', resultado.errores)
 }
 
 export async function guardarCohorte(formData: FormData) {
@@ -711,10 +834,15 @@ export async function guardarCohorte(formData: FormData) {
   const guardados = await guardarProgramasDeCohorte(supabaseAdmin, cohorteId as string, programaIds)
   if ('error' in guardados) return { error: guardados.error }
 
-  await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId as string)
+  const nuevos = await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId as string)
 
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/alumno/programas')
+
+  if (nuevos.length > 0) {
+    await notificarAccesosNuevos(nuevos, { nombreCohorte: nombre, fechaInicio: fecha_inicio, fechaFin: fecha_fin })
+  }
+
   return { success: true }
 }
 
@@ -743,10 +871,24 @@ export async function inscribirAlumnosEnCohorte(cohorteId: string, alumnoIds: st
     if (error) return { error: error.message }
   }
 
-  await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId)
+  // El diff de qué es nuevo lo hace sincronizarAccesosDeCohorte contra
+  // programas_asignados (no contra cohortes_alumnos): así un alumno que ya estaba
+  // inscripto pero por lo que sea no tenía el acceso real también queda cubierto.
+  const nuevos = await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId)
 
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/alumno/programas')
+
+  if (nuevos.length > 0) {
+    const { data: cohorte } = await supabaseAdmin
+      .from('cohortes').select('nombre, fecha_inicio, fecha_fin').eq('id', cohorteId).single()
+    if (cohorte) {
+      await notificarAccesosNuevos(nuevos, {
+        nombreCohorte: cohorte.nombre, fechaInicio: cohorte.fecha_inicio, fechaFin: cohorte.fecha_fin,
+      })
+    }
+  }
+
   return { success: true }
 }
 
@@ -846,6 +988,15 @@ export async function generarClasesDeCohorte(cohorteId: string) {
   )
   if (error) return { error: error.message }
 
+  await notificarClasesAgendadas({
+    alumno_id: null,
+    cohorte_id: cohorteId,
+    tipo: 'presencial',
+    lugar: null,
+    enlace: null,
+    duracionMinutos: duracion,
+  }, faltantes)
+
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/psicologo/agenda')
   revalidatePath('/alumno/agenda')
@@ -873,6 +1024,102 @@ export async function borrarClasesFuturasDeCohorte(cohorteId: string) {
   revalidatePath('/psicologo/agenda')
   revalidatePath('/alumno/agenda')
   return { success: true, borradas: data?.length ?? 0 }
+}
+
+// Notifica clases nuevas agendadas — sesión única, semanas recurrentes, o el horario
+// completo de una comisión (hasta MAXIMO_CLASES fechas de una vez). SIEMPRE es UN mail
+// por alumno afectado resumiendo cantidad + primera fecha, nunca uno por fecha: una
+// comisión con 20 inscriptos y 20 fechas nuevas mandaría 400 mails si esto no agrupara.
+async function notificarClasesAgendadas(
+  destino: {
+    alumno_id: string | null
+    cohorte_id: string | null
+    tipo: 'virtual' | 'presencial'
+    lugar: string | null
+    enlace: string | null
+    duracionMinutos: number | null
+  },
+  fechas: string[],
+): Promise<void> {
+  // No tiene sentido "avisar" de una clase que ya pasó (carga retroactiva).
+  const futuras = fechas.filter((f) => f > new Date().toISOString())
+  if (futuras.length === 0) return
+
+  const supabaseAdmin = createAdminClient()
+  const primera = futuras.reduce((min, f) => (f < min ? f : min), futuras[0])
+  const cantidad = futuras.length
+  const urlAgenda = `${baseUrl()}/alumno/agenda`
+  const subject = cantidad === 1 ? 'Nueva clase agendada' : `Se agendaron ${cantidad} clases nuevas`
+
+  if (destino.alumno_id) {
+    // Sesión individual — un solo destinatario. El enlace de la sesión, o el del
+    // alumno como fallback (mismo criterio que armarSesion() en calendarActions.ts).
+    const { data: alumno } = await supabaseAdmin
+      .from('alumnos')
+      .select('id, nombre, email, link_videollamada')
+      .eq('id', destino.alumno_id)
+      .eq('estado', 'activo')
+      .maybeSingle()
+    if (!alumno) return
+
+    const resultado = await enviarMail({
+      to: alumno.email,
+      subject,
+      tipo: 'clase_agendada',
+      alumnoId: alumno.id,
+      react: ClaseAgendadaEmail({
+        nombre: alumno.nombre,
+        contexto: 'Sesión individual',
+        tipo: destino.tipo,
+        cantidad,
+        primeraFechaHora: primera,
+        duracionMinutos: destino.duracionMinutos,
+        lugar: destino.lugar,
+        enlace: destino.enlace || alumno.link_videollamada || null,
+        urlAgenda,
+      }),
+    })
+    if (!resultado.ok) console.error('[notificarClasesAgendadas] Error:', resultado.error)
+    return
+  }
+
+  if (!destino.cohorte_id) return
+
+  const [{ data: cohorte }, { data: inscriptos }] = await Promise.all([
+    supabaseAdmin.from('cohortes').select('nombre').eq('id', destino.cohorte_id).single(),
+    supabaseAdmin
+      .from('cohortes_alumnos')
+      .select('alumnos(id, nombre, email, estado)')
+      .eq('cohorte_id', destino.cohorte_id),
+  ])
+  if (!cohorte) return
+
+  const alumnosActivos = (inscriptos ?? [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((r: any) => r.alumnos as { id: string; nombre: string; email: string; estado: string } | null)
+    .filter((a): a is { id: string; nombre: string; email: string; estado: string } => a?.estado === 'activo')
+  if (alumnosActivos.length === 0) return
+
+  const mails: OpcionesEmail[] = alumnosActivos.map((a) => ({
+    to: a.email,
+    subject,
+    tipo: 'clase_agendada' as const,
+    alumnoId: a.id,
+    react: ClaseAgendadaEmail({
+      nombre: a.nombre,
+      contexto: cohorte.nombre,
+      tipo: destino.tipo,
+      cantidad,
+      primeraFechaHora: primera,
+      duracionMinutos: destino.duracionMinutos,
+      lugar: destino.lugar,
+      enlace: destino.enlace,
+      urlAgenda,
+    }),
+  }))
+
+  const resultado = await enviarMailBatch(mails)
+  if (resultado.errores.length > 0) console.error('[notificarClasesAgendadas] Errores:', resultado.errores)
 }
 
 // ============================================================
@@ -987,11 +1234,26 @@ export async function agregarSesionUnica(formData: FormData) {
   // "YYYY-MM-DDTHH:mm" sin zona: se interpreta como hora de Argentina, igual que el
   // horario de las comisiones. Con `new Date(str)` quedaba en la zona del servidor.
   const [diaUnica, horaUnica] = fecha_hora.split('T')
-  const { error } = await supabase
+  const fechaHoraISO = instanteArgentina(diaUnica, horaUnica)
+
+  const { data: sesionCreada, error } = await supabase
     .from('agenda_sesiones')
-    .insert({ ...destino, fecha_hora: instanteArgentina(diaUnica, horaUnica) })
+    .insert({ ...destino, fecha_hora: fechaHoraISO })
+    .select('id, alumno_id, cohorte_id, tipo, lugar, enlace, duracion_minutos')
+    .single()
 
   if (error) return { error: error.message }
+
+  if (sesionCreada) {
+    await notificarClasesAgendadas({
+      alumno_id: sesionCreada.alumno_id,
+      cohorte_id: sesionCreada.cohorte_id,
+      tipo: sesionCreada.tipo as 'virtual' | 'presencial',
+      lugar: sesionCreada.lugar,
+      enlace: sesionCreada.enlace,
+      duracionMinutos: sesionCreada.duracion_minutos,
+    }, [fechaHoraISO])
+  }
 
   revalidatePath('/psicologo/agenda')
   return { success: true }
@@ -1027,6 +1289,16 @@ export async function generarSesionesRecurrentes(formData: FormData) {
 
   const { error } = await supabase.from('agenda_sesiones').insert(sesiones)
   if (error) return { error: error.message }
+
+  // Sin duracion_minutos explícito en el insert: usa el default de la tabla (60).
+  await notificarClasesAgendadas({
+    alumno_id: destino.alumno_id,
+    cohorte_id: destino.cohorte_id,
+    tipo: destino.tipo as 'virtual' | 'presencial',
+    lugar: destino.lugar,
+    enlace: destino.enlace,
+    duracionMinutos: 60,
+  }, sesiones.map((s) => s.fecha_hora))
 
   revalidatePath('/psicologo/agenda')
   return { success: true }

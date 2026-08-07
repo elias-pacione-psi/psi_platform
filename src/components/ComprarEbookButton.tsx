@@ -14,30 +14,44 @@ import { toast } from 'sonner'
 // (mercadoPagoConfigurado(), en utils/mercadopago.ts) a partir de si existe
 // MERCADOPAGO_ACCESS_TOKEN — nunca se chequea acá: ese valor es un secreto de servidor,
 // no algo que deba viajar al bundle del cliente más que como el booleano ya resuelto.
-// TEMPORAL — solo para previsualizar cómo se siente el checkout de Mercado Pago.
-// Este link fijo (creado a mano en el dashboard de MP) NO está conectado a
-// `iniciarCompraEbook`: no crea orden, no dispara el webhook y no habilita
-// la descarga. Sacar esta constante y el bloque que la usa antes de activar
-// el flujo real (que ya existe más abajo, gateado por `pagosHabilitados`).
-const LINK_PREVIEW_MP = 'https://mpago.la/2CgXKwA'
-
-export function ComprarEbookButton({ ebookId, pagosHabilitados }: { ebookId: string; pagosHabilitados: boolean }) {
+//
+// `linkPago` es el link de pago manual de ESTE ebook puntual (cargado a mano en el
+// admin — columna ebooks.link_pago). Tiene prioridad sobre el flujo automático: no crea
+// orden ni dispara el webhook, así que no habilita la descarga automática, pero permite
+// vender un libro puntual (con Mercado Pago, Ualá, o lo que sea que devuelva un link de
+// pago) sin depender de tener el token de la API configurado.
+export function ComprarEbookButton(
+  { ebookId, pagosHabilitados, linkPago }: { ebookId: string; pagosHabilitados: boolean; linkPago: string | null },
+) {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [isPending, startTransition] = useTransition()
 
+  if (linkPago) {
+    return (
+      <Button
+        onClick={() => { window.location.href = linkPago }}
+        className="w-full bg-tinta hover:bg-marca text-crema font-bold h-14 rounded-xl text-lg"
+      >
+        <ShoppingCart className="w-5 h-5 mr-2" />
+        Comprar
+      </Button>
+    )
+  }
+
   if (!pagosHabilitados) {
     return (
       <div className="space-y-3">
-        <Button
-          onClick={() => { window.location.href = LINK_PREVIEW_MP }}
-          className="w-full bg-tinta hover:bg-marca text-crema font-bold h-14 rounded-xl text-lg"
-        >
+        <Button disabled className="w-full bg-tinta text-crema font-bold h-14 rounded-xl text-lg opacity-60 cursor-not-allowed">
           <ShoppingCart className="w-5 h-5 mr-2" />
-          Comprar
+          Comprar — próximamente
         </Button>
-        <p className="text-xs text-muted-foreground text-center">
-          (Preview: este botón usa un link de prueba de Mercado Pago, no está conectado a la compra real todavía.)
+        <p className="text-sm text-muted-foreground text-center">
+          Todavía no habilitamos el pago online para este ebook.{' '}
+          <Link href="/?interes=otro#contacto" className="text-marca underline underline-offset-2 hover:opacity-80">
+            Escribinos
+          </Link>{' '}
+          y coordinamos el envío por otro medio.
         </p>
       </div>
     )
