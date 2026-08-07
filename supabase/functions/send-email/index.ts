@@ -72,10 +72,11 @@ Deno.serve(async (req) => {
     // etc.), NO a través de /auth/v1/verify de Supabase. Ese endpoint hostea el flujo
     // implícito: verifica el token él mismo, arma una sesión, y redirige con los tokens
     // en el fragment de la URL (#access_token=...) — un fragment nunca viaja en el
-    // request HTTP, así que src/app/auth/confirm/route.ts (que espera token_hash+type
-    // como query params y hace su propia verifyOtp del lado del servidor) jamás lo recibe
-    // y termina mandando a login con "enlace inválido". Pasándole token_hash y type
-    // directo al redirect_to, es la propia ruta la que verifica — sin intermediario.
+    // request HTTP, así que src/app/auth/confirm/page.tsx (que espera token_hash+type
+    // como query params) nunca lo recibe y termina mandando a login con "enlace inválido".
+    // Pasándole token_hash y type directo al redirect_to, es la propia app la que verifica
+    // — sin intermediario, y recién cuando la persona confirma el click (ver
+    // src/app/auth/confirm/actions.ts sobre por qué la verificación no pasa en el GET).
     const actionLink = new URL(redirect_to)
     actionLink.searchParams.set('token_hash', token_hash)
     actionLink.searchParams.set('type', email_action_type)
