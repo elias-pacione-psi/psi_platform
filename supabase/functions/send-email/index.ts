@@ -65,11 +65,17 @@ Deno.serve(async (req) => {
   // en console.error (que si el Dashboard tiene logging habilitado, sí se puede ver ahí).
   try {
     const { user, email_data } = data
-    const { token_hash, redirect_to, email_action_type, site_url } = email_data
+    const { token_hash, redirect_to, email_action_type } = email_data
 
     // Mismo link que arma internamente el template default de Supabase: GoTrue lo
     // resuelve en /auth/v1/verify, valida el token_hash, y redirige a redirect_to.
-    const actionLink = `${site_url}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
+    // Base URL: Deno.env.get('SUPABASE_URL'), NO email_data.site_url — este último ya
+    // trae /auth/v1 incluido en este proyecto, y concatenarle /auth/v1/verify de nuevo
+    // arma /auth/v1/auth/v1/verify, que Kong no matchea contra la ruta de GoTrue y cae
+    // al fallback de PostgREST ("No API key found in request"). SUPABASE_URL es la base
+    // limpia (sin path), la inyecta Supabase sola en cada Edge Function. El apikey
+    // (SUPABASE_ANON_KEY, pública) queda igual por las dudas — no hace daño tenerlo.
+    const actionLink = `${Deno.env.get('SUPABASE_URL')}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}&apikey=${Deno.env.get('SUPABASE_ANON_KEY')}`
 
     let subject: string
     let html: string
