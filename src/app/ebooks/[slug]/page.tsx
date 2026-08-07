@@ -26,7 +26,7 @@ export default async function EbookDetallePage({ params }: Props) {
   // visitarse por URL directa aunque alguien adivine o comparta el slug.
   const { data: ebook } = await supabase
     .from('ebooks')
-    .select('id, slug, titulo, descripcion, portada_key, precio_centavos')
+    .select('id, slug, titulo, descripcion, portada_key, precio_centavos, link_pago')
     .eq('slug', slug)
     .eq('estado', 'publicado')
     .maybeSingle()
@@ -70,7 +70,7 @@ export default async function EbookDetallePage({ params }: Props) {
               <p className="text-tinta/80 font-serif leading-relaxed mb-8 whitespace-pre-wrap">{ebook.descripcion}</p>
             )}
             <div className="mt-auto max-w-sm">
-              <ComprarEbookButton ebookId={ebook.id} pagosHabilitados={mercadoPagoConfigurado()} />
+              <ComprarEbookButton ebookId={ebook.id} pagosHabilitados={mercadoPagoConfigurado()} linkPago={ebook.link_pago} />
             </div>
           </div>
         </div>

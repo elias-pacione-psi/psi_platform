@@ -23,6 +23,7 @@ type Ebook = {
   portada_url: string | null
   archivo_key: string
   precio_centavos: number
+  link_pago: string | null
   estado: 'borrador' | 'publicado'
   ventas: number
 }
@@ -203,6 +204,18 @@ export function EbooksAdminClient({ ebooks }: { ebooks: Ebook[] }) {
                   Publicado (visible en /ebooks)
                 </Label>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="link_pago" className="font-bold text-tinta">Link de pago (opcional)</Label>
+              <Input
+                id="link_pago" name="link_pago" type="url"
+                defaultValue={seleccionado?.link_pago ?? ''}
+                className="bg-card border-border" placeholder="https://mpago.la/... o el link de Ualá u otro medio"
+              />
+              <p className="text-xs text-muted-foreground">
+                Es el link de pago de este libro puntual (Mercado Pago, Ualá, lo que sea). Si lo dejás vacío, el botón &ldquo;Comprar&rdquo; muestra &ldquo;próximamente&rdquo;.
+              </p>
             </div>
 
             {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}

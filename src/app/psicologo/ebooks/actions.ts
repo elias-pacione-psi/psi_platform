@@ -11,6 +11,13 @@ import { esMarcadorR2, extensionDe } from '@/utils/r2-marcador'
 
 const EXTENSIONES_IMAGEN = ['jpg', 'jpeg', 'png', 'webp']
 const PRECIO_MAXIMO_CENTAVOS = 500_000_00 // tope de seguridad contra un cero de más al tipear
+const LINK_PAGO_MAX_LEN = 300
+
+// Sin allowlist de host a propósito: hoy es Mercado Pago, pero puede ser un
+// link de Ualá u otro proveedor más adelante — alcanza con exigir https.
+function esUrlHttps(valor: string): boolean {
+  try { return new URL(valor).protocol === 'https:' } catch { return false }
+}
 
 function slugificar(texto: string): string {
   return texto
@@ -56,6 +63,7 @@ export async function guardarEbook(formData: FormData) {
   const portada = (formData.get('portada_key') as string)?.trim() || ''
   const archivo = (formData.get('archivo_key') as string)?.trim() || ''
   const precioArsRaw = (formData.get('precio_ars') as string)?.trim()
+  const linkPago = (formData.get('link_pago') as string)?.trim() || null
   const estado = formData.get('estado') === 'publicado' ? 'publicado' : 'borrador'
 
   if (!titulo) return { error: 'El título es obligatorio' }
@@ -83,12 +91,18 @@ export async function guardarEbook(formData: FormData) {
     return { error: 'Ese precio parece un error de tipeo — revisalo' }
   }
 
+  if (linkPago) {
+    if (linkPago.length > LINK_PAGO_MAX_LEN) return { error: 'El link de pago es demasiado largo' }
+    if (!esUrlHttps(linkPago)) return { error: 'El link de pago tiene que ser una URL https válida' }
+  }
+
   const slug = await slugDisponible(supabase, slugificar(titulo), id)
   const campos = {
     titulo, descripcion,
     portada_key: portada || null,
     archivo_key: archivo,
     precio_centavos,
+    link_pago: linkPago,
     estado,
     slug,
   }
