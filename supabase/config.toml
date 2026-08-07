@@ -301,6 +301,17 @@ max_frequency = "5s"
 # enabled = true
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
+# Send Email Hook: reemplaza el envío default de Supabase Auth (invite, recovery,
+# magiclink) por supabase/functions/send-email, que manda con nuestra marca vía Resend.
+# host.docker.internal es cómo el contenedor de GoTrue local llega al de Edge Runtime
+# local — no es la URL de producción, esa se configura aparte en el Dashboard (ver
+# docs/setup-emails.md). SEND_EMAIL_HOOK_SECRET tiene que estar en supabase/functions/.env
+# para `supabase start`, con el mismo valor que se usa en producción.
+[auth.hook.send_email]
+enabled = true
+uri = "http://host.docker.internal:54321/functions/v1/send-email"
+secrets = "env(SEND_EMAIL_HOOK_SECRET)"
+
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
 [auth.sms.twilio]
 enabled = false
