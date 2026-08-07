@@ -1,4 +1,11 @@
 import { Text, Button, Section, Heading } from 'npm:@react-email/components'
+// Sin deno.json en supabase/functions, Deno compila .tsx con el transform JSX clásico
+// por default (pragma React.createElement) — así que cualquier archivo con sintaxis JSX
+// necesita `React` importado como VALOR, no solo como tipo. Sin esto reventaba en runtime
+// con "ReferenceError: React is not defined" apenas se evaluaba el primer <Tag> del
+// return — nunca se había probado hasta la primera invitación real.
+import React from 'npm:react@19.2.4'
+import type { CSSProperties } from 'npm:react@19.2.4'
 import { EmailLayout } from './EmailLayout.tsx'
 
 const C = { tinta: '#2f3e46', marca: '#4e6478', blanco: '#ffffff', mutedFg: '#5f6d77', crema: '#f1f0eb' } as const
@@ -43,15 +50,15 @@ export function InviteEmail({ enlace }: InviteEmailProps) {
   )
 }
 
-const iconWrapStyle: React.CSSProperties = { textAlign: 'center', marginBottom: '8px' }
-const iconStyle: React.CSSProperties = { fontSize: '48px', lineHeight: '1', margin: '0' }
-const titleStyle: React.CSSProperties = {
+const iconWrapStyle: CSSProperties = { textAlign: 'center', marginBottom: '8px' }
+const iconStyle: CSSProperties = { fontSize: '48px', lineHeight: '1', margin: '0' }
+const titleStyle: CSSProperties = {
   color: C.tinta, fontSize: '26px', fontWeight: '700', textAlign: 'center', margin: '0 0 24px', lineHeight: '1.3',
 }
-const bodyTextStyle: React.CSSProperties = { color: C.tinta, fontSize: '16px', lineHeight: '1.7', margin: '0 0 16px' }
-const btnSectionStyle: React.CSSProperties = { textAlign: 'center', margin: '32px 0' }
-const btnStyle: React.CSSProperties = {
+const bodyTextStyle: CSSProperties = { color: C.tinta, fontSize: '16px', lineHeight: '1.7', margin: '0 0 16px' }
+const btnSectionStyle: CSSProperties = { textAlign: 'center', margin: '32px 0' }
+const btnStyle: CSSProperties = {
   backgroundColor: C.marca, color: C.blanco, borderRadius: '8px', fontSize: '16px',
   fontWeight: '600', padding: '14px 32px', textDecoration: 'none', display: 'inline-block',
 }
-const hintStyle: React.CSSProperties = { color: C.mutedFg, fontSize: '13px', lineHeight: '1.6', margin: '0' }
+const hintStyle: CSSProperties = { color: C.mutedFg, fontSize: '13px', lineHeight: '1.6', margin: '0' }

@@ -2,7 +2,10 @@
 // de src/emails/EmailLayout.tsx: esto corre en Deno (no en el build de Next.js), así que
 // no puede importar nada del árbol de src/ — mismo diseño visual, copia independiente.
 import { Html, Head, Body, Container, Section, Text, Hr, Link } from 'npm:@react-email/components'
-import type { ReactNode } from 'npm:react@19.2.4'
+// React como valor: ver el comentario en InviteEmail.tsx sobre el transform JSX
+// clásico de Deno (sin esto, "ReferenceError: React is not defined" en runtime).
+import React from 'npm:react@19.2.4'
+import type { ReactNode, CSSProperties } from 'npm:react@19.2.4'
 
 // Paleta exacta de la plataforma (src/app/globals.css).
 const C = {
@@ -55,36 +58,36 @@ export function EmailLayout({ children, preview }: EmailLayoutProps) {
   )
 }
 
-const bodyStyle: React.CSSProperties = {
+const bodyStyle: CSSProperties = {
   backgroundColor: C.crema,
   fontFamily: "'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
   margin: '0',
   padding: '0',
 }
 
-const headerStyle: React.CSSProperties = { backgroundColor: C.tinta, padding: '0' }
+const headerStyle: CSSProperties = { backgroundColor: C.tinta, padding: '0' }
 
-const headerInnerStyle: React.CSSProperties = { maxWidth: '600px', margin: '0 auto', padding: '24px 32px' }
+const headerInnerStyle: CSSProperties = { maxWidth: '600px', margin: '0 auto', padding: '24px 32px' }
 
-const logoStyle: React.CSSProperties = {
+const logoStyle: CSSProperties = {
   color: C.blanco, fontSize: '20px', fontWeight: '700', margin: '0', letterSpacing: '-0.3px',
 }
 
-const subtituloStyle: React.CSSProperties = {
+const subtituloStyle: CSSProperties = {
   color: C.grisCalido, fontSize: '13px', margin: '2px 0 0', fontWeight: '400',
 }
 
-const cardStyle: React.CSSProperties = {
+const cardStyle: CSSProperties = {
   maxWidth: '600px', margin: '0 auto', backgroundColor: C.blanco,
   borderRadius: '0 0 8px 8px', padding: '40px 40px 32px',
 }
 
-const footerContainerStyle: React.CSSProperties = { maxWidth: '600px', margin: '0 auto', padding: '0 32px 40px' }
+const footerContainerStyle: CSSProperties = { maxWidth: '600px', margin: '0 auto', padding: '0 32px 40px' }
 
-const hrStyle: React.CSSProperties = { borderColor: C.grisCalido, margin: '24px 0 16px' }
+const hrStyle: CSSProperties = { borderColor: C.grisCalido, margin: '24px 0 16px' }
 
-const footerTextStyle: React.CSSProperties = {
+const footerTextStyle: CSSProperties = {
   color: C.mutedFg, fontSize: '12px', lineHeight: '1.6', margin: '0 0 4px', textAlign: 'center' as const,
 }
 
-const footerLinkStyle: React.CSSProperties = { color: C.marca, textDecoration: 'none' }
+const footerLinkStyle: CSSProperties = { color: C.marca, textDecoration: 'none' }
