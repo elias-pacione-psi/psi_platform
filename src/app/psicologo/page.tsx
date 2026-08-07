@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import {
-  Users, LayoutList, GraduationCap, Inbox, Library, Calendar,
+  Users, LayoutList, GraduationCap, Inbox, Library, FolderCog, Calendar,
   ArrowRight, CheckCircle2, UserPlus, MapPin, Video, BookOpen,
 } from 'lucide-react'
 
@@ -48,7 +48,8 @@ export default async function PsicologoHomePage() {
     supabaseAdmin.from('solicitudes_registro').select('*', { count: 'exact', head: true }).eq('estado', 'pendiente'),
     supabase.from('programas').select('*', { count: 'exact', head: true }),
     supabase.from('cohortes').select('*', { count: 'exact', head: true }),
-    supabase.from('biblioteca_recursos').select('*', { count: 'exact', head: true }),
+    // Filtrado igual que la página de Biblioteca: esta tarjeta solo cuenta Lecturas.
+    supabase.from('biblioteca_recursos').select('*', { count: 'exact', head: true }).eq('tipo_contenido', 'r2_pdf'),
     supabase.from('ebooks').select('*', { count: 'exact', head: true }).eq('estado', 'publicado'),
     supabase
       .from('agenda_sesiones')
@@ -73,8 +74,8 @@ export default async function PsicologoHomePage() {
     { titulo: 'Alumnos', descripcion: 'Cuentas, contacto y programas asignados', url: '/psicologo/alumnos', icon: Users, dato: `${alumnosActivos ?? 0} ${alumnosActivos === 1 ? 'activo' : 'activos'}` },
     { titulo: 'Programas', descripcion: 'Módulos y lecciones de cada formación', url: '/psicologo/programas', icon: LayoutList, dato: `${totalProgramas ?? 0} ${totalProgramas === 1 ? 'programa' : 'programas'}` },
     { titulo: 'Comisiones', descripcion: 'Camadas que cursan juntas', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'comisión' : 'comisiones'}` },
-    // Archivos ya no es su propia tarjeta: se fusionó como pestaña de Biblioteca.
-    { titulo: 'Biblioteca', descripcion: 'Material de apoyo y archivos, con acceso por alumno', url: '/psicologo/biblioteca', icon: Library, dato: `${totalRecursos ?? 0} ${totalRecursos === 1 ? 'recurso' : 'recursos'}` },
+    { titulo: 'Biblioteca', descripcion: 'Libros de Lecturas, con acceso por alumno', url: '/psicologo/biblioteca', icon: Library, dato: `${totalRecursos ?? 0} ${totalRecursos === 1 ? 'recurso' : 'recursos'}` },
+    { titulo: 'Archivos', descripcion: 'El bucket: subir y organizar el material', url: '/psicologo/archivos', icon: FolderCog, dato: 'Gestor' },
     // Ventas ya no es su propia tarjeta: se fusionó como pestaña de ebooks.
     { titulo: 'ebooks', descripcion: 'El único producto con compra directa', url: '/psicologo/ebooks', icon: BookOpen, dato: `${totalEbooksPublicados ?? 0} ${totalEbooksPublicados === 1 ? 'publicado' : 'publicados'}` },
     // Faltaba en esta grilla aunque ya estaba en el sidebar — quedaba desincronizada.

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, BookOpen, ShoppingBag, ChevronDown } from "lucide-react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -95,12 +95,14 @@ const itemsPsicologo = [
     icon: Inbox,
   },
   {
-    // Archivos vive acá adentro como pestaña ("Todos los archivos"): es el mismo
-    // material, solo que sin curar todavía. Separarlo en dos secciones del sidebar
-    // hacía parecer que eran dos cosas distintas.
     title: "Biblioteca",
     url: "/psicologo/biblioteca",
     icon: Library,
+  },
+  {
+    title: "Archivos",
+    url: "/psicologo/archivos",
+    icon: FolderCog,
   },
   {
     title: "Agenda",
