@@ -67,28 +67,31 @@ Deno.serve(async (req) => {
     const { user, email_data } = data
     const { token_hash, redirect_to, email_action_type } = email_data
 
-    // Mismo link que arma internamente el template default de Supabase: GoTrue lo
-    // resuelve en /auth/v1/verify, valida el token_hash, y redirige a redirect_to.
-    // Base URL: Deno.env.get('SUPABASE_URL'), NO email_data.site_url — este último ya
-    // trae /auth/v1 incluido en este proyecto, y concatenarle /auth/v1/verify de nuevo
-    // arma /auth/v1/auth/v1/verify, que Kong no matchea contra la ruta de GoTrue y cae
-    // al fallback de PostgREST ("No API key found in request"). SUPABASE_URL es la base
-    // limpia (sin path), la inyecta Supabase sola en cada Edge Function. El apikey
-    // (SUPABASE_ANON_KEY, pública) queda igual por las dudas — no hace daño tenerlo.
-    const actionLink = `${Deno.env.get('SUPABASE_URL')}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}&apikey=${Deno.env.get('SUPABASE_ANON_KEY')}`
+    // El link va directo a nuestra propia ruta (redirect_to — ya trae /auth/confirm
+    // armado desde donde se disparó la acción: inviteUserByEmail, resetPasswordForEmail,
+    // etc.), NO a través de /auth/v1/verify de Supabase. Ese endpoint hostea el flujo
+    // implícito: verifica el token él mismo, arma una sesión, y redirige con los tokens
+    // en el fragment de la URL (#access_token=...) — un fragment nunca viaja en el
+    // request HTTP, así que src/app/auth/confirm/route.ts (que espera token_hash+type
+    // como query params y hace su propia verifyOtp del lado del servidor) jamás lo recibe
+    // y termina mandando a login con "enlace inválido". Pasándole token_hash y type
+    // directo al redirect_to, es la propia ruta la que verifica — sin intermediario.
+    const actionLink = new URL(redirect_to)
+    actionLink.searchParams.set('token_hash', token_hash)
+    actionLink.searchParams.set('type', email_action_type)
 
     let subject: string
     let html: string
 
     if (email_action_type === 'recovery') {
       subject = 'Recuperá tu contraseña'
-      html = await render(React.createElement(RecuperarPasswordEmail, { enlace: actionLink }))
+      html = await render(React.createElement(RecuperarPasswordEmail, { enlace: actionLink.toString() }))
     } else {
       // invite, signup, magiclink, email_change_* comparten el mismo template de
       // activación — ver el comentario en InviteEmail.tsx sobre por qué el copy es
       // genérico (sin nombre) acá.
       subject = '¡Bienvenido/a a la Plataforma de Elías Pacione!'
-      html = await render(React.createElement(InviteEmail, { enlace: actionLink }))
+      html = await render(React.createElement(InviteEmail, { enlace: actionLink.toString() }))
     }
 
     const { error } = await resend.emails.send({
