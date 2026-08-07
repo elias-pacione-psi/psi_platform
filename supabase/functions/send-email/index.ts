@@ -57,41 +57,53 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: 'Firma inválida' }), { status: 401 })
   }
 
-  const { user, email_data } = data
-  const { token_hash, redirect_to, email_action_type, site_url } = email_data
+  // Todo lo de acá para abajo (render de React Email + Resend) va en un try/catch
+  // propio: sin esto, cualquier excepción no capturada (por ejemplo un fallo al
+  // renderizar el JSX en el runtime de Edge Functions) la envuelve el runtime en un 500
+  // genérico con el body "Internal Server Error" — sin mensaje, sin forma de diagnosticar
+  // sin acceso a los logs del Dashboard. Con el catch, al menos queda en la respuesta y
+  // en console.error (que si el Dashboard tiene logging habilitado, sí se puede ver ahí).
+  try {
+    const { user, email_data } = data
+    const { token_hash, redirect_to, email_action_type, site_url } = email_data
 
-  // Mismo link que arma internamente el template default de Supabase: GoTrue lo
-  // resuelve en /auth/v1/verify, valida el token_hash, y redirige a redirect_to.
-  const actionLink = `${site_url}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
+    // Mismo link que arma internamente el template default de Supabase: GoTrue lo
+    // resuelve en /auth/v1/verify, valida el token_hash, y redirige a redirect_to.
+    const actionLink = `${site_url}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
 
-  let subject: string
-  let html: string
+    let subject: string
+    let html: string
 
-  if (email_action_type === 'recovery') {
-    subject = 'Recuperá tu contraseña'
-    html = await render(React.createElement(RecuperarPasswordEmail, { enlace: actionLink }))
-  } else {
-    // invite, signup, magiclink, email_change_* comparten el mismo template de
-    // activación — ver el comentario en InviteEmail.tsx sobre por qué el copy es
-    // genérico (sin nombre) acá.
-    subject = '¡Bienvenido/a a la Plataforma de Elías Pacione!'
-    html = await render(React.createElement(InviteEmail, { enlace: actionLink }))
+    if (email_action_type === 'recovery') {
+      subject = 'Recuperá tu contraseña'
+      html = await render(React.createElement(RecuperarPasswordEmail, { enlace: actionLink }))
+    } else {
+      // invite, signup, magiclink, email_change_* comparten el mismo template de
+      // activación — ver el comentario en InviteEmail.tsx sobre por qué el copy es
+      // genérico (sin nombre) acá.
+      subject = '¡Bienvenido/a a la Plataforma de Elías Pacione!'
+      html = await render(React.createElement(InviteEmail, { enlace: actionLink }))
+    }
+
+    const { error } = await resend.emails.send({
+      from: REMITENTE,
+      to: user.email,
+      subject,
+      html,
+    })
+
+    if (error) {
+      console.error('[send-email] Error de Resend:', error)
+      return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    }
+
+    return new Response(JSON.stringify({}), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (err) {
+    console.error('[send-email] Excepción no capturada:', err)
+    const mensaje = err instanceof Error ? `${err.name}: ${err.message}` : String(err)
+    return new Response(JSON.stringify({ error: mensaje, stack: err instanceof Error ? err.stack : undefined }), { status: 500 })
   }
-
-  const { error } = await resend.emails.send({
-    from: REMITENTE,
-    to: user.email,
-    subject,
-    html,
-  })
-
-  if (error) {
-    console.error('[send-email] Error de Resend:', error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
-  }
-
-  return new Response(JSON.stringify({}), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
 })
