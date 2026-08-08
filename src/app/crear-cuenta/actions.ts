@@ -4,22 +4,51 @@ import { z } from 'zod'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 
-// El guardrail real de "quién puede crear una cuenta acá" no es un flag de Supabase — es
-// esta consulta. Ver la decisión en AGENTS.md y docs/plan-modelo-comercial.md (fase 5):
-// el registro dejó de estar prohibido en general, pero sigue acotado a quien ya pagó un
-// ebook. Supabase Auth (enable_signup, supabase/config.toml) no tiene forma de saber
-// eso — por eso este chequeo pasa ANTES de siquiera intentar el signUp.
-async function tieneCompraPagada(
+const RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+// Un único mensaje para TODOS los modos de falla del alta. Antes había dos distintos
+// ("Ya existe una cuenta con ese email" / "No encontramos ninguna compra confirmada"), y
+// esa diferencia era un oráculo: probando emails contra esta action se podía averiguar
+// quién compró y quién ya tiene cuenta, sin ninguna credencial. La pantalla siempre dice
+// lo mismo; el detalle real queda en los logs del servidor.
+const ERROR_GENERICO = 'No pudimos crear la cuenta con esos datos. Revisá el enlace de tu compra o escribinos.'
+
+// El guardrail de "quién puede crear una cuenta acá" son DOS cosas, no una:
+//
+//   1. que exista una compra pagada con ese email, y
+//   2. que quien está completando el formulario tenga el id de esa orden.
+//
+// El (2) es la parte que faltaba y que hacía esto vulnerable a pre-hijacking. Con sólo
+// el (1), saber el email de un comprador alcanzaba para crear SU cuenta con una
+// contraseña elegida por el atacante: la cuenta nacía con email_confirm: true (o sea,
+// Supabase la daba por verificada sin que nadie hubiera abierto ese buzón), las órdenes
+// se le vinculaban, y desde /alumno/compras se bajaba el PDF que pagó otro. La víctima
+// además quedaba trabada, porque el email ya "tenía cuenta".
+//
+// El id de la orden es un uuid que sólo conoce quien volvió del checkout de Mercado Pago
+// (es la URL /pedido/[id] a la que redirige el pago). No es una prueba de control del
+// buzón —para eso haría falta el salto por email— pero convierte "saber un email" en
+// "tener el link privado de esa compra", que es exactamente la capability que el flujo
+// ya le da al comprador y a nadie más.
+async function ordenHabilitaAlta(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
+  ordenId: string,
   email: string,
 ): Promise<boolean> {
-  const { count } = await supabaseAdmin
+  if (!RE_UUID.test(ordenId)) return false
+
+  const { data: orden } = await supabaseAdmin
     .from('ordenes')
-    .select('*', { count: 'exact', head: true })
-    .eq('email_comprador', email)
+    .select('email_comprador')
+    .eq('id', ordenId)
     .eq('estado', 'pagada')
-  return (count ?? 0) > 0
+    .is('alumno_id', null)
+    .maybeSingle()
+
+  // El email del formulario tiene que ser el de ESA orden: si no, con el link de la
+  // compra propia se podría dar de alta la cuenta de cualquier otro email.
+  return orden?.email_comprador === email
 }
 
 const MIN_LEN = 12
@@ -46,6 +75,7 @@ const schema = z.object({
   nombre: z.string().trim().min(1, 'El nombre es obligatorio').max(100),
   email: z.string().trim().toLowerCase().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'El email no es válido').max(254),
   password: z.string(),
+  ordenId: z.string().trim().max(64),
 })
 
 export async function crearCuentaComprador(formData: FormData) {
@@ -53,45 +83,51 @@ export async function crearCuentaComprador(formData: FormData) {
     nombre: formData.get('nombre') ?? '',
     email: formData.get('email') ?? '',
     password: formData.get('password') ?? '',
+    ordenId: formData.get('orden') ?? '',
   })
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Datos inválidos' }
 
-  const { nombre, email, password } = parsed.data
+  const { nombre, email, password, ordenId } = parsed.data
+  // La contraseña sí devuelve el motivo real: no filtra nada sobre terceros (es la que la
+  // persona acaba de tipear) y sin el detalle no sabría qué corregir.
   const errorPassword = errorEnPassword(password)
   if (errorPassword) return { error: errorPassword }
 
   const supabaseAdmin = createAdminClient()
 
   const { data: yaExiste } = await supabaseAdmin.from('alumnos').select('id').eq('email', email).maybeSingle()
-  if (yaExiste) return { error: 'Ya existe una cuenta con ese email. Iniciá sesión en vez de crear una nueva.' }
-
-  if (!(await tieneCompraPagada(supabaseAdmin, email))) {
-    return { error: 'No encontramos ninguna compra confirmada con ese email.' }
+  if (yaExiste) {
+    console.warn('Alta rechazada: ya existe cuenta para ese email')
+    return { error: ERROR_GENERICO }
   }
 
-  // Con admin.createUser() y NO con signUp(): el endpoint público /auth/v1/signup queda
-  // DESHABILITADO en el dashboard a propósito (Authentication → Sign In / Providers →
-  // "Allow new users to sign up" = OFF, espejado en supabase/config.toml).
+  if (!(await ordenHabilitaAlta(supabaseAdmin, ordenId, email))) {
+    console.warn('Alta rechazada: la orden no habilita el alta para ese email')
+    return { error: ERROR_GENERICO }
+  }
+
+  // Con admin.createUser() y NO con signUp(): el endpoint público /auth/v1/signup está en
+  // OFF en el dashboard (Authentication → Sign In / Providers → "Allow new users to sign
+  // up"), espejado en supabase/config.toml. Verificado CERRADO contra producción el
+  // 2026-08-08: responde `signup_disabled`. Si alguien lo volviera a abrir, todo el
+  // control de acá arriba pasaría a ser decorativo — cualquiera con la anon key crearía
+  // cuentas por ese endpoint sin pasar por esta función.
   //
-  // Con signUp() abierto, el chequeo de tieneCompraPagada() de arriba era decorativo: la
-  // anon key viaja en el bundle del navegador, así que cualquiera podía hacer un POST a
-  // /auth/v1/signup salteándose esta función entera y quedarse con una sesión
-  // `authenticated` sin haber comprado nada. Con eso no llegaba a los datos de otros
-  // alumnos (la RLS aguanta), pero sí a escribir progreso y entregas sin límite y a subir
-  // archivos al bucket de R2 — o sea, a la factura de Cloudflare. Además rompía la regla
-  // de AGENTS.md: el alta es por invitación del psicólogo o por compra, nunca abierta.
-  //
-  // Ahora el alta sólo existe donde ya se validó la compra, y eso lo garantiza Supabase
-  // (no hay endpoint público que crear cuentas) y no sólo el orden de las líneas de acá.
-  // email_confirm: true porque la identidad ya está probada — pagó con este email.
+  // email_confirm: true significa "Supabase da este email por verificado". Es una
+  // afirmación fuerte y acá se sostiene en la orden, no en el email del formulario:
+  // ordenHabilitaAlta() ya exigió el id de la compra Y que el email coincida con el que
+  // pagó. Sin ese chequeo, esto estaría marcando como verificado un buzón que nadie abrió.
   const { data: creado, error: errorCreacion } = await supabaseAdmin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
     user_metadata: { nombre }, // handle_new_user() lo lee para el nombre inicial del perfil
   })
-  if (errorCreacion) return { error: errorCreacion.message }
-  if (!creado.user) return { error: 'No se pudo crear la cuenta. Intentá de nuevo.' }
+  if (errorCreacion) {
+    console.error('No se pudo crear el usuario:', errorCreacion.message)
+    return { error: ERROR_GENERICO }
+  }
+  if (!creado.user) return { error: ERROR_GENERICO }
 
   // Con admin client: recién creada, esta cuenta no tiene forma de pasar la policy de
   // `ordenes` por su cuenta (ordenes_select_propia exige alumno_id = auth.uid(), que es

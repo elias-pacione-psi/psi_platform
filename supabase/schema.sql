@@ -262,6 +262,12 @@ create trigger on_auth_user_created
 
 -- Protege campos del instructor en entregas: el alumno NO puede tocar estado
 -- ni comentario_instructor (solo su archivo y comentario). Toca updated_at.
+--
+-- Cubre INSERT ADEMÁS de UPDATE. Sólo con UPDATE quedaba un agujero: la policy de insert
+-- valida dueño, prefijo del archivo y lección asignada, pero no dice nada de `estado` ni
+-- de `comentario_instructor`, así que un POST directo a /rest/v1/entregas podía crear la
+-- fila ya nacida como 'revisada' y con una devolución escrita por el propio alumno. No
+-- expone datos ajenos, pero la UI muestra ese texto como si fuera del instructor.
 create or replace function public.proteger_entrega_de_alumno()
 returns trigger
 language plpgsql
@@ -270,19 +276,38 @@ set search_path = public
 as $$
 begin
   new.updated_at := now();
+
+  if tg_op = 'INSERT' then
+    if not public.es_psicologo() then
+      new.alumno_id := auth.uid();       -- el dueño lo decide la sesión, no el body
+      new.estado := 'entregada';         -- una entrega nunca nace revisada
+      new.comentario_instructor := null; -- ni con devolución
+    end if;
+    return new;
+  end if;
+
   if not public.es_psicologo() then
     new.estado := old.estado;
     new.comentario_instructor := old.comentario_instructor;
     new.leccion_id := old.leccion_id;
     new.alumno_id := old.alumno_id;
+
+    -- Volver a subir después de una corrección devuelve la entrega a la cola del
+    -- instructor. Sin esto el estado quedaba 'revisada' con un archivo nuevo adentro, así
+    -- que la re-entrega no aparecía como pendiente y nadie la miraba.
+    if new.archivo_url is distinct from old.archivo_url then
+      new.estado := 'entregada';
+      new.comentario_instructor := null;
+    end if;
   end if;
+
   return new;
 end;
 $$;
 
 drop trigger if exists trg_proteger_entrega on public.entregas;
 create trigger trg_proteger_entrega
-  before update on public.entregas
+  before insert or update on public.entregas
   for each row execute function public.proteger_entrega_de_alumno();
 
 -- ----------------------------------------------------------------------------
@@ -500,6 +525,76 @@ create policy "quiz_intentos_select" on public.quiz_intentos
 -- también inserta con createAdminClient() en vez del cliente del usuario — mismo
 -- patrón que quiz_preguntas, sin este policy no queda otro camino de escritura.
 drop policy if exists "quiz_intentos_insert_propio" on public.quiz_intentos;
+
+-- Contar intentos y registrar el nuevo, en una sola transacción serializada por
+-- (alumno, lección). responderQuiz() hacía count-then-insert en dos queries, y eso es una
+-- race: dos envíos en paralelo con 2 intentos usados leían ambos "2", los dos pasaban el
+-- tope de 3 y quedaban 4+. Con feedback por pregunta en cada respuesta, disparar N
+-- requests concurrentes daba muchas más combinaciones de las permitidas.
+--
+-- El lock es advisory y por par alumno+lección: no bloquea filas de negocio ni serializa
+-- a dos alumnos distintos, ni a la misma persona en dos quizzes distintos.
+--
+-- `registrado` distingue "no te quedan intentos" de "ya aprobaste y estás repasando": en
+-- el segundo caso se corrige y se muestra el resultado, pero NO se inserta una fila más
+-- (si no, quien ya aprobó podía reenviar para siempre y engordar la tabla sin límite).
+create or replace function public.registrar_intento_quiz(
+  p_alumno_id uuid,
+  p_leccion_id uuid,
+  p_puntaje int,
+  p_total int,
+  p_aprobado boolean,
+  p_maximo int default 3
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, pg_catalog
+as $$
+declare
+  v_usados int;
+  v_aprobado_previo boolean;
+begin
+  perform pg_advisory_xact_lock(hashtext(p_alumno_id::text || ':' || p_leccion_id::text)::bigint);
+
+  select count(*) into v_usados
+    from public.quiz_intentos
+   where alumno_id = p_alumno_id and leccion_id = p_leccion_id;
+
+  if v_usados >= p_maximo then
+    select exists (
+      select 1 from public.quiz_intentos
+       where alumno_id = p_alumno_id and leccion_id = p_leccion_id and aprobado
+    ) into v_aprobado_previo;
+
+    if not v_aprobado_previo then
+      return jsonb_build_object('error', 'sin_intentos', 'usados', v_usados);
+    end if;
+
+    return jsonb_build_object('ok', true, 'registrado', false, 'usados', v_usados);
+  end if;
+
+  insert into public.quiz_intentos (alumno_id, leccion_id, puntaje, total, aprobado)
+  values (p_alumno_id, p_leccion_id, p_puntaje, p_total, p_aprobado);
+
+  return jsonb_build_object('ok', true, 'registrado', true, 'usados', v_usados + 1);
+end;
+$$;
+
+-- Sólo el servidor (service-role) la llama, desde responderQuiz. Sin este revoke, el
+-- `grant all on all routines ... to authenticated` de la sección 3.5 la dejaría invocable
+-- por cualquier alumno vía /rest/v1/rpc — que es justo el camino que quiz_intentos cerró
+-- al quedarse sin policy de insert. Postgres además da EXECUTE a PUBLIC por default en
+-- toda función nueva, así que el revoke tiene que nombrar a public explícitamente.
+revoke all on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
+  from public, anon, authenticated;
+
+-- Explícito y no heredado del `alter default privileges` de la sección 3.5: si esa línea
+-- no hubiera corrido en esta base, la función quedaría sin EXECUTE para nadie y
+-- responderQuiz fallaría para todos los alumnos. Un grant de más no cuesta nada; que se
+-- rompa el quiz entero por un privilegio implícito, sí.
+grant execute on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
+  to service_role;
 
 -- entregas: el alumno crea/ve/edita la suya (el trigger protege campos del
 -- instructor); el psicólogo ve todas y las revisa.

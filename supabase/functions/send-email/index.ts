@@ -112,8 +112,10 @@ Deno.serve(async (req) => {
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
+    // El stack va al log, nunca a la respuesta: expone rutas del runtime y nombres
+    // internos, y quien recibe este 500 es Supabase Auth, que no hace nada con él.
     console.error('[send-email] Excepción no capturada:', err)
     const mensaje = err instanceof Error ? `${err.name}: ${err.message}` : String(err)
-    return new Response(JSON.stringify({ error: mensaje, stack: err instanceof Error ? err.stack : undefined }), { status: 500 })
+    return new Response(JSON.stringify({ error: mensaje }), { status: 500 })
   }
 })

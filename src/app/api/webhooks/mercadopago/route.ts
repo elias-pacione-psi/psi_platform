@@ -53,6 +53,12 @@ export async function POST(request: NextRequest) {
   if (!orden) return NextResponse.json({ ok: true })
   if (orden.estado === 'pagada') return NextResponse.json({ ok: true })
 
+  // Una orden reembolsada es un estado FINAL decidido por fuera de este webhook. Sin este
+  // corte, una notificación 'approved' que llegara tarde (reintento de Mercado Pago sobre
+  // el pago original, posterior al reembolso) la devolvía a 'pagada' — y con eso, el
+  // comprador recuperaba la descarga de algo que ya se le devolvió.
+  if (orden.estado === 'reembolsada') return NextResponse.json({ ok: true })
+
   if (pago.status === 'approved') {
     await supabaseAdmin
       .from('ordenes')

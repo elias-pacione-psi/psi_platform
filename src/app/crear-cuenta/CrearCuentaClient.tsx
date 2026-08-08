@@ -15,10 +15,11 @@ import { toast } from 'sonner'
 // por qué tienen que coincidir con supabase/config.toml).
 const MIN_LEN = 12
 
-export function CrearCuentaClient({ emailInicial }: { emailInicial: string }) {
+export function CrearCuentaClient({ emailInicial, ordenId }: { emailInicial: string; ordenId: string }) {
   const [isPending, startTransition] = useTransition()
   const [nombre, setNombre] = useState('')
-  const [email, setEmail] = useState(emailInicial)
+  // Sin setter: el email lo fija la orden y el input es readOnly.
+  const [email] = useState(emailInicial)
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [show, setShow] = useState(false)
@@ -70,6 +71,12 @@ export function CrearCuentaClient({ emailInicial }: { emailInicial: string }) {
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-5">
+            {/* El id de la compra es lo que habilita el alta: la action exige que exista,
+                esté pagada, sin cuenta asociada, y que su email coincida con el de abajo.
+                Va oculto porque no es algo que la persona tenga que tipear — llega en la
+                URL desde la confirmación de pago. */}
+            <input type="hidden" name="orden" value={ordenId} />
+
             <div className="space-y-2">
               <Label htmlFor="nombre" className="font-sans text-tinta">Nombre</Label>
               <Input
@@ -81,13 +88,17 @@ export function CrearCuentaClient({ emailInicial }: { emailInicial: string }) {
 
             <div className="space-y-2">
               <Label htmlFor="email" className="font-sans text-tinta">Email</Label>
+              {/* Solo lectura: sale de la orden, no de lo que se tipee. Editable no
+                  servía de nada —la action exige que coincida con el email que pagó, así
+                  que cualquier cambio termina en error— y encima invitaba a probar
+                  direcciones ajenas. */}
               <Input
-                id="email" name="email" type="email" required className="border-border"
-                disabled={isPending} value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="vos@ejemplo.com"
+                id="email" name="email" type="email" required readOnly
+                className="border-border bg-muted text-muted-foreground"
+                value={email}
               />
               <p className="text-xs text-muted-foreground">
-                Tiene que ser el mismo email con el que compraste, para que veamos qué comprar tenés asociado.
+                Es el email con el que hiciste la compra. Si no es el tuyo, escribinos antes de seguir.
               </p>
             </div>
 

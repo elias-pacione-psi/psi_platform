@@ -40,8 +40,13 @@ export async function updateSession(request: NextRequest) {
     // el mismo tipo de bug que ya apareció con /ebooks, /terminos y /arrepentimiento.
     '/api',
   ]
-  const esRutaPublica = request.nextUrl.pathname === '/'
-    || publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+  // Coincidencia exacta o de segmento completo, NO startsWith a secas: con startsWith,
+  // '/ebooks' también hacía pública una futura '/ebooks-descuento' y '/api' cualquier
+  // '/api-interna'. El prefijo tiene que terminar en '/' para contar como "esta ruta y lo
+  // que cuelgue de ella".
+  const { pathname } = request.nextUrl
+  const esRutaPublica = pathname === '/'
+    || publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))
 
   if (!user && !esRutaPublica) {
     const url = request.nextUrl.clone()
