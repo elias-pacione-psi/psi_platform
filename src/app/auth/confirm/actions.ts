@@ -22,5 +22,11 @@ export async function confirmarAcceso(formData: FormData) {
     }
   }
 
-  redirect(`/login?message=${encodeURIComponent('El enlace es inválido o ha expirado.')}`)
+  // Vuelve a ESTA pantalla en estado de error, no a /login. Antes terminaba en
+  // `/login?message=...`, y ahí se perdían dos cosas: /login es un componente cliente que
+  // nunca leyó ese `message` (la persona veía un formulario pelado, sin motivo), y para
+  // alguien recién invitado el login no es una salida — su cuenta existe pero todavía no
+  // tiene contraseña. El estado de error de /auth/confirm explica qué pasó y ofrece el
+  // enlace nuevo.
+  redirect('/auth/confirm?error=vencido')
 }
