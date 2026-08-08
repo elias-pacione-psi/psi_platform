@@ -134,8 +134,17 @@ $$;
 -- `grant all on all routines ... to authenticated` de schema.sql la dejaría invocable por
 -- cualquier alumno vía /rest/v1/rpc — que es exactamente el camino que quiz_intentos había
 -- cerrado al quedarse sin policy de insert. Sería regalar de vuelta lo que ya se cerró.
+-- Postgres además da EXECUTE a PUBLIC por default en toda función nueva, así que hay que
+-- nombrar a public explícitamente.
 revoke all on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
   from public, anon, authenticated;
+
+-- Explícito, no heredado del `alter default privileges` de schema.sql: si esa línea no
+-- hubiera corrido en esta base, la función quedaría sin EXECUTE para nadie y responderQuiz
+-- fallaría para TODOS los alumnos. Un grant de más no cuesta nada; romper el quiz entero
+-- por depender de un privilegio implícito, sí.
+grant execute on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
+  to service_role;
 
 commit;
 

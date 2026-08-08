@@ -584,9 +584,17 @@ $$;
 -- Sólo el servidor (service-role) la llama, desde responderQuiz. Sin este revoke, el
 -- `grant all on all routines ... to authenticated` de la sección 3.5 la dejaría invocable
 -- por cualquier alumno vía /rest/v1/rpc — que es justo el camino que quiz_intentos cerró
--- al quedarse sin policy de insert.
+-- al quedarse sin policy de insert. Postgres además da EXECUTE a PUBLIC por default en
+-- toda función nueva, así que el revoke tiene que nombrar a public explícitamente.
 revoke all on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
   from public, anon, authenticated;
+
+-- Explícito y no heredado del `alter default privileges` de la sección 3.5: si esa línea
+-- no hubiera corrido en esta base, la función quedaría sin EXECUTE para nadie y
+-- responderQuiz fallaría para todos los alumnos. Un grant de más no cuesta nada; que se
+-- rompa el quiz entero por un privilegio implícito, sí.
+grant execute on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
+  to service_role;
 
 -- entregas: el alumno crea/ve/edita la suya (el trigger protege campos del
 -- instructor); el psicólogo ve todas y las revisa.
