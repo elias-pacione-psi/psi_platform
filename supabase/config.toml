@@ -232,7 +232,11 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-enable_signup = true
+# Espeja el `enable_signup = false` de [auth]: dejarlo en true acá volvía a habilitar el
+# alta pública por email, que es justamente el único proveedor que este portal usa — o sea
+# que el cierre de arriba quedaba sin efecto. Ninguno de los dos caminos de alta reales
+# (inviteUserByEmail del psicólogo, admin.createUser tras una compra) pasa por este flag.
+enable_signup = false
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true

@@ -124,6 +124,8 @@ export async function obtenerPagoMP(paymentId: string): Promise<PagoMP | null> {
 // sobre el manifest "id:<dataId>;request-id:<x-request-id>;ts:<ts>;". Sin esto, cualquiera
 // que supiera la URL del webhook podría mandar un POST fingiendo un pago aprobado y
 // regalarse el ebook — por eso esta verificación tiene que pasar ANTES de tocar la orden.
+const VENTANA_FIRMA_MS = 5 * 60 * 1000
+
 export function verificarFirmaWebhookMP(params: {
   xSignature: string | null
   xRequestId: string | null
@@ -139,6 +141,13 @@ export function verificarFirmaWebhookMP(params: {
   }
   const { ts, v1 } = partes
   if (!ts || !v1) return false
+
+  // Ventana de frescura: sin esto, una notificación firmada capturada alguna vez sigue
+  // siendo válida para siempre y se puede reenviar. El impacto está acotado porque el
+  // estado se re-consulta a la API de Mercado Pago igual, pero una firma sin vencimiento
+  // no es una firma completa. El ts viene en segundos (epoch).
+  const tsMs = Number(ts) * 1000
+  if (!Number.isFinite(tsMs) || Math.abs(Date.now() - tsMs) > VENTANA_FIRMA_MS) return false
 
   const manifest = `id:${params.dataId};request-id:${params.xRequestId};ts:${ts};`
   const esperado = crypto.createHmac('sha256', secret).update(manifest).digest('hex')

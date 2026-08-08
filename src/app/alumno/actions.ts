@@ -4,8 +4,10 @@ import { revalidatePath } from 'next/cache'
 import { requireUser } from '@/utils/supabase/guards'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { corregirQuiz } from '@/utils/supabase/quiz'
-import { firmarSubidaR2, r2Configurado } from '@/utils/r2'
+import { firmarSubidaR2, r2Configurado, tamanoEnR2, borrarDeR2 } from '@/utils/r2'
 import { marcarKeyR2, keyDeMarcadorR2, PREFIJO_ENTREGAS_R2 } from '@/utils/r2-marcador'
+
+const RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // Allowlist real: el Content-Type se firma junto con la URL de subida (ver
 // firmarSubidaR2 en utils/r2.ts), así que lo que se acepte acá es literalmente lo único
@@ -41,8 +43,13 @@ function extensionPermitidaEntrega(contentType: string, nombreArchivo: string): 
 // Espeja TAMANO_MAXIMO_MATERIAL_BYTES del gestor del psicólogo, más bajo porque un trabajo
 // entregado no es material de curso. Sin ningún tope, la única cota de lo que se puede
 // escribir en el bucket era la paciencia de quien subiera — y eso se paga en la factura de
-// Cloudflare. Es una cota blanda (el tamaño lo declara el cliente), pero corta el abuso
-// casual; el techo duro va en una regla de lifecycle del bucket.
+// Cloudflare.
+//
+// Se valida DOS veces y por motivos distintos: al firmar, contra el tamaño que declara el
+// cliente (para no hacerle empezar una subida que se va a rechazar), y al registrar la
+// entrega, contra el tamaño REAL que reporta R2. El segundo es el que cuenta: una URL
+// presignada no puede exigir Content-Length, así que una firma pedida para "1 KB" acepta
+// igual un PUT de 50 GB.
 const TAMANO_MAXIMO_ENTREGA_BYTES = 100 * 1024 * 1024 // 100 MB
 
 export async function obtenerUrlSubidaEntregaR2(
@@ -53,12 +60,26 @@ export async function obtenerUrlSubidaEntregaR2(
 ) {
   const auth = await requireUser()
   if ('error' in auth) return { error: auth.error }
-  const { user } = auth
+  const { supabase, user } = auth
 
   // A diferencia de una lección (que se degrada a la URL vieja si falta configurar R2),
   // una entrega no tiene a qué degradarse: mejor cortar antes de prometerle al alumno
   // una subida que va a fallar con un error críptico del SDK.
   if (!r2Configurado()) return { error: 'La subida de archivos no está disponible todavía.' }
+
+  // leccionId entra en la key del objeto y antes no se validaba nada: cualquier alumno
+  // activo podía pedir URLs firmadas para lecciones que ni siquiera tiene asignadas, o con
+  // basura adentro. El select pasa por RLS (lecciones_select), así que si el programa no
+  // está asignado la fila directamente no existe para esta sesión; y se exige que sea de
+  // tipo 'entrega', porque para cualquier otro tipo no hay nada que subir.
+  if (!RE_UUID.test(leccionId)) return { error: 'Lección inválida.' }
+  const { data: leccion } = await supabase
+    .from('lecciones')
+    .select('id')
+    .eq('id', leccionId)
+    .eq('tipo_contenido', 'entrega')
+    .maybeSingle()
+  if (!leccion) return { error: 'No autorizado' }
 
   if (!Number.isFinite(tamanoBytes) || tamanoBytes <= 0) return { error: 'Archivo inválido.' }
   if (tamanoBytes > TAMANO_MAXIMO_ENTREGA_BYTES) {
@@ -150,50 +171,46 @@ export async function responderQuiz(leccionId: string, programaId: string, respu
 
   if (!(await tieneAccesoALeccion(supabase, user.id, programaId, leccionId))) return { error: 'No autorizado' }
 
-  // Se cuenta con service-role y no con el cliente del usuario porque el conteo tiene que
-  // ver TODOS los intentos, no los que deje pasar la RLS — y porque quiz_intentos no tiene
-  // policy de insert, así que esta tabla ya se toca únicamente desde acá.
-  const supabaseAdmin = createAdminClient()
-  const { count: intentosPrevios } = await supabaseAdmin
-    .from('quiz_intentos')
-    .select('*', { count: 'exact', head: true })
-    .eq('alumno_id', user.id)
-    .eq('leccion_id', leccionId)
-
-  const yaUsados = intentosPrevios ?? 0
-
-  // Quien ya aprobó puede seguir entrando a repasar el quiz resuelto; lo que se corta es
-  // seguir intentando después de agotar los intentos SIN haber aprobado.
-  if (yaUsados >= MAXIMO_INTENTOS_QUIZ) {
-    const { data: aprobadoPrevio } = await supabaseAdmin
-      .from('quiz_intentos')
-      .select('id')
-      .eq('alumno_id', user.id)
-      .eq('leccion_id', leccionId)
-      .eq('aprobado', true)
-      .limit(1)
-      .maybeSingle()
-
-    if (!aprobadoPrevio) {
-      return { error: `Ya usaste tus ${MAXIMO_INTENTOS_QUIZ} intentos. Escribile a tu instructor.` }
-    }
+  // `respuestas` viene del cliente sin pasar por ningún schema: se acota acá para que no
+  // se pueda mandar un objeto gigante que infle el payload y el trabajo de corregirQuiz.
+  // Los valores se comparan por igualdad contra respuesta_correcta, así que nada largo
+  // puede ser válido; y las claves son ids de pregunta.
+  const entradas = Object.entries(respuestas ?? {})
+  if (entradas.length > 50) return { error: 'Respuestas inválidas' }
+  if (entradas.some(([id, v]) => !RE_UUID.test(id) || typeof v !== 'string' || v.length > 500)) {
+    return { error: 'Respuestas inválidas' }
   }
 
   // Corrección server-side (las respuestas correctas nunca viajan antes del envío)
   const resultado = await corregirQuiz(leccionId, respuestas)
   if (!resultado) return { error: 'No se pudieron cargar las preguntas' }
 
-  // Con service-role: la tabla no tiene policy de insert para authenticated (ver
-  // schema.sql), así que un resultado de quiz solo puede entrar por acá, ya corregido
-  // en el servidor — nunca con un puntaje/aprobado que el alumno mande directo a la API.
-  const { error: errIntento } = await supabaseAdmin.from('quiz_intentos').insert({
-    alumno_id: user.id,
-    leccion_id: leccionId,
-    puntaje: resultado.puntaje,
-    total: resultado.total,
-    aprobado: resultado.aprobado,
+  // Contar y registrar van juntos, en una sola transacción serializada por (alumno,
+  // lección). Antes eran dos queries —count, chequeo, insert— y eso es una race:
+  // disparando envíos en paralelo con 2 intentos usados, los dos leían "2", los dos
+  // pasaban el tope y quedaban 4+. Como cada respuesta trae qué preguntas se acertaron,
+  // más intentos de los permitidos es directamente más información para adivinar.
+  //
+  // Con service-role: quiz_intentos no tiene policy de insert (ver schema.sql), así que
+  // un resultado sólo puede entrar por acá, ya corregido en el servidor — nunca con un
+  // puntaje/aprobado que el alumno mande directo a la API. La función además está
+  // revocada para authenticated, así que tampoco se la puede llamar por /rest/v1/rpc.
+  const supabaseAdmin = createAdminClient()
+  const { data: registro, error: errIntento } = await supabaseAdmin.rpc('registrar_intento_quiz', {
+    p_alumno_id: user.id,
+    p_leccion_id: leccionId,
+    p_puntaje: resultado.puntaje,
+    p_total: resultado.total,
+    p_aprobado: resultado.aprobado,
+    p_maximo: MAXIMO_INTENTOS_QUIZ,
   })
   if (errIntento) return { error: errIntento.message }
+
+  if (registro?.error === 'sin_intentos') {
+    return { error: `Ya usaste tus ${MAXIMO_INTENTOS_QUIZ} intentos. Escribile a tu instructor.` }
+  }
+
+  const yaUsados = Math.max(0, (registro?.usados ?? 1) - 1)
 
   // Si aprobó, marca la lección como completada
   if (resultado.aprobado) {
@@ -244,6 +261,21 @@ export async function registrarEntrega(leccionId: string, programaId: string, ar
 
   if (!(await tieneAccesoALeccion(supabase, user.id, programaId, leccionId))) return { error: 'No autorizado' }
   if (!archivoPath || !perteneceAlAlumno(archivoPath, user.id)) return { error: 'Ruta de archivo inválida' }
+  if (comentario && comentario.length > 2000) return { error: 'El comentario es demasiado largo (máx. 2000 caracteres).' }
+
+  // Único chequeo de tamaño que no se puede mentir: el de obtenerUrlSubidaEntregaR2 corre
+  // sobre lo que declaró el cliente ANTES de subir, y la URL presignada no puede exigir un
+  // Content-Length. Acá el archivo ya está en R2, así que se le pregunta cuánto pesa de
+  // verdad — y si se pasó, se borra en vez de dejarlo ocupando (y facturando) espacio.
+  const keyR2 = keyDeMarcadorR2(archivoPath)
+  if (keyR2) {
+    const tamanoReal = await tamanoEnR2(keyR2)
+    if (tamanoReal === null) return { error: 'El archivo no llegó al almacenamiento. Probá de nuevo.' }
+    if (tamanoReal > TAMANO_MAXIMO_ENTREGA_BYTES) {
+      await borrarDeR2([keyR2])
+      return { error: `El archivo supera el máximo de ${TAMANO_MAXIMO_ENTREGA_BYTES / 1024 / 1024} MB.` }
+    }
+  }
 
   const { error } = await supabase.from('entregas').upsert({
     leccion_id: leccionId,

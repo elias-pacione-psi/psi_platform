@@ -252,6 +252,22 @@ export async function borrarDeR2(keys: string[]): Promise<void> {
   }
 }
 
+// Tamaño real del objeto ya subido. Hace falta porque una URL presignada de S3/R2 NO
+// puede exigir un Content-Length: la firma cubre la key, el bucket y el Content-Type, pero
+// no cuánto se manda. O sea que el tope que valida el servidor al firmar es lo que el
+// cliente DECLARA, y nada impide después hacer el PUT con un archivo mucho más grande.
+// El único chequeo que no se puede mentir es preguntarle a R2 después de la subida.
+export async function tamanoEnR2(key: string): Promise<number | null> {
+  try {
+    const res = await cliente().send(
+      new HeadObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }),
+    )
+    return res.ContentLength ?? null
+  } catch {
+    return null
+  }
+}
+
 export async function existeEnR2(key: string): Promise<boolean> {
   try {
     await cliente().send(new HeadObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }))
