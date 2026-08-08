@@ -18,7 +18,7 @@ export default async function AlumnoHomePage() {
   const [{ data: proximaSesion }, { count: countProg }, { count: countRec }] = await Promise.all([
     supabase
       .from('agenda_sesiones')
-      .select('fecha_hora, duracion_minutos, tipo, lugar, cohortes(nombre)')
+      .select('fecha_hora, duracion_minutos, tipo, lugar, enlace, cohortes(nombre)')
       .gte('fecha_hora', new Date().toISOString())
       .order('fecha_hora', { ascending: true })
       .limit(1)
@@ -35,6 +35,8 @@ export default async function AlumnoHomePage() {
   const cantidadProgramas = countProg || 0
   const cantidadMateriales = countRec || 0
 
+  const linkFinal = proximaSesion?.enlace || alumno?.link_videollamada || (esPsicologo ? 'https://meet.google.com' : null)
+
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
       <div>
@@ -47,52 +49,28 @@ export default async function AlumnoHomePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300">
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300 bg-[#1e293b]">
           <CardHeader>
-            <CardTitle className="font-heading text-2xl text-tinta">Tu próximo encuentro</CardTitle>
-            <CardDescription className="font-sans text-base">
-              Fecha de tu próximo encuentro y acceso a la videollamada.
+            <CardTitle className="font-heading text-2xl text-white">Tu clase en vivo</CardTitle>
+            <CardDescription className="font-sans text-base text-white/70">
+              Únete a nuestra sesión de Google Meet programada.
             </CardDescription>
           </CardHeader>
           <CardContent>
             {proximaSesion?.fecha_hora ? (
-              // Todo esto salía hardcodeado ("Presencial · Dignos, Quilmes", "8:00 a
-              // 12:00 hs", "Encuentro 1 · Laboratorio de Escucha Activa"): mostraba lo
-              // mismo para cualquier sesión, sin importar cuál fuera. Ahora sale de la
-              // fila, con duracion_minutos para calcular la hora de fin.
-              <div className="mb-4 p-4 bg-crema rounded-xl border border-tinta/10">
-                <p className="text-marca font-sans font-semibold mb-1">
-                  {proximaSesion.tipo === 'presencial'
-                    ? `Presencial${proximaSesion.lugar ? ` · ${proximaSesion.lugar}` : ''}`
-                    : 'Virtual'}
+              <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 text-center">
+                <p className="font-sans font-medium text-white mb-1">
+                  Tu próxima clase es el <span className="font-bold">{new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</span> a las <span className="font-bold">{new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}hs</span>
                 </p>
-                <p className="text-tinta font-serif font-medium mb-1">
-                  <span className="font-bold first-letter:uppercase">
-                    {new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
-                  </span>
-                  {', '}
-                  {new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                  {' a '}
-                  {new Date(new Date(proximaSesion.fecha_hora).getTime() + (proximaSesion.duracion_minutos ?? 60) * 60000)
-                    .toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                  {' hs'}
-                </p>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {(proximaSesion as any).cohortes?.nombre && (
-                  <p className="text-tinta font-sans font-medium border-t border-tinta/10 pt-3 mt-3">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {(proximaSesion as any).cohortes.nombre}
-                  </p>
-                )}
               </div>
             ) : (
-              <div className="mb-4 p-4 bg-crema rounded-xl border border-tinta/10 text-center">
-                <p className="text-muted-foreground font-sans text-sm">No hay encuentros agendados por ahora.</p>
+              <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 text-center">
+                <p className="text-white/70 font-sans text-sm">No hay clases en vivo agendadas por ahora.</p>
               </div>
             )}
 
-            {alumno?.link_videollamada ? (
-              <JoinMeetButton linkVideollamada={alumno.link_videollamada} />
+            {linkFinal ? (
+              <JoinMeetButton linkVideollamada={linkFinal} />
             ) : null}
           </CardContent>
         </Card>
