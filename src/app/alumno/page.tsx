@@ -49,7 +49,7 @@ export default async function AlumnoHomePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300 bg-[#1e293b]">
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300 bg-noche">
           <CardHeader>
             <CardTitle className="font-heading text-2xl text-white">Tu clase en vivo</CardTitle>
             <CardDescription className="font-sans text-base text-white/70">
