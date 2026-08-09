@@ -6,6 +6,7 @@ import { PlayCircle, FileText, FileAudio, FileVideo, CheckCircle, ListChecks, Cl
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { OpinionCurso } from './OpinionCurso'
 
 export default async function ProgramaDetallePage(props: { params: Promise<{ programaId: string }> }) {
   const params = await props.params
@@ -24,10 +25,11 @@ export default async function ProgramaDetallePage(props: { params: Promise<{ pro
   ])
   if (!asignacion && perfil?.rol !== 'psicologo') redirect('/alumno/programas')
 
-  const [{ data: modulos }, { data: lecciones }, { data: progresos }] = await Promise.all([
+  const [{ data: modulos }, { data: lecciones }, { data: progresos }, { data: opinion }] = await Promise.all([
     supabase.from('modulos').select('*').eq('programa_id', programaId).order('orden', { ascending: true }).order('created_at', { ascending: true }),
     supabase.from('lecciones').select('id, titulo, tipo_contenido, modulo_id, orden').eq('programa_id', programaId).order('orden', { ascending: true }).order('created_at', { ascending: true }),
     supabase.from('progreso_lecciones').select('leccion_id').eq('alumno_id', user?.id).eq('completado', true),
+    supabase.from('opiniones_curso').select('puntuacion, lo_que_sirvio, lo_que_mejoraria').eq('alumno_id', user?.id).eq('programa_id', programaId).maybeSingle(),
   ])
 
   const completadas = new Set((progresos || []).map(p => p.leccion_id))
@@ -140,6 +142,17 @@ export default async function ProgramaDetallePage(props: { params: Promise<{ pro
           </div>
         ))}
       </div>
+
+      {/* Opinión sobre el curso — solo para alumnos reales: si el que mira es el
+          psicólogo (vista previa de su propio material), no tiene sentido pedirle
+          que puntúe su curso, y la RLS tampoco lo dejaría guardar. */}
+      {perfil?.rol !== 'psicologo' && total > 0 && (
+        <OpinionCurso
+          programaId={programaId}
+          opinionInicial={opinion ?? null}
+          cursoCompleto={hechas === total}
+        />
+      )}
     </div>
   )
 }
