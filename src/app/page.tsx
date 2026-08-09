@@ -168,10 +168,6 @@ export default function LandingPage() {
                   <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Dónde</p>
                   <p className="font-serif text-sm text-tinta/80">Wilde y Quilmes, Buenos Aires</p>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Primera consulta</p>
-                  <p className="font-serif text-sm text-tinta/80">Breve encuentro inicial, sin costo</p>
-                </div>
               </div>
             </div>
           </div>
