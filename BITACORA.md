@@ -8,6 +8,17 @@ tener que releer toda la conversación anterior.
 
 ---
 
+## 2026-08-08
+
+**Mejoras en UI del alumno y biblioteca:**
+- Se forzó el uso del visor seguro (`PdfViewerSeguro`) en la sección **Biblioteca** para todo archivo que sea un PDF directo (sin importar su procedencia histórica como `drive_pdf`, mientras no sea un sandbox preview). Esto oculta el visor nativo del navegador que permitía descargas e impresiones, alineándose con el objetivo de evitar el robo de material.
+- Rediseño de la tarjeta **"Tu clase en vivo"** en el inicio del alumno (`/alumno`), imitando un diseño similar al de *Think Like a Native* (fondo oscuro `bg-noche`/`bg-slate-800`, resaltado de fecha y botón rojo completo).
+- Se agregó el campo `enlace` a la query de agenda_sesiones para darle prioridad sobre el link de perfil del alumno, y se implementó un fallback en el botón para que el usuario Psicólogo que pruebe la "Vista previa" siempre vea el botón renderizado (incluso si no tiene enlace en su tabla).
+
+**Emails / Notificaciones (Revisión):**
+- Se confirmó el funcionamiento del sistema dual de emails: creación de usuarios la hace Supabase Auth admin (que dispara los webhooks / envíos predeterminados, atrapables en Inbucket en local o directo en la nube), mientras que la gestión de sesiones/notificaciones usa Resend con las plantillas locales (con la API key configurada en `.env.local`).
+
+---
 ## 2026-08-02
 
 **Auditoría completa de funcionalidades y seguridad (a pedido de Lucas, "se agregaron muchas funciones últimamente"):**
