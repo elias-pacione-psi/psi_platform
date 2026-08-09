@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { FolderHeart, Calendar, ShieldCheck } from 'lucide-react'
+import { FolderHeart, Calendar, ShieldCheck, Video, Users, MapPin } from 'lucide-react'
 import { BrandMark } from '@/components/BrandMark'
 import { SiteHeader } from '@/components/SiteHeader'
 import { LandingClient } from './LandingClient'
@@ -24,6 +24,12 @@ const especialidades = [
   'Trauma y estrés postraumático',
   'TOC',
   'Trastorno límite de la personalidad',
+]
+
+const datosRapidos = [
+  { icono: Video, titulo: 'Modalidad', texto: 'Presencial y virtual' },
+  { icono: Users, titulo: 'Atiende a', texto: 'Adolescentes, adultos y parejas' },
+  { icono: MapPin, titulo: 'Dónde', texto: 'Wilde y Quilmes, Buenos Aires' },
 ]
 
 const enfoques = [
@@ -155,19 +161,19 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-x-8 gap-y-5 pt-1">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Modalidad</p>
-                  <p className="font-serif text-sm text-tinta/80">Presencial y virtual</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Atiende a</p>
-                  <p className="font-serif text-sm text-tinta/80">Adolescentes, adultos y parejas</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Dónde</p>
-                  <p className="font-serif text-sm text-tinta/80">Wilde y Quilmes, Buenos Aires</p>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                {datosRapidos.map(({ icono: Icono, titulo, texto }) => (
+                  <div
+                    key={titulo}
+                    className="flex items-start gap-3 bg-gris-calido/40 dark:bg-card border border-border rounded-xl p-3.5"
+                  >
+                    <Icono className="w-4 h-4 text-marca shrink-0 mt-0.5" strokeWidth={1.75} />
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">{titulo}</p>
+                      <p className="font-serif text-sm text-tinta/80 leading-snug">{texto}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
