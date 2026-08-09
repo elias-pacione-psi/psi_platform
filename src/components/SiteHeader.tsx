@@ -12,6 +12,7 @@ const SECCIONES_NAV = [
   { titulo: 'Formaciones', href: '/formaciones' },
   { titulo: 'Supervisiones', href: '/supervisiones' },
   { titulo: 'Terapia individual', href: '/terapia-individual' },
+  { titulo: 'Psicología y Fe', href: '/psicologia-y-fe' },
 ]
 
 export function SiteHeader() {

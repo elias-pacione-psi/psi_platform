@@ -13,7 +13,7 @@ import { Loader2 } from 'lucide-react'
 
 // Mismo orden en el que aparecen los botones de la nav (page.tsx), menos "otro": ese
 // solo lo ve quien entra directo al formulario sin pasar por un botón puntual.
-const OPCIONES_INTERES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'otro'] as const
+const OPCIONES_INTERES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'psicologia_fe', 'otro'] as const
 
 export function LandingClient() {
   const [isPending, startTransition] = useTransition()

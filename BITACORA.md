@@ -6,6 +6,15 @@ terminó (ver instrucción en `AGENTS.md`) — más reciente arriba. El objetivo
 que una sesión nueva pueda entender el estado y las decisiones tomadas sin
 tener que releer toda la conversación anterior.
 
+## 2026-08-09
+
+**Botón y Sección "Psicología y Fe":**
+- Se agregó la nueva propuesta de **Psicología y Fe** (psicología aplicada para la comunidad cristiana) en la plataforma.
+- **Navegación**: Nuevo botón en la barra superior en `SiteHeader.tsx`.
+- **Página dedicada**: Creada en `src/app/psicologia-y-fe/page.tsx` con sus 3 modalidades (charlas presenciales, consultas pastorales, supervisión a psicólogos cristianos).
+- **Formulario de Consultas y Backend**: Agregada la opción `psicologia_fe` en `LandingClient.tsx`, `taxonomia-labels.ts`, la Server Action `actions.ts` y el snippet SQL `2026-08-09-agregar-interes-psicologia-fe.sql`.
+- **Middleware**: Incorporado `'/psicologia-y-fe'` a la lista `publicRoutes` en `src/utils/supabase/middleware.ts` para permitir el acceso público sin requerir inicio de sesión.
+
 ---
 
 ## 2026-08-08

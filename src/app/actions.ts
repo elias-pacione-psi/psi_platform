@@ -7,7 +7,7 @@ import { createAdminClient } from '@/utils/supabase/admin'
 // Mismos cinco valores que el check `solicitudes_interes_valido` de la migración
 // 2026-08-04-ebooks-y-desplegable-interes.sql. Si se agrega una opción acá, hay que
 // sumarla ahí (y en utils/taxonomia-labels.ts, para la etiqueta del panel).
-const INTERESES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'otro'] as const
+const INTERESES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'psicologia_fe', 'otro'] as const
 
 // Endpoint público (formulario de la landing): validamos y acotamos todo para evitar spam/basura en la DB
 const solicitudSchema = z.object({

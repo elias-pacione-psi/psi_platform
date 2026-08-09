@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { resolverUrlRecurso } from '@/utils/r2'
 import { AdminProgramasClient } from './AdminProgramasClient'
 
 export default async function AdminProgramasPage() {
@@ -14,10 +15,13 @@ export default async function AdminProgramasPage() {
     return <div>Error cargando datos.</div>
   }
 
-  const programasFormateados = programas?.map(m => ({
+  // Miniatura de portada para la tabla: firmada acá, server-side — el bucket es
+  // privado, un <img src> directo con la key cruda no cargaría nada.
+  const programasFormateados = await Promise.all((programas ?? []).map(async (m) => ({
     ...m,
-    cantidad_lecciones: m.lecciones[0]?.count || 0
-  })) || []
+    cantidad_lecciones: m.lecciones[0]?.count || 0,
+    portada_url: await resolverUrlRecurso(m.portada_key),
+  })))
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">

@@ -31,23 +31,37 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import { SelectorArchivoR2 } from '@/components/SelectorArchivoR2'
 import { guardarPrograma, eliminarPrograma } from '../actions'
-import { Loader2, Settings2, Plus, ArrowRight, Trash2 } from 'lucide-react'
+import { Loader2, Settings2, Plus, ArrowRight, Trash2, ImageOff } from 'lucide-react'
 import { toast } from 'sonner'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function AdminProgramasClient({ programas }: { programas: any[] }) {
+type Programa = {
+  id: string
+  titulo: string
+  descripcion: string | null
+  descripcion_larga: string | null
+  portada_key: string | null
+  portada_url: string | null
+  publicado_en_home: boolean
+  cantidad_lecciones: number
+}
+
+export function AdminProgramasClient({ programas }: { programas: Programa[] }) {
   const router = useRouter()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [selectedPrograma, setSelectedPrograma] = useState<any>(null)
+  const [selectedPrograma, setSelectedPrograma] = useState<Programa | null>(null)
   const [open, setOpen] = useState(false)
   const [programaToDelete, setProgramaToDelete] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [portada, setPortada] = useState('')
+  const [publicadoEnHome, setPublicadoEnHome] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const openModal = (programa: any = null) => {
+  const openModal = (programa: Programa | null = null) => {
     setSelectedPrograma(programa)
+    setPortada(programa?.portada_key ?? '')
+    setPublicadoEnHome(programa?.publicado_en_home ?? false)
     setOpen(true)
     setErrorMsg(null)
   }
@@ -95,20 +109,41 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
         <Table>
           <TableHeader className="bg-muted">
             <TableRow>
+              <TableHead className="w-14"></TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Título</TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Lecciones</TableHead>
+              <TableHead className="font-heading font-semibold text-tinta">Home</TableHead>
               <TableHead className="text-right font-heading font-semibold text-tinta">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {programas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">No hay programas creados aún.</TableCell>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No hay programas creados aún.</TableCell>
               </TableRow>
             ) : programas.map((programa) => (
               <TableRow key={programa.id}>
+                <TableCell>
+                  {programa.portada_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={programa.portada_url} alt="" className="w-10 h-10 object-cover rounded border border-border" />
+                  ) : (
+                    <div className="w-10 h-10 rounded border border-dashed border-border flex items-center justify-center text-muted-foreground">
+                      <ImageOff className="w-4 h-4" />
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="font-medium text-tinta max-w-[300px] truncate">{programa.titulo}</TableCell>
                 <TableCell>{programa.cantidad_lecciones}</TableCell>
+                <TableCell>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                    programa.publicado_en_home
+                      ? 'bg-marca/10 text-marca'
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {programa.publicado_en_home ? 'Publicado' : 'Oculto'}
+                  </span>
+                </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button variant="outline" size="sm" onClick={() => openModal(programa)} className="font-sans">
                     <Settings2 className="w-4 h-4 mr-2" />
@@ -132,7 +167,7 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-crema">
+        <DialogContent className="sm:max-w-[560px] bg-crema max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading text-2xl text-tinta">
               {selectedPrograma ? 'Editar programa' : 'Crear nuevo programa'}
@@ -158,6 +193,31 @@ export function AdminProgramasClient({ programas }: { programas: any[] }) {
                 defaultValue={selectedPrograma?.descripcion || ''}
                 className="bg-card border-border h-24 resize-none"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="descripcion_larga" className="font-bold text-tinta">Descripción ampliada (para /cursos)</Label>
+              <Textarea
+                id="descripcion_larga"
+                name="descripcion_larga"
+                defaultValue={selectedPrograma?.descripcion_larga || ''}
+                className="bg-card border-border h-40 resize-none"
+                placeholder="Texto de venta más largo: para qué sirve, a quién apunta, qué incluye. Si lo dejás vacío, se usa la descripción corta de arriba."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="font-bold text-tinta">Portada (imagen)</Label>
+              <SelectorArchivoR2 id="portada_key" name="portada_key" value={portada} onChange={setPortada} />
+              <p className="text-xs text-muted-foreground">Opcional — se puede agregar después. Sin portada se muestra un ícono en su lugar.</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Checkbox id="publicado_en_home" checked={publicadoEnHome} onCheckedChange={(v) => setPublicadoEnHome(v === true)} />
+              <input type="hidden" name="publicado_en_home" value={publicadoEnHome ? 'true' : 'false'} />
+              <Label htmlFor="publicado_en_home" className="font-sans text-tinta cursor-pointer">
+                Publicar en Home (visible en /cursos)
+              </Label>
             </div>
 
             {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}
