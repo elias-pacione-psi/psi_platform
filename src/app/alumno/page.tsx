@@ -49,23 +49,23 @@ export default async function AlumnoHomePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300 bg-noche">
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300 ring-1 ring-marca/20">
           <CardHeader>
-            <CardTitle className="font-heading text-2xl text-white">Tu clase en vivo</CardTitle>
-            <CardDescription className="font-sans text-base text-white/70">
+            <CardTitle className="font-heading text-2xl text-tinta">Tu clase en vivo</CardTitle>
+            <CardDescription className="font-sans text-base">
               Únete a nuestra sesión de Google Meet programada.
             </CardDescription>
           </CardHeader>
           <CardContent>
             {proximaSesion?.fecha_hora ? (
-              <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 text-center">
-                <p className="font-sans font-medium text-white mb-1">
+              <div className="mb-6 p-4 bg-crema rounded-xl border border-tinta/10 text-center">
+                <p className="font-sans font-medium text-tinta mb-1">
                   Tu próxima clase es el <span className="font-bold">{new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</span> a las <span className="font-bold">{new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}hs</span>
                 </p>
               </div>
             ) : (
-              <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 text-center">
-                <p className="text-white/70 font-sans text-sm">No hay clases en vivo agendadas por ahora.</p>
+              <div className="mb-6 p-4 bg-crema rounded-xl border border-tinta/10 text-center">
+                <p className="text-tinta/70 font-sans text-sm">No hay clases en vivo agendadas por ahora.</p>
               </div>
             )}
 
