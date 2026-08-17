@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock } from 'lucide-react'
-import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { createClient } from '@/utils/supabase/server'
@@ -63,7 +63,12 @@ export default async function CursosPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={PlayCircle} etiqueta="Lección grabada" variante="marca" />
+          <IlustracionSitio
+            slug="cursos-leccion-grabada"
+            icon={PlayCircle}
+            etiqueta="Lección grabada"
+            variante="marca"
+          />
         </div>
       </section>
 
@@ -173,7 +178,13 @@ export default async function CursosPage() {
       {/* PARA QUIÉN ES + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={BookOpen} etiqueta="Módulo con material de apoyo" variante="sage" className="md:order-2" />
+          <IlustracionSitio
+            slug="cursos-material-apoyo"
+            icon={BookOpen}
+            etiqueta="Módulo con material de apoyo"
+            variante="sage"
+            className="md:order-2"
+          />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               ¿Para quién es?

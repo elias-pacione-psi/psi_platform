@@ -1,9 +1,12 @@
 import Link from 'next/link'
 import { BookOpen, Users, MessageSquareQuote, ShieldCheck, ArrowRight, HeartHandshake, Sparkles, UserCheck } from 'lucide-react'
-import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Psicología y Fe | Elias Pacione' }
+
+// Ver formaciones/page.tsx: se regenera cada hora para que la firma de R2 no venza.
+export const revalidate = 3600
 
 const SERVICIOS = [
   {
@@ -52,7 +55,12 @@ export default function PsicologiaYFePage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={HeartHandshake} etiqueta="Psicología y fe integrada" variante="marca" />
+          <IlustracionSitio
+            slug="fe-puente"
+            icon={HeartHandshake}
+            etiqueta="Psicología y fe integrada"
+            variante="marca"
+          />
         </div>
       </section>
 
@@ -103,7 +111,13 @@ export default function PsicologiaYFePage() {
       {/* CONFIDENCIALIDAD Y RIGOR */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={BookOpen} etiqueta="Enfoque profesional" variante="sage" className="md:order-2" />
+          <IlustracionSitio
+            slug="fe-enfoque-profesional"
+            icon={BookOpen}
+            etiqueta="Enfoque profesional"
+            variante="sage"
+            className="md:order-2"
+          />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               Rigor clínico y marco ético
