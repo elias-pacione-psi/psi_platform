@@ -46,8 +46,10 @@ export async function IlustracionSitio({ slug, icon, etiqueta, variante = 'marca
         height={900}
         className="hidden aspect-[4/3] w-full object-cover dark:block"
       />
+      {/* Sin el rótulo "· ilustración" que llevaba el placeholder: acá la imagen es el
+          asset definitivo, así que el pie solo nombra lo que se ve. */}
       <figcaption className="border-t border-border px-4 py-2.5 font-serif text-xs text-muted-foreground">
-        {etiqueta} · ilustración
+        {etiqueta}
       </figcaption>
     </figure>
   )
