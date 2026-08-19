@@ -10,9 +10,15 @@ export const metadata = { title: 'Política de privacidad | Elias Pacione' }
 // lenguaje claro a propósito: el art. 4 de la Ley 24.240 exige información "cierta,
 // clara y detallada", y una política que nadie entiende no informa a nadie.
 //
-// Los datos identificatorios del responsable salen de utils/datos-titular.ts. Sigue
-// siendo recomendable que un abogado le dé una lectura antes de escalar la venta,
-// pero esto ya no es un placeholder: describe el tratamiento real.
+// Los datos identificatorios del responsable salen de utils/datos-titular.ts.
+//
+// La §10 del documento legal redactado para el sitio ("Terminos y condiciones
+// _eliaspacione_.docx", 12/08/2026) está incorporada acá: los datos de salud de los
+// formularios como dato sensible del art. 2, el tratamiento con medidas reforzadas
+// (punto 3), los derechos del titular y la mención a la AAIP (punto 8). Los
+// proveedores del punto 5 son los que efectivamente se usan, no los que el documento
+// enumera de memoria — Mercado Pago está integrado, Ualá aparece solo como link de
+// pago manual (ver ComprarEbookButton).
 
 type Bloque =
   | { tipo: 'p'; texto: string }
@@ -37,7 +43,7 @@ const secciones: { titulo: string; bloques: Bloque[] }[] = [
       },
       {
         tipo: 'p',
-        texto: 'Cualquier consulta sobre esta política, o sobre cómo se tratan tus datos, se responde por ese email.',
+        texto: 'Cualquier consulta sobre esta política, o sobre cómo se tratan tus datos, se responde por ese email. Esta política forma parte integrante de los términos y condiciones del sitio.',
       },
     ],
   },
@@ -112,6 +118,10 @@ const secciones: { titulo: string; bloques: Bloque[] }[] = [
         tipo: 'p',
         texto: 'Al enviar el formulario prestás tu consentimiento libre, expreso e informado para que esos datos se traten con la única finalidad de responder tu consulta y, si corresponde, coordinar una primera entrevista. No se usan para ninguna otra cosa.',
       },
+      {
+        tipo: 'p',
+        texto: 'Por su naturaleza, esos datos se guardan con las medidas de seguridad y confidencialidad reforzadas que exige la Ley 25.326: no se comparten con nadie más, no se usan para ningún otro fin y se eliminan cuando dejan de ser necesarios para el contacto o cuando lo pidas.',
+      },
     ],
   },
   {
@@ -148,7 +158,8 @@ const secciones: { titulo: string; bloques: Bloque[] }[] = [
           'Cloudflare R2 — almacenamiento de los archivos del material y de los trabajos entregados.',
           'Vercel — alojamiento del sitio.',
           'Resend — envío de los correos de la plataforma (invitaciones, recuperación de contraseña, recordatorios de clase).',
-          'La plataforma de pagos que se utilice para cobrar los ebooks — recibe únicamente lo necesario para procesar el cobro.',
+          'Mercado Pago, y en compras puntuales Ualá — cobro de los ebooks; recibe únicamente lo necesario para procesar el pago.',
+          'Google Meet, Zoom u otra plataforma de videollamada — solo cuando un encuentro es virtual, y únicamente para que puedas conectarte a la clase o a la sesión. Cada una se rige además por sus propias políticas.',
         ],
       },
       {
@@ -346,6 +357,20 @@ export default function PrivacidadPage() {
               </div>
             </section>
           ))}
+        </div>
+
+        <div className="mt-10 bg-card border border-border rounded-xl p-5">
+          <p className="text-sm text-tinta/70 leading-relaxed">
+            Esta política forma parte de los{' '}
+            <Link href="/terminos" className="text-marca underline underline-offset-2">
+              términos y condiciones
+            </Link>
+            . Si querés dar de baja una compra, entrá al{' '}
+            <Link href="/arrepentimiento" className="text-marca underline underline-offset-2">
+              botón de arrepentimiento
+            </Link>
+            .
+          </p>
         </div>
 
         <p className="text-sm text-tinta/50 mt-12 pt-6 border-t border-tinta/10">

@@ -45,9 +45,15 @@ export default function ArrepentimientoPage() {
             y sin costo alguno.
           </p>
           <p>
-            Vale también si ya descargaste el archivo. No hace falta que te registres, ni
-            que completes ningún formulario, ni que expliques por qué: alcanza con un
-            mail.
+            No hace falta que te registres, ni que completes ningún formulario, ni que
+            expliques por qué: alcanza con un mail.
+          </p>
+          <p>
+            Si ya descargaste el ebook o accediste a los módulos de un curso dentro de
+            esos diez días —habiendo pedido al comprar el acceso inmediato—, esa
+            circunstancia puede tenerse en cuenta para evaluar si corresponde el
+            reintegro y con qué alcance, dentro de lo que admita la normativa de defensa
+            del consumidor vigente. Escribí igual: se revisa caso por caso.
           </p>
 
           <div className="bg-card border border-border rounded-xl p-6">
@@ -84,13 +90,26 @@ export default function ArrepentimientoPage() {
             <p>
               Dentro de las <strong>24 horas</strong> vas a recibir la confirmación de que
               el pedido se recibió, junto con un código de identificación del trámite. El
-              reintegro se hace por el mismo medio de pago que usaste, sin gastos a tu
-              cargo, y se procesa dentro de los 5 días hábiles — el tiempo en que el dinero
-              se acredita depende además de tu banco.
+              reintegro que corresponda se hace por el mismo medio de pago que usaste,
+              sin gastos a tu cargo, y se procesa dentro de los 5 días hábiles — el tiempo
+              en que el dinero se acredita depende además de tu banco.
             </p>
           </div>
 
+          {/* La Ley 24.240 excluye de su régimen a los servicios de profesionales
+              liberales con título universitario y matrícula (art. 2), así que la
+              terapia, la supervisión y la consultoría pastoral no entran acá. Se
+              aclara igual para que nadie escriba a esta dirección creyendo que
+              cancela un turno: eso se coordina directo con Elías. */}
           <p className="text-sm text-tinta/60 pt-4 border-t border-tinta/10">
+            Esto aplica a lo que se compra por la web. La terapia individual, la
+            supervisión y la consultoría pastoral no se contratan online y quedan fuera
+            del régimen de la Ley 24.240 por su artículo 2: cancelar o reprogramar un
+            turno se acuerda directamente con Elías, por la vía que hayan usado para
+            coordinarlo.
+          </p>
+
+          <p className="text-sm text-tinta/60">
             El detalle completo está en los{' '}
             <Link href="/terminos" className="text-marca underline underline-offset-2">
               términos y condiciones

@@ -23,11 +23,11 @@ export const DATOS_TITULAR = {
   email: 'elias.psicologiaconsentido@gmail.com',
   sitio: 'eliaspacione.com',
 
-  // ---- COMPLETAR ANTES DE VENDER ONLINE ----
-  matricula: '',  // Ej: 'M.P. 12345'
-  cuit: '',       // Ej: '20-12345678-9'
-  domicilio: '',  // Ej: 'Av. Mitre 722, Quilmes, Provincia de Buenos Aires'
-  // ------------------------------------------
+  // Cargados el 2026-08-20 desde el documento de términos y condiciones redactado
+  // para el sitio ("Terminos y condiciones _eliaspacione_.docx", secciones 1 y 16).
+  matricula: 'M.P. N° 62423',
+  cuit: '20-29004460-0',
+  domicilio: 'Mitre 722, Quilmes, Provincia de Buenos Aires',
 
   // Opcional: si se completa, se muestra como vía de contacto adicional.
   telefono: '',
@@ -54,4 +54,4 @@ export function lineaIdentificatoria(): string {
 // Fecha de última revisión del texto legal. Actualizar a mano cuando se cambie el
 // contenido de /privacidad o /terminos — no usar new Date(), que mentiría diciendo
 // que el texto se actualizó hoy solo porque el sitio se volvió a deployar.
-export const ULTIMA_ACTUALIZACION_LEGAL = '9 de agosto de 2026'
+export const ULTIMA_ACTUALIZACION_LEGAL = '20 de agosto de 2026'
