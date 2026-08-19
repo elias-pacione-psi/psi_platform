@@ -115,7 +115,7 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
           <div className="mb-8">
             {esArchivoDirecto
               ? <PdfViewerSeguro url={leccion.url_recurso} />
-              : <DriveIframe url={leccion.url_recurso} />}
+              : <DriveIframe url={leccion.url_recurso} formato="documento" />}
           </div>
         )}
         {tipoMedio === 'video' && leccion.url_recurso && (

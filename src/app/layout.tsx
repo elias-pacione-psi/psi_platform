@@ -23,10 +23,13 @@ export const metadata: Metadata = {
 
 import type { Viewport } from 'next';
 
+// Sin `maximumScale`/`userScalable: false` a propósito: fijarlos en 1 apagaba el
+// pinch-to-zoom nativo en TODA la app, que es justo el gesto con el que se leen los
+// documentos en el teléfono (PDFs, imágenes de lecciones, tablas). Además incumple
+// WCAG 1.4.4. En escritorio no cambia nada — ahí el zoom siempre fue el del navegador.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
 };
 
 import { Toaster } from "@/components/ui/sonner"
