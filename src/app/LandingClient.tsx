@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { crearSolicitud } from './actions'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
@@ -13,7 +14,7 @@ import { Loader2 } from 'lucide-react'
 
 // Mismo orden en el que aparecen los botones de la nav (page.tsx), menos "otro": ese
 // solo lo ve quien entra directo al formulario sin pasar por un botón puntual.
-const OPCIONES_INTERES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'otro'] as const
+const OPCIONES_INTERES = ['curso', 'formacion', 'supervision', 'terapia_individual', 'psicologia_fe', 'otro'] as const
 
 export function LandingClient() {
   const [isPending, startTransition] = useTransition()
@@ -94,14 +95,19 @@ export function LandingClient() {
             </div>
           </div>
 
+          {/* Sin `required` a propósito: acá alguien puede volcar su motivo de consulta,
+              que es un dato sensible de salud, y el art. 7 de la Ley 25.326 dice que nadie
+              puede ser obligado a darlos. Con el desplegable de interés ya alcanza para
+              responder la consulta. */}
           <div className="space-y-2">
-            <Label htmlFor="objetivos" className="text-tinta font-bold">Contanos más</Label>
+            <Label htmlFor="objetivos" className="text-tinta font-bold">
+              Contanos más <span className="font-normal text-muted-foreground">(opcional)</span>
+            </Label>
             <Textarea
               id="objetivos"
               name="objetivos"
-              required
               className="border-border bg-background h-32 resize-none"
-              placeholder="Contanos brevemente qué te trae por acá..."
+              placeholder="Si querés, contanos brevemente qué estás buscando. No hace falta que entres en detalles."
               disabled={isPending}
             />
           </div>
@@ -109,6 +115,17 @@ export function LandingClient() {
           <Button type="submit" disabled={isPending} className="w-full bg-tinta hover:bg-marca text-crema font-bold h-14 rounded-xl text-lg transition-transform hover:scale-[1.01]">
             {isPending ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : "Enviar Solicitud"}
           </Button>
+
+          {/* Deber de información del art. 6 de la Ley 25.326: el titular tiene que saber
+              para qué se usan sus datos y cómo ejercer sus derechos ANTES de entregarlos. */}
+          <p className="text-xs text-muted-foreground leading-relaxed text-center">
+            Tus datos se usan únicamente para responder esta consulta y quedan bajo secreto
+            profesional. Podés pedir acceder a ellos, corregirlos o borrarlos cuando quieras.{' '}
+            <Link href="/privacidad" className="underline underline-offset-2 hover:text-tinta transition-colors">
+              Política de privacidad
+            </Link>
+            .
+          </p>
         </form>
       </div>
     </section>

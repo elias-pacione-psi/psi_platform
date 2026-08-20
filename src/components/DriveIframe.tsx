@@ -7,9 +7,13 @@ import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
 
 interface DriveIframeProps {
   url: string;
+  /** Con 'documento' la caja se vuelve alta en teléfono: una página A4 metida en un
+   *  16:9 de 360px de ancho queda en una franja de ~200px, ilegible aun con zoom. En
+   *  escritorio los dos formatos siguen usando el 16:9 de siempre. */
+  formato?: 'video' | 'documento';
 }
 
-export function DriveIframe({ url }: DriveIframeProps) {
+export function DriveIframe({ url, formato = 'video' }: DriveIframeProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
@@ -62,8 +66,13 @@ export function DriveIframe({ url }: DriveIframeProps) {
 
       <div
         ref={containerRef}
-        className={`relative w-full overflow-hidden bg-muted shadow-inner ${isFullscreen ? 'h-screen' : 'rounded-xl border border-border'}`}
-        style={!isFullscreen ? { paddingTop: '56.25%' } : {}}
+        className={`relative w-full overflow-hidden bg-muted shadow-inner ${
+          isFullscreen
+            ? 'h-screen'
+            : formato === 'documento'
+              ? 'rounded-xl border border-border h-[78dvh] md:h-auto md:pt-[56.25%]'
+              : 'rounded-xl border border-border pt-[56.25%]'
+        }`}
       >
         {/* Sandbox SOLO para páginas de preview en HTML (Drive/Dropbox): sin
             allow-same-origin ahí, el visor queda en un spinner infinito (verificado

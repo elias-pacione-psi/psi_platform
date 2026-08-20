@@ -28,5 +28,6 @@ export const LABEL_INTERES: Record<string, string> = {
   formacion: 'Formación con clases en vivo',
   supervision: 'Supervisión',
   terapia_individual: 'Terapia individual',
+  psicologia_fe: 'Psicología y Fe',
   otro: 'Otro / no especificado',
 }

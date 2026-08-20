@@ -1,9 +1,13 @@
 import Link from 'next/link'
 import { Presentation, Users, CalendarCheck, ArrowRight, BookOpen } from 'lucide-react'
-import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Formaciones | Elias Pacione' }
+
+// La página es estática salvo por las ilustraciones, que llegan con una URL de R2 firmada
+// por 6 horas. Regenerándola cada hora la firma siempre está fresca cuando se sirve.
+export const revalidate = 3600
 
 const PASOS = [
   {
@@ -49,7 +53,12 @@ export default function FormacionesPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={Presentation} etiqueta="Clase en vivo" variante="marca" />
+          <IlustracionSitio
+            slug="formaciones-clase-en-vivo"
+            icon={Presentation}
+            etiqueta="Clase en vivo"
+            variante="marca"
+          />
         </div>
       </section>
 
@@ -92,7 +101,13 @@ export default function FormacionesPage() {
       {/* PARA QUIÉN ES + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={Users} etiqueta="Grupo de la cohorte" variante="sage" className="md:order-2" />
+          <IlustracionSitio
+            slug="formaciones-grupo-cohorte"
+            icon={Users}
+            etiqueta="Grupo de la cohorte"
+            variante="sage"
+            className="md:order-2"
+          />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               ¿Para quién es?

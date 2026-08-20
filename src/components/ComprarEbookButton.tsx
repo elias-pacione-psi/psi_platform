@@ -101,6 +101,28 @@ export function ComprarEbookButton(
               {isPending ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
               Ir a pagar
             </Button>
+
+            {/* Dos cosas tienen que pasar acá y no en el pie de la home:
+                  1. Los términos dicen que comprar implica aceptarlos (punto 2), y el
+                     art. 4 de la Ley 24.240 exige que estén a la vista ANTES de pagar.
+                  2. La salvedad del punto 9 sobre contenido digital ya descargado sólo
+                     se sostiene si el comprador prestó "conformidad previa y expresa"
+                     al acceso inmediato. Este es el único momento en que se puede
+                     tomar esa conformidad: si se saca de acá, hay que sacar también la
+                     salvedad del punto 9 de /terminos. */}
+            <p className="text-xs text-muted-foreground text-center leading-relaxed">
+              Al continuar aceptás los{' '}
+              <Link href="/terminos" className="underline underline-offset-2 hover:text-tinta">
+                términos y condiciones
+              </Link>{' '}
+              y la{' '}
+              <Link href="/privacidad" className="underline underline-offset-2 hover:text-tinta">
+                política de privacidad
+              </Link>
+              , y pedís expresamente acceder al ebook apenas se acredite el pago. Tenés
+              10 días corridos para arrepentirte; sobre el contenido que ya hayas
+              descargado rige la salvedad del punto 9 de los términos.
+            </p>
           </div>
         </DialogContent>
       </Dialog>

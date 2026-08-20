@@ -1,9 +1,12 @@
 import Link from 'next/link'
 import { HeartHandshake, UserRound, MessageCircleHeart, ArrowRight, ShieldCheck } from 'lucide-react'
-import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Terapia individual | Elias Pacione' }
+
+// Ver formaciones/page.tsx: se regenera cada hora para que la firma de R2 no venza.
+export const revalidate = 3600
 
 const PASOS = [
   {
@@ -49,7 +52,12 @@ export default function TerapiaIndividualPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={HeartHandshake} etiqueta="Encuentro terapéutico" variante="marca" />
+          <IlustracionSitio
+            slug="terapia-encuentro"
+            icon={HeartHandshake}
+            etiqueta="Encuentro terapéutico"
+            variante="marca"
+          />
         </div>
       </section>
 
@@ -92,7 +100,13 @@ export default function TerapiaIndividualPage() {
       {/* PRIVACIDAD + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={UserRound} etiqueta="Espacio individual" variante="sage" className="md:order-2" />
+          <IlustracionSitio
+            slug="terapia-espacio-individual"
+            icon={UserRound}
+            etiqueta="Espacio individual"
+            variante="sage"
+            className="md:order-2"
+          />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               Un espacio confidencial

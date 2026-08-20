@@ -7,6 +7,7 @@ import { PlayCircle, FileText, FileAudio, FileVideo, FileImage, ExternalLink, X,
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRef, useEffect } from 'react'
 import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
+import { PdfViewerSeguro } from '@/components/PdfViewerSeguro'
 
 type Recurso = { id: string, titulo: string, tipo_contenido: string, url_recurso: string }
 
@@ -126,6 +127,16 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
                   </Button>
                 </a>
               </div>
+            ) : selectedRecurso.tipo_contenido.includes('pdf') && !esPaginaDePreviewSandboxeable(selectedRecurso.url_recurso) ? (
+              /* Mismo visor que la sección Programa (react-pdf): sin botón de descarga
+                 ni impresión, sin capa de texto seleccionable y clic derecho bloqueado.
+                 Antes acá había un iframe al archivo firmado y el visor nativo del
+                 navegador exponía ambos botones en su toolbar. El viewer ya trae su
+                 propia barra (página, zoom, pantalla completa), así que no lleva el
+                 contenedor con borde ni el botón externo de fullscreen. */
+              <div className="h-full w-full max-w-6xl mx-auto overflow-auto">
+                <PdfViewerSeguro url={selectedRecurso.url_recurso} />
+              </div>
             ) : (
               <div className="h-full w-full max-w-6xl mx-auto flex flex-col gap-3">
                 <div className="flex justify-end">
@@ -179,17 +190,6 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
                         onContextMenu={(e) => e.preventDefault()}
                       />
                     </div>
-                  ) : selectedRecurso.tipo_contenido === 'r2_pdf' || selectedRecurso.tipo_contenido === 'supabase_pdf' ? (
-                    /* Sin sandbox: sandbox bloquea el plugin nativo de PDF del navegador
-                       (ícono gris, no renderiza). No hace falta acá: es un archivo propio
-                       en nuestro bucket privado (R2 o Supabase), no contenido de terceros
-                       embebido. */
-                    <iframe
-                      src={selectedRecurso.url_recurso}
-                      className="w-full h-full border-0 z-0 relative bg-card"
-                      allow="fullscreen"
-                      title="Visor de PDF"
-                    />
                   ) : (
                     /* Sandbox SOLO para páginas de preview en HTML (Drive/Dropbox): sin
                        allow-same-origin ahí, el visor queda en spinner infinito (verificado

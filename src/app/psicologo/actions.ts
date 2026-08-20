@@ -6,7 +6,7 @@ import { requirePsicologo } from '@/utils/supabase/guards'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { BUCKET_MATERIALES } from '@/utils/supabase/recursos'
 import { borrarDeR2, extraerKeyDeR2 } from '@/utils/r2'
-import { esMarcadorR2 } from '@/utils/r2-marcador'
+import { esMarcadorR2, extensionDe } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 import { baseUrl } from '@/utils/site-url'
@@ -369,6 +369,8 @@ export async function eliminarUsuarioTotal(id: string) {
 // PROGRAMAS / MÓDULOS / LECCIONES
 // ============================================================
 
+const EXTENSIONES_IMAGEN_PROGRAMA = ['jpg', 'jpeg', 'png', 'webp']
+
 export async function guardarPrograma(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -377,18 +379,40 @@ export async function guardarPrograma(formData: FormData) {
   const id = formData.get('id') as string | null
   const titulo = (formData.get('titulo') as string)?.trim()
   const descripcion = (formData.get('descripcion') as string)?.trim() || null
+  const descripcionLarga = (formData.get('descripcion_larga') as string)?.trim() || null
+  const portada = (formData.get('portada_key') as string)?.trim() || ''
+  const publicadoEnHome = formData.get('publicado_en_home') === 'true'
 
   if (!titulo) return { error: 'El título es obligatorio' }
+  if (descripcionLarga && descripcionLarga.length > 6000) return { error: 'La descripción ampliada es demasiado larga' }
+
+  // A diferencia de ebooks: portada opcional incluso publicado — las imágenes
+  // se cargan después. Solo se valida si el psicólogo eligió una.
+  if (portada) {
+    if (!esMarcadorR2(portada)) return { error: 'La portada tiene que elegirse del bucket' }
+    if (!EXTENSIONES_IMAGEN_PROGRAMA.includes(extensionDe(portada))) {
+      return { error: `La portada tiene que ser una imagen (${EXTENSIONES_IMAGEN_PROGRAMA.join(', ')})` }
+    }
+  }
+
+  const campos = {
+    titulo,
+    descripcion,
+    descripcion_larga: descripcionLarga,
+    portada_key: portada || null,
+    publicado_en_home: publicadoEnHome,
+  }
 
   if (id) {
-    const { error } = await supabase.from('programas').update({ titulo, descripcion }).eq('id', id)
+    const { error } = await supabase.from('programas').update(campos).eq('id', id)
     if (error) return { error: error.message }
   } else {
-    const { error } = await supabase.from('programas').insert({ titulo, descripcion })
+    const { error } = await supabase.from('programas').insert(campos)
     if (error) return { error: error.message }
   }
 
   revalidatePath('/psicologo/programas')
+  revalidatePath('/cursos')
   return { success: true }
 }
 
@@ -408,6 +432,7 @@ export async function eliminarPrograma(id: string) {
   await limpiarArchivosDeStorage(lecciones || [])
 
   revalidatePath('/psicologo/programas')
+  revalidatePath('/cursos')
   return { success: true }
 }
 

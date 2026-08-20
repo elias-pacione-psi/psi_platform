@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock } from 'lucide-react'
-import { ImagenMuestra } from '@/components/ImagenMuestra'
+import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { createClient } from '@/utils/supabase/server'
+import { resolverUrlRecurso } from '@/utils/r2'
 
 export const metadata = { title: 'Cursos | Elias Pacione' }
 
@@ -23,7 +26,18 @@ const PASOS = [
   },
 ]
 
-export default function CursosPage() {
+export default async function CursosPage() {
+  const supabase = await createClient()
+  const { data: programas } = await supabase
+    .from('programas')
+    .select('id, titulo, descripcion, descripcion_larga, portada_key')
+    .eq('publicado_en_home', true)
+    .order('created_at', { ascending: false })
+
+  const programasPublicados = await Promise.all(
+    (programas ?? []).map(async (p) => ({ ...p, portada_url: await resolverUrlRecurso(p.portada_key) })),
+  )
+
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
       <SiteHeader />
@@ -49,7 +63,12 @@ export default function CursosPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <ImagenMuestra icon={PlayCircle} etiqueta="Lección grabada" variante="marca" />
+          <IlustracionSitio
+            slug="cursos-leccion-grabada"
+            icon={PlayCircle}
+            etiqueta="Lección grabada"
+            variante="marca"
+          />
         </div>
       </section>
 
@@ -89,10 +108,83 @@ export default function CursosPage() {
         </div>
       </section>
 
+      {/* CURSOS DISPONIBLES — programas reales marcados con publicado_en_home.
+          Se oculta la sección entera si no hay ninguno todavía: un acordeón
+          vacío en medio de una página informativa se vería roto. */}
+      {programasPublicados.length > 0 && (
+        <section className="border-b border-border">
+          <div className="max-w-5xl mx-auto px-6 py-16">
+            <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-3 tracking-tight">
+              Cursos disponibles
+            </h2>
+            <p className="font-serif text-tinta/75 text-base leading-relaxed mb-10 max-w-2xl">
+              Elegí un curso para ver de qué se trata.
+            </p>
+            <Accordion className="w-full space-y-4">
+              {programasPublicados.map((p) => (
+                <AccordionItem
+                  key={p.id}
+                  value={p.id}
+                  className="border border-border rounded-xl px-4 bg-card data-[state=open]:shadow-md transition-all"
+                >
+                  <AccordionTrigger className="hover:no-underline py-4">
+                    <div className="flex items-center gap-4 text-left">
+                      <div className="w-14 h-14 rounded-lg bg-muted overflow-hidden shrink-0 flex items-center justify-center">
+                        {p.portada_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={p.portada_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <BookOpen className="w-6 h-6 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div>
+                        <span className="font-heading font-semibold text-lg text-tinta block">{p.titulo}</span>
+                        {p.descripcion && (
+                          <span className="font-sans text-sm text-muted-foreground font-normal line-clamp-1">{p.descripcion}</span>
+                        )}
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-2 pb-6 border-t border-border">
+                    <div className="grid md:grid-cols-[200px_1fr] gap-6 mt-4 items-start">
+                      {p.portada_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.portada_url} alt={p.titulo} className="w-full aspect-[4/3] object-cover rounded-xl border border-border" />
+                      ) : (
+                        <div className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted flex items-center justify-center">
+                          <BookOpen className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-serif text-tinta/80 text-base leading-relaxed whitespace-pre-line">
+                          {p.descripcion_larga || p.descripcion || 'Muy pronto vamos a sumar más detalle sobre este curso.'}
+                        </p>
+                        <Link
+                          href="/?interes=curso#contacto"
+                          className="inline-flex items-center gap-2 mt-6 bg-tinta text-crema px-6 py-2.5 rounded-full font-medium text-sm transition-colors hover:bg-marca"
+                        >
+                          Quiero más información <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      )}
+
       {/* PARA QUIÉN ES + imágenes */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-          <ImagenMuestra icon={BookOpen} etiqueta="Módulo con material de apoyo" variante="sage" className="md:order-2" />
+          <IlustracionSitio
+            slug="cursos-material-apoyo"
+            icon={BookOpen}
+            etiqueta="Módulo con material de apoyo"
+            variante="sage"
+            className="md:order-2"
+          />
           <div className="md:order-1">
             <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
               ¿Para quién es?

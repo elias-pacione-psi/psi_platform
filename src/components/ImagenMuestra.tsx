@@ -1,10 +1,10 @@
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// No hay fotografía propia todavía (ver public/ — solo assets de marca), así que
-// estas tarjetas hacen de placeholder honesto: se rotulan como "imagen de
-// muestra" en vez de simular una foto real, para que no se confundan con el
-// asset final el día que haya fotografía propia.
+// Placeholder de respaldo. Las páginas públicas hoy muestran las ilustraciones que están
+// en el bucket (ver IlustracionSitio.tsx); esto es a lo que caen si el bucket no responde
+// o el archivo no está. Se rotula como "imagen de muestra" en vez de simular una foto
+// real, para que se note que ahí falta el asset definitivo.
 const FONDOS = {
   marca: 'from-marca/25 via-marca/10 to-transparent',
   sage: 'from-sage/50 via-sage/15 to-transparent',

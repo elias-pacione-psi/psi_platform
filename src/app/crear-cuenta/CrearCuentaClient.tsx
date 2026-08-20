@@ -142,6 +142,20 @@ export function CrearCuentaClient({ emailInicial, ordenId }: { emailInicial: str
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Crear cuenta'}
             </Button>
 
+            {/* Punto 1 de /terminos: crear una cuenta implica aceptarlos. Tiene que
+                estar dicho acá, en el momento en que se acepta, no solo en el pie. */}
+            <p className="text-center text-xs text-muted-foreground leading-relaxed">
+              Al crear tu cuenta aceptás los{' '}
+              <Link href="/terminos" className="underline underline-offset-2 hover:text-tinta">
+                términos y condiciones
+              </Link>{' '}
+              y la{' '}
+              <Link href="/privacidad" className="underline underline-offset-2 hover:text-tinta">
+                política de privacidad
+              </Link>
+              . La cuenta es para mayores de 18 años.
+            </p>
+
             <p className="text-center text-sm text-muted-foreground">
               ¿Ya tenés cuenta? <Link href="/login" className="text-marca underline underline-offset-2">Ingresá</Link>
             </p>

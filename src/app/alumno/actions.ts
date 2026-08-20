@@ -295,3 +295,67 @@ export async function registrarEntrega(leccionId: string, programaId: string, ar
   revalidatePath(`/alumno/programas/${programaId}/leccion/${leccionId}`)
   return { success: true }
 }
+
+// ============================================================
+// OPINIÓN SOBRE EL CURSO
+// ============================================================
+// Encuesta corta y privada sobre el MATERIAL, no sobre un tratamiento: le sirve a
+// Elias para mejorar los cursos. Solo la ve él. No se publica en ningún lado —
+// convertir una opinión en testimonio exige pedirle permiso al alumno sobre un texto
+// concreto, y eso todavía no existe.
+//
+// El acceso al programa lo hace cumplir la RLS (policy opiniones_insert_propia, con
+// tiene_acceso_programa), que es la capa real. Acá solo se valida la forma del dato.
+
+const TOPE_TEXTO_OPINION = 2000
+
+export async function guardarOpinionCurso(
+  programaId: string,
+  puntuacion: number,
+  loQueSirvio: string,
+  loQueMejoraria: string,
+) {
+  const auth = await requireUser()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase, user } = auth
+
+  if (!RE_UUID.test(programaId)) return { error: 'Curso inválido' }
+  if (!Number.isInteger(puntuacion) || puntuacion < 1 || puntuacion > 5) {
+    return { error: 'Elegí una puntuación de 1 a 5' }
+  }
+
+  const sirvio = loQueSirvio?.trim() || null
+  const mejoraria = loQueMejoraria?.trim() || null
+  if (sirvio && sirvio.length > TOPE_TEXTO_OPINION) return { error: 'El texto es demasiado largo' }
+  if (mejoraria && mejoraria.length > TOPE_TEXTO_OPINION) return { error: 'El texto es demasiado largo' }
+
+  const { error } = await supabase.from('opiniones_curso').upsert({
+    programa_id: programaId,
+    alumno_id: user.id,
+    puntuacion,
+    lo_que_sirvio: sirvio,
+    lo_que_mejoraria: mejoraria,
+  }, { onConflict: 'programa_id,alumno_id' })
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/alumno/programas/${programaId}`)
+  return { success: true }
+}
+
+export async function borrarOpinionCurso(programaId: string) {
+  const auth = await requireUser()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase, user } = auth
+
+  const { error } = await supabase
+    .from('opiniones_curso')
+    .delete()
+    .eq('programa_id', programaId)
+    .eq('alumno_id', user.id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/alumno/programas/${programaId}`)
+  return { success: true }
+}
