@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { fechaLarga, hora } from '@/utils/fecha-ar'
 import {
   Users, LayoutList, GraduationCap, Inbox, Library, FolderCog, Calendar,
   ArrowRight, CheckCircle2, UserPlus, MapPin, Video, BookOpen,
@@ -156,13 +157,9 @@ export default async function PsicologoHomePage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <p className="text-tinta font-semibold first-letter:uppercase">
-                  {new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', {
-                    weekday: 'long', day: 'numeric', month: 'long',
-                  })}
+                  {fechaLarga(proximaSesion.fecha_hora)}
                   {' · '}
-                  {new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', {
-                    hour: '2-digit', minute: '2-digit', hour12: false,
-                  })}
+                  {hora(proximaSesion.fecha_hora)}
                   {' hs'}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5">

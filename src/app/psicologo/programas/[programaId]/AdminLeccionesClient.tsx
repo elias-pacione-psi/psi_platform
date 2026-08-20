@@ -20,6 +20,7 @@ import { createClient } from '@/utils/supabase/client'
 import { toast } from 'sonner'
 import { SelectorArchivoR2 } from '@/components/SelectorArchivoR2'
 import { LABEL_TIPO_MEDIO, LABEL_ORIGEN } from '@/utils/taxonomia-labels'
+import { fechaCorta } from '@/utils/fecha-ar'
 
 const TIPO_LABEL: Record<string, string> = {
   drive_video: 'Video', drive_audio: 'Audio', drive_pdf: 'PDF', drive_image: 'Imagen',
@@ -226,7 +227,7 @@ export function AdminLeccionesClient({ programa, modulos, lecciones }: { program
                             <span className="px-2 py-1 rounded-md text-xs font-semibold bg-muted text-muted-foreground border border-border">
                               {LABEL_TIPO_MEDIO[leccion.tipo_medio] ?? TIPO_LABEL[leccion.tipo_contenido] ?? leccion.tipo_contenido}
                               {leccion.tipo_contenido === 'quiz' && ` · ${leccion.preguntas?.length || 0} preg.`}
-                              {leccion.tipo_contenido === 'entrega' && leccion.fecha_limite && ` · vence ${new Date(leccion.fecha_limite).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}`}
+                              {leccion.tipo_contenido === 'entrega' && leccion.fecha_limite && ` · vence ${fechaCorta(leccion.fecha_limite)}`}
                             </span>
                             {leccion.origen && (
                               <span className="px-2 py-1 rounded-md text-xs font-semibold bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400" title="De dónde viene el archivo">

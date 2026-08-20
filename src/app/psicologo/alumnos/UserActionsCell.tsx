@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2 } from 'lucide-react'
+import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, GraduationCap } from 'lucide-react'
 import { toast } from 'sonner'
 import { actualizarAlumno, cambiarEstadoAlumno, eliminarUsuarioTotal } from '../actions'
+import { QuizzesDialog } from './QuizzesDialog'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alumno: any, todosLosProgramas: any[], stateType: string }) {
   const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showQuizzesDialog, setShowQuizzesDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showPurgeDialog, setShowPurgeDialog] = useState(false)
   const [purgeText, setPurgeText] = useState('')
@@ -102,6 +104,10 @@ export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alum
           </Button>
         } />
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={(e) => { e.preventDefault(); setShowQuizzesDialog(true); }}>
+            <GraduationCap className="mr-2 h-4 w-4 text-tinta" />
+            Quizzes
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={(e) => { e.preventDefault(); setShowEditDialog(true); }}>
             <Settings2 className="mr-2 h-4 w-4 text-tinta" />
             <span>Gestionar / Editar</span>
@@ -193,6 +199,16 @@ export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alum
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Montado sólo mientras está abierto: así cada apertura arranca con estado
+          limpio y la carga vive en el montaje, sin resetear nada a mano. */}
+      {showQuizzesDialog && (
+        <QuizzesDialog
+          alumnoId={alumno.id}
+          alumnoNombre={alumno.nombre}
+          onOpenChange={setShowQuizzesDialog}
+        />
+      )}
 
       <Dialog open={showEditDialog} onOpenChange={(open) => {
         if (!open) {

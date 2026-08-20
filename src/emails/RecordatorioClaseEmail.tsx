@@ -1,5 +1,6 @@
 import { Text, Button, Section, Heading, Hr, Link } from 'react-email'
 import { EmailLayout } from './EmailLayout'
+import { fechaLarga, hora } from '@/utils/fecha-ar'
 
 const C = {
   tinta: '#2f3e46',
@@ -21,25 +22,9 @@ interface RecordatorioClaseEmailProps {
   urlAgenda: string
 }
 
-const formatHora = (iso: string): string => {
-  const d = new Date(iso)
-  return d.toLocaleTimeString('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'America/Argentina/Buenos_Aires',
-  })
-}
+const formatHora = (iso: string): string => hora(iso)
 
-const formatFechaCorta = (iso: string): string => {
-  const d = new Date(iso)
-  return d.toLocaleDateString('es-AR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'America/Argentina/Buenos_Aires',
-  })
-}
+const formatFechaCorta = (iso: string): string => fechaLarga(iso)
 
 /**
  * Recordatorio automático que sale la mañana del día anterior a la clase.

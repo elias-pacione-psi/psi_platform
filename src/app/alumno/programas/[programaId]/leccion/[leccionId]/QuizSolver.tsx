@@ -47,6 +47,13 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
 
   const reintentar = () => { setResultado(null); setRespuestas({}) }
 
+  // "No alcanzaste el 70%" era exacto pero inútil: con 5 preguntas el 70% son 3,5, que
+  // redondeando para arriba son 4 aciertos — o sea que 3/5 (60%) reprueba y el alumno
+  // que sacó 3 no tiene forma de saber que le faltaba una sola. Se dice el número de
+  // respuestas, que es lo accionable. UMBRAL_APROBACION vive en utils/supabase/quiz.ts,
+  // que es server-only; el 0.7 se repite acá y los dos tienen que moverse juntos.
+  const aciertosNecesarios = (total: number) => Math.ceil(total * 0.7)
+
   return (
     <div className="space-y-6">
       {resultado && (
@@ -61,8 +68,8 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
                 {resultado.aprobado
                   ? '¡Aprobado! La lección quedó completada.'
                   : resultado.intentosRestantes > 0
-                    ? `No alcanzaste el 70%. Repasá y volvé a intentar — te ${resultado.intentosRestantes === 1 ? 'queda 1 intento' : `quedan ${resultado.intentosRestantes} intentos`}.`
-                    : 'No alcanzaste el 70% y usaste todos tus intentos. Abajo están las respuestas correctas; escribile a tu instructor.'}
+                    ? `Para aprobar necesitás ${aciertosNecesarios(resultado.total)} de ${resultado.total}. Repasá y volvé a intentar — te ${resultado.intentosRestantes === 1 ? 'queda 1 intento' : `quedan ${resultado.intentosRestantes} intentos`}.`
+                    : `Para aprobar hacían falta ${aciertosNecesarios(resultado.total)} de ${resultado.total} y usaste todos tus intentos. Abajo están las respuestas correctas. Escribile a tu instructor: puede devolverte los intentos para que lo rindas de nuevo.`}
               </p>
             </div>
           </CardContent>

@@ -1,5 +1,6 @@
 import { Text, Button, Section, Heading, Hr } from 'react-email'
 import { EmailLayout } from './EmailLayout'
+import { fechaSoloDia } from '@/utils/fecha-ar'
 
 const C = {
   tinta: '#2f3e46',
@@ -21,16 +22,12 @@ interface AsignacionProgramaEmailProps {
   urlPlataforma: string
 }
 
-const formatFecha = (f: string | null | undefined): string | null => {
-  if (!f) return null
-  const d = new Date(f + 'T00:00:00')
-  return d.toLocaleDateString('es-AR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
+// fecha_inicio/fecha_fin son columnas `date` ("2026-09-01"), sin hora ni zona.
+// fechaSoloDia las ancla al offset argentino antes de formatear: sin eso,
+// new Date("2026-09-01") es medianoche UTC = 21:00 del 31 de agosto en Argentina, y la
+// cohorte arrancaba un día antes en el mail.
+const formatFecha = (f: string | null | undefined): string | null =>
+  f ? fechaSoloDia(f) : null
 
 /**
  * Email que recibe el alumno cuando se le da acceso a uno o más programas nuevos —

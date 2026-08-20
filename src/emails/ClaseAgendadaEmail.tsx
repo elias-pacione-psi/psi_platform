@@ -1,5 +1,6 @@
 import { Text, Button, Section, Heading, Hr, Link } from 'react-email'
 import { EmailLayout } from './EmailLayout'
+import { fechaLargaConAnio, hora } from '@/utils/fecha-ar'
 
 const C = {
   tinta: '#2f3e46',
@@ -25,23 +26,10 @@ interface ClaseAgendadaEmailProps {
   urlAgenda: string
 }
 
-const formatFechaHora = (iso: string) => {
-  const d = new Date(iso)
-  const fecha = d.toLocaleDateString('es-AR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'America/Argentina/Buenos_Aires',
-  })
-  const hora = d.toLocaleTimeString('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'America/Argentina/Buenos_Aires',
-  })
-  return { fecha, hora }
-}
+const formatFechaHora = (iso: string) => ({
+  fecha: fechaLargaConAnio(iso),
+  hora: hora(iso),
+})
 
 /**
  * Email que recibe el alumno cuando se agenda una o más clases nuevas de una vez

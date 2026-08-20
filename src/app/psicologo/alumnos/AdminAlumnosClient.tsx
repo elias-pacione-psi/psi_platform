@@ -28,6 +28,7 @@ import { Check, Loader2, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { aprobarSolicitud, rechazarSolicitud } from '../actions'
 import { LABEL_INTERES } from '@/utils/taxonomia-labels'
+import { fechaCorta } from '@/utils/fecha-ar'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: { alumnos: any[], todosLosProgramas: any[], solicitudes?: any[] }) {
@@ -181,11 +182,7 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
                   {req.objetivos || '-'}
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                  {new Date(req.created_at).toLocaleDateString('es-AR', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                  })}
+                  {fechaCorta(req.created_at)}
                 </TableCell>
                 <TableCell className="text-right whitespace-nowrap space-x-2">
                   <Button
