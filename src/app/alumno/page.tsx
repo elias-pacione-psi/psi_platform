@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LayoutList, FolderHeart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { JoinMeetButton } from './JoinMeetButton'
+import { fechaLarga, hora } from '@/utils/fecha-ar'
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -60,7 +61,7 @@ export default async function AlumnoHomePage() {
             {proximaSesion?.fecha_hora ? (
               <div className="mb-6 p-4 bg-crema rounded-xl border border-tinta/10 text-center">
                 <p className="font-sans font-medium text-tinta mb-1">
-                  Tu próxima clase es el <span className="font-bold">{new Date(proximaSesion.fecha_hora).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</span> a las <span className="font-bold">{new Date(proximaSesion.fecha_hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}hs</span>
+                  Tu próxima clase es el <span className="font-bold">{fechaLarga(proximaSesion.fecha_hora)}</span> a las <span className="font-bold">{hora(proximaSesion.fecha_hora)}hs</span>
                 </p>
               </div>
             ) : (

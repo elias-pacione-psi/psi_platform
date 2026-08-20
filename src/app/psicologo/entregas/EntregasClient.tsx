@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { revisarEntrega } from '../actions'
 import { Loader2, Download, Inbox, CheckCircle2, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
+import { fechaNumerica } from '@/utils/fecha-ar'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function EntregasClient({ entregas }: { entregas: any[] }) {
@@ -60,7 +61,7 @@ export function EntregasClient({ entregas }: { entregas: any[] }) {
                   <div className="text-tinta">{e.lecciones?.titulo}</div>
                   <div className="text-xs text-muted-foreground">{e.lecciones?.programas?.titulo}</div>
                 </TableCell>
-                <TableCell className="text-sm text-muted-foreground">{new Date(e.updated_at).toLocaleDateString('es-AR')}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{fechaNumerica(e.updated_at)}</TableCell>
                 <TableCell className="text-right space-x-2">
                   {e.archivo_firmado && (
                     <a href={e.archivo_firmado} target="_blank" rel="noopener noreferrer">

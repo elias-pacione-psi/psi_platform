@@ -28,6 +28,7 @@ import {
   PREFIJO_BIBLIOTECA_R2, SECCIONES_BIBLIOTECA_R2,
 } from '@/utils/r2-marcador'
 import type { CarpetaR2, ListadoR2, ObjetoR2 } from '@/utils/r2'
+import { fechaNumerica } from '@/utils/fecha-ar'
 
 const TIPOS_ACEPTADOS = '.pdf,.txt,.md,.jpg,.jpeg,.png,.webp,.gif,.svg,.mp3,.m4a,.ogg,.oga,.wav,.mp4,.webm,.mov,.doc,.docx,.ppt,.pptx'
 
@@ -393,7 +394,7 @@ export function ArchivosClient({
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">{formatearBytes(c.tamano)}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {c.modificado ? new Date(c.modificado).toLocaleDateString('es-AR') : '—'}
+                    {c.modificado ? fechaNumerica(c.modificado) : '—'}
                   </TableCell>
                   <TableCell className="text-right">
                     {fija ? (
@@ -429,7 +430,7 @@ export function ArchivosClient({
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">{formatearBytes(a.tamano)}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {a.modificado ? new Date(a.modificado).toLocaleDateString('es-AR') : '—'}
+                    {a.modificado ? fechaNumerica(a.modificado) : '—'}
                   </TableCell>
                   <TableCell className="text-right whitespace-nowrap">
                     <Button variant="ghost" size="sm" onClick={() => handleVistaPrevia(a.key)} title="Vista previa">

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { ShoppingBag } from 'lucide-react'
 import { ComprasClient } from './ComprasClient'
+import { fechaCorta } from '@/utils/fecha-ar'
 
 export const metadata = { title: 'Mis compras | Elias Pacione' }
 
@@ -29,7 +30,7 @@ export default async function ComprasPage() {
     id: o.id,
     estado: o.estado,
     precio: formatoARS.format(o.precio_cobrado / 100),
-    fecha: new Date(o.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' }),
+    fecha: fechaCorta(o.created_at),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     titulo: (o.ebooks as any)?.titulo ?? 'Ebook',
   }))

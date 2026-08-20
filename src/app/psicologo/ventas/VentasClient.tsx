@@ -8,6 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { marcarOrdenReembolsada } from './actions'
 import { Loader2, TrendingUp, Receipt, Undo2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { fechaCorta } from '@/utils/fecha-ar'
 
 type Fila = {
   id: string
@@ -113,7 +114,7 @@ export function VentasClient({ filas, totalVentas, ingresosCentavos }: { filas: 
                     </span>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                    {new Date(f.fecha).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {fechaCorta(f.fecha)}
                   </TableCell>
                   <TableCell className="text-right">
                     {f.estado === 'pagada' && (

@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { CheckCircle2, Clock, AlertTriangle, MessageSquare, ClipboardList } from 'lucide-react'
+import { fechaHoraCorta } from '@/utils/fecha-ar'
 
 export const metadata = { title: 'Tareas' }
 
@@ -132,7 +133,7 @@ export default async function TareasPage() {
 
                 {t.fecha_limite && (
                   <p className={`text-xs mt-2 ${vencida ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-muted-foreground'}`}>
-                    Vence: {new Date(t.fecha_limite).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    Vence: {fechaHoraCorta(t.fecha_limite)}
                   </p>
                 )}
 
