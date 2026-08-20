@@ -6,6 +6,7 @@ import { requirePsicologo } from '@/utils/supabase/guards'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { BUCKET_MATERIALES } from '@/utils/supabase/recursos'
 import { borrarDeR2, extraerKeyDeR2 } from '@/utils/r2'
+import { keysHuerfanas } from '@/utils/supabase/referencias-r2'
 import { esMarcadorR2, extensionDe } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
@@ -21,13 +22,22 @@ const INVITE_REDIRECT = `${baseUrl()}/auth/confirm?next=/configurar-password`
 // Borra del backend que corresponda los archivos subidos (ignora URLs externas).
 // R2 se detecta por la marca r2key:// (extraerKeyDeR2), no por tipo_contenido: el mismo
 // tipo_contenido (ej. drive_video) puede vivir en Drive real o en R2 elegido por el picker.
+//
+// Se llama DESPUÉS de borrar la fila, así que lo que queda por limpiar son archivos
+// huérfanos... salvo cuando no lo son: el mismo objeto de R2 suele estar referenciado
+// desde varios lados a la vez (el PDF de un ebook que además figura en Biblioteca, un
+// audio que es lección y recurso). Sin el filtro de keysHuerfanas, borrar el recurso de
+// Biblioteca se llevaba puesto el archivo del ebook ya vendido.
 async function limpiarArchivosDeStorage(recursos: { tipo_contenido: string; url_recurso: string }[]) {
   const subidos = recursos.filter(r => r.url_recurso && !r.url_recurso.startsWith('http'))
 
   const pathsR2 = subidos.map(r => extraerKeyDeR2(r.url_recurso)).filter((k): k is string => Boolean(k))
   const pathsSupabase = subidos.filter(r => r.tipo_contenido.startsWith('supabase_')).map(r => r.url_recurso)
 
-  if (pathsR2.length > 0) await borrarDeR2(pathsR2)
+  if (pathsR2.length > 0) {
+    const aBorrar = await keysHuerfanas(pathsR2)
+    if (aBorrar.length > 0) await borrarDeR2(aBorrar)
+  }
 
   if (pathsSupabase.length > 0) {
     const supabaseAdmin = createAdminClient()

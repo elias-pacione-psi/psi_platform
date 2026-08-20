@@ -28,6 +28,7 @@ import {
   SECCIONES_BIBLIOTECA_R2,
 } from '@/utils/r2-marcador'
 import { sincronizarBibliotecaR2 } from '@/utils/supabase/biblioteca-r2'
+import { errorSiEstanEnUso } from '@/utils/supabase/referencias-r2'
 import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
 import { tipoMedioPorTipoContenido } from '@/utils/taxonomia'
 
@@ -304,6 +305,9 @@ export async function borrarCarpeta(prefijo: string) {
       return { error: 'Esa carpeta contiene entregas de alumnos.' }
     }
 
+    const enUso = await errorSiEstanEnUso(keys)
+    if (enUso) return { error: enUso }
+
     await borrarDeR2(keys)
     if (esZonaBibliotecaR2(prefijo)) await sincronizarBiblioteca()
     return { success: true, borrados: keys.filter((k) => !k.endsWith('/')).length }
@@ -329,9 +333,16 @@ export async function sincronizarBiblioteca() {
   return res
 }
 
-// Actualiza las referencias de lecciones/biblioteca que apuntaban a `keyVieja`, para que
-// no queden huérfanas tras un rename/move. Se compara con extraerKeyDeR2() (no un .eq()
-// literal) porque entiende la marca r2key:// sin importar de dónde salió.
+// Actualiza las referencias que apuntaban a `keyVieja`, para que no queden huérfanas tras
+// un rename/move. Se compara con extraerKeyDeR2() (no un .eq() literal) porque entiende la
+// marca r2key:// sin importar de dónde salió.
+//
+// Tiene que cubrir TODAS las tablas que guardan una key del bucket, no solo las de
+// contenido: cuando esto miraba únicamente lecciones y biblioteca, renombrar el PDF de un
+// ebook desde el gestor lo dejaba apuntando a una key que ya no existía — portada rota en
+// la vidriera y descarga caída para todo el que lo había pagado. La lista tiene que
+// coincidir con la de utils/supabase/referencias-r2.ts (el chequeo de borrado): si se
+// agrega una columna con key de R2, va en los dos lados.
 async function actualizarReferenciasR2(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any,
@@ -339,15 +350,27 @@ async function actualizarReferenciasR2(
   keyNueva: string,
 ): Promise<number> {
   const marcaNueva = marcarKeyR2(keyNueva)
-  const [{ data: lecs }, { data: recs }] = await Promise.all([
+  const [{ data: lecs }, { data: recs }, { data: ebs }, { data: progs }] = await Promise.all([
     supabase.from('lecciones').select('id, url_recurso').not('url_recurso', 'is', null),
     supabase.from('biblioteca_recursos').select('id, url_recurso').not('url_recurso', 'is', null),
+    supabase.from('ebooks').select('id, archivo_key, portada_key'),
+    supabase.from('programas').select('id, portada_key').not('portada_key', 'is', null),
   ])
 
+  const apunta = (valor: string | null) => Boolean(valor) && extraerKeyDeR2(valor as string) === keyVieja
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const idsLecciones = (lecs ?? []).filter((r: any) => extraerKeyDeR2(r.url_recurso) === keyVieja).map((r: any) => r.id)
+  const idsLecciones = (lecs ?? []).filter((r: any) => apunta(r.url_recurso)).map((r: any) => r.id)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const idsRecursos = (recs ?? []).filter((r: any) => extraerKeyDeR2(r.url_recurso) === keyVieja).map((r: any) => r.id)
+  const idsRecursos = (recs ?? []).filter((r: any) => apunta(r.url_recurso)).map((r: any) => r.id)
+  // Las dos columnas del ebook se tratan por separado: un mismo archivo no puede ser a la
+  // vez el PDF y la portada, pero sí puede haber dos ebooks distintos apuntando al mismo.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const idsEbookArchivo = (ebs ?? []).filter((r: any) => apunta(r.archivo_key)).map((r: any) => r.id)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const idsEbookPortada = (ebs ?? []).filter((r: any) => apunta(r.portada_key)).map((r: any) => r.id)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const idsProgramas = (progs ?? []).filter((r: any) => apunta(r.portada_key)).map((r: any) => r.id)
 
   await Promise.all([
     idsLecciones.length > 0
@@ -356,9 +379,21 @@ async function actualizarReferenciasR2(
     idsRecursos.length > 0
       ? supabase.from('biblioteca_recursos').update({ url_recurso: marcaNueva, origen: 'r2' }).in('id', idsRecursos)
       : Promise.resolve(),
+    idsEbookArchivo.length > 0
+      ? supabase.from('ebooks').update({ archivo_key: marcaNueva }).in('id', idsEbookArchivo)
+      : Promise.resolve(),
+    idsEbookPortada.length > 0
+      ? supabase.from('ebooks').update({ portada_key: marcaNueva }).in('id', idsEbookPortada)
+      : Promise.resolve(),
+    idsProgramas.length > 0
+      ? supabase.from('programas').update({ portada_key: marcaNueva }).in('id', idsProgramas)
+      : Promise.resolve(),
   ])
 
-  return idsLecciones.length + idsRecursos.length
+  return (
+    idsLecciones.length + idsRecursos.length
+    + idsEbookArchivo.length + idsEbookPortada.length + idsProgramas.length
+  )
 }
 
 export async function renombrarArchivo(key: string, nuevoNombre: string) {
@@ -459,6 +494,13 @@ export async function borrarObjetos(keys: string[]) {
     return { error: 'Las entregas de alumnos se gestionan desde Entregas.' }
   }
 
+  // Un archivo del bucket puede estar referenciado por una lección, un recurso de
+  // Biblioteca o —lo más caro— por un ebook que ya se vendió. Borrar el objeto rompe esa
+  // referencia sin aviso y no hay papelera: R2 no versiona. Se bloquea nombrando quién lo
+  // usa, para que sacar la referencia sea una decisión y no un accidente.
+  const enUso = await errorSiEstanEnUso(keys)
+  if (enUso) return { error: enUso }
+
   try {
     await borrarDeR2(keys)
     if (keys.some(esZonaBibliotecaR2)) await sincronizarBiblioteca()
@@ -494,6 +536,12 @@ export async function borrarMultiples(seleccion: { id: string; tipo: 'archivo' |
     if (keysParaBorrar.length === 0) return { error: 'No hay nada válido para borrar.' }
 
     const uniqueKeys = Array.from(new Set(keysParaBorrar))
+
+    // Mismo motivo que en borrarObjetos, y acá pesa más: una carpeta entera puede
+    // arrastrar el PDF de un ebook vendido sin que se vea en la selección.
+    const enUso = await errorSiEstanEnUso(uniqueKeys)
+    if (enUso) return { error: enUso }
+
     await borrarDeR2(uniqueKeys)
     if (uniqueKeys.some(esZonaBibliotecaR2)) await sincronizarBiblioteca()
 
