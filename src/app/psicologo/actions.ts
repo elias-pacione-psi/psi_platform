@@ -644,6 +644,115 @@ export async function guardarQuizPreguntas(leccionId: string, programaId: string
   return { success: true }
 }
 
+// El tope de intentos vive en alumno/actions.ts (MAXIMO_INTENTOS_QUIZ), que es donde se
+// aplica. Acá se re-declara para poder decir "usó 3 de 3" sin importar el módulo del
+// alumno desde el panel del psicólogo. Si cambia allá, cambia acá.
+const MAXIMO_INTENTOS_QUIZ = 3
+
+export type IntentosDeQuiz = {
+  leccionId: string
+  leccion: string
+  programa: string
+  intentos: number
+  mejorPuntaje: number
+  total: number
+  aprobado: boolean
+  /** Agotó los intentos sin aprobar: no puede avanzar sin que le reinicien el quiz. */
+  bloqueado: boolean
+  ultimoIntento: string
+}
+
+// Qué quizzes rindió un alumno y cómo le fue. Hasta ahora `quiz_intentos` no se leía en
+// ninguna pantalla: el psicólogo veía "X/Y lecciones completadas" pero no podía saber
+// quién aprobó, con qué puntaje, ni quién se quedó trabado.
+export async function obtenerIntentosQuizDeAlumno(
+  alumnoId: string,
+): Promise<{ error: string } | { intentos: IntentosDeQuiz[] }> {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  if (!RE_UUID.test(alumnoId)) return { error: 'Alumno inválido' }
+
+  const { data, error } = await auth.supabase
+    .from('quiz_intentos')
+    .select('leccion_id, puntaje, total, aprobado, created_at, lecciones(titulo, programas(titulo))')
+    .eq('alumno_id', alumnoId)
+    .order('created_at', { ascending: true })
+
+  if (error) return { error: error.message }
+
+  // Se agrupa por lección en vez de listar intento por intento: lo que hace falta decidir
+  // es "¿a esta persona la destrabo en este quiz?", y para eso importa el mejor puntaje y
+  // cuántos intentos quedan, no la secuencia completa.
+  const porLeccion = new Map<string, IntentosDeQuiz>()
+  for (const fila of data ?? []) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const leccion = fila.lecciones as any
+    const previo = porLeccion.get(fila.leccion_id)
+    porLeccion.set(fila.leccion_id, {
+      leccionId: fila.leccion_id,
+      leccion: leccion?.titulo ?? 'Lección',
+      programa: leccion?.programas?.titulo ?? '—',
+      intentos: (previo?.intentos ?? 0) + 1,
+      mejorPuntaje: Math.max(previo?.mejorPuntaje ?? 0, fila.puntaje),
+      total: fila.total,
+      aprobado: (previo?.aprobado ?? false) || fila.aprobado,
+      bloqueado: false, // se calcula abajo, cuando ya están todos los intentos contados
+      ultimoIntento: fila.created_at,
+    })
+  }
+
+  const intentos = [...porLeccion.values()].map((i) => ({
+    ...i,
+    bloqueado: !i.aprobado && i.intentos >= MAXIMO_INTENTOS_QUIZ,
+  }))
+
+  // Los trabados primero: es la única fila sobre la que hay algo que hacer.
+  intentos.sort((a, b) => {
+    if (a.bloqueado !== b.bloqueado) return a.bloqueado ? -1 : 1
+    return b.ultimoIntento.localeCompare(a.ultimoIntento)
+  })
+
+  return { intentos }
+}
+
+// Le devuelve los 3 intentos a un alumno en un quiz puntual.
+//
+// Sin esto, agotar los intentos era un callejón sin salida: el mensaje del alumno decía
+// "escribile a tu instructor" y el instructor no tenía ningún botón para responder a eso.
+// La única salida era borrar la cuenta entera.
+//
+// Con service-role porque `quiz_intentos` no tiene policy de delete (ver schema.sql): la
+// tabla se escribe sólo desde el servidor, y esto es una escritura de servidor más.
+export async function reiniciarIntentosQuiz(alumnoId: string, leccionId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  if (!RE_UUID.test(alumnoId) || !RE_UUID.test(leccionId)) return { error: 'Datos inválidos' }
+
+  const supabaseAdmin = createAdminClient()
+
+  const { error } = await supabaseAdmin
+    .from('quiz_intentos')
+    .delete()
+    .eq('alumno_id', alumnoId)
+    .eq('leccion_id', leccionId)
+
+  if (error) return { error: error.message }
+
+  // El progreso de la lección se limpia también: si estaba completada era porque había
+  // aprobado, y reiniciar el quiz deshace esa aprobación. Dejarla tildada mostraría la
+  // lección como superada con cero intentos rendidos detrás.
+  const { error: errorProgreso } = await supabaseAdmin
+    .from('progreso_lecciones')
+    .delete()
+    .eq('alumno_id', alumnoId)
+    .eq('leccion_id', leccionId)
+
+  if (errorProgreso) return { error: errorProgreso.message }
+
+  revalidatePath('/psicologo/alumnos')
+  return { success: true }
+}
+
 // ============================================================
 // ENTREGAS (revisión por el instructor)
 // ============================================================
