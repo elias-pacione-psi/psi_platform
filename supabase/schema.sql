@@ -61,15 +61,37 @@ create table if not exists public.lecciones (
 );
 alter table public.lecciones add column if not exists fecha_limite timestamptz;
 
--- Cohortes: camadas que cursan un programa juntas (8 semanas, etc.)
+-- Cohortes: camadas que cursan uno o más programas juntas (8 semanas, etc.)
 create table if not exists public.cohortes (
   id uuid primary key default gen_random_uuid(),
-  programa_id uuid not null references public.programas(id) on delete cascade,
+  programa_id uuid references public.programas(id) on delete cascade,
   nombre text not null,
   fecha_inicio date,
   fecha_fin date,
   created_at timestamptz not null default now()
 );
+-- programa_id queda (histórico, ver cohortes_programas abajo) pero deja de ser
+-- obligatoria: una cohorte pasa a poder asociar varios programas a la vez.
+alter table public.cohortes alter column programa_id drop not null;
+
+-- Horario de cursada. dias_semana usa la convención de JS/Postgres `dow`:
+-- 0 = domingo … 6 = sábado. Es un array para poder decir "martes y jueves" sin
+-- inventar una tabla más.
+alter table public.cohortes add column if not exists dias_semana smallint[];
+alter table public.cohortes add column if not exists hora_inicio time;
+alter table public.cohortes add column if not exists hora_fin time;
+
+alter table public.cohortes drop constraint if exists cohortes_dias_semana_validos;
+alter table public.cohortes add constraint cohortes_dias_semana_validos
+  check (
+    dias_semana is null
+    or (array_length(dias_semana, 1) between 1 and 7
+        and dias_semana <@ array[0,1,2,3,4,5,6]::smallint[])
+  );
+
+alter table public.cohortes drop constraint if exists cohortes_horario_coherente;
+alter table public.cohortes add constraint cohortes_horario_coherente
+  check (hora_inicio is null or hora_fin is null or hora_fin > hora_inicio);
 
 -- Inscripción de alumnos a cohortes
 create table if not exists public.cohortes_alumnos (
@@ -78,6 +100,18 @@ create table if not exists public.cohortes_alumnos (
   created_at timestamptz not null default now(),
   primary key (cohorte_id, alumno_id)
 );
+
+-- Varios programas por cohorte: reemplaza a cohortes.programa_id como fuente de
+-- verdad (esa columna queda solo por compatibilidad histórica, ver arriba).
+create table if not exists public.cohortes_programas (
+  cohorte_id uuid not null references public.cohortes(id) on delete cascade,
+  programa_id uuid not null references public.programas(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (cohorte_id, programa_id)
+);
+
+create index if not exists idx_cohortes_programas_programa
+  on public.cohortes_programas (programa_id);
 
 -- Acceso a contenido: qué programas puede ver cada alumno.
 -- Se completa al inscribir a una cohorte (o manualmente). Base de la RLS de contenido.
@@ -164,6 +198,12 @@ create table if not exists public.agenda_sesiones (
   created_at timestamptz not null default now(),
   constraint agenda_destino_unico check ((alumno_id is not null) <> (cohorte_id is not null))
 );
+-- Duración real de la sesión. Antes el calendario asumía 1 hora fija para todo;
+-- con el horario de la cohorte una clase puede durar 4 (ej: sábados de 8 a 12).
+alter table public.agenda_sesiones add column if not exists duracion_minutos int not null default 60;
+alter table public.agenda_sesiones drop constraint if exists agenda_duracion_valida;
+alter table public.agenda_sesiones add constraint agenda_duracion_valida
+  check (duracion_minutos between 15 and 720);
 
 create index if not exists idx_modulos_programa on public.modulos (programa_id);
 create index if not exists idx_lecciones_programa on public.lecciones (programa_id);
@@ -355,6 +395,7 @@ alter table public.modulos enable row level security;
 alter table public.lecciones enable row level security;
 alter table public.cohortes enable row level security;
 alter table public.cohortes_alumnos enable row level security;
+alter table public.cohortes_programas enable row level security;
 alter table public.programas_asignados enable row level security;
 alter table public.biblioteca_recursos enable row level security;
 alter table public.recursos_asignados enable row level security;
@@ -435,6 +476,26 @@ create policy "cohortes_alumnos_select" on public.cohortes_alumnos
 
 drop policy if exists "cohortes_alumnos_write" on public.cohortes_alumnos;
 create policy "cohortes_alumnos_write" on public.cohortes_alumnos
+  for all to authenticated
+  using (public.es_psicologo())
+  with check (public.es_psicologo());
+
+-- Mismo criterio que cohortes_alumnos: el alumno ve las filas de las cohortes en
+-- las que está (necesita saber qué programas cursa), el psicólogo gestiona todo.
+drop policy if exists "cohortes_programas_select" on public.cohortes_programas;
+create policy "cohortes_programas_select" on public.cohortes_programas
+  for select to authenticated
+  using (
+    public.es_psicologo()
+    or exists (
+      select 1 from public.cohortes_alumnos ca
+      where ca.cohorte_id = cohortes_programas.cohorte_id
+        and ca.alumno_id = auth.uid()
+    )
+  );
+
+drop policy if exists "cohortes_programas_all_psicologo" on public.cohortes_programas;
+create policy "cohortes_programas_all_psicologo" on public.cohortes_programas
   for all to authenticated
   using (public.es_psicologo())
   with check (public.es_psicologo());
