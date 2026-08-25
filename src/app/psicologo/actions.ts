@@ -381,6 +381,10 @@ export async function eliminarUsuarioTotal(id: string) {
 
 const EXTENSIONES_IMAGEN_PROGRAMA = ['jpg', 'jpeg', 'png', 'webp']
 
+// Mismos valores que el check de programas_tipo_valido en la base: la validación de acá
+// es para dar un error legible, la de la base es la que realmente garantiza el dato.
+const TIPOS_PROGRAMA = ['curso_asincronico', 'formacion']
+
 export async function guardarPrograma(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -392,8 +396,10 @@ export async function guardarPrograma(formData: FormData) {
   const descripcionLarga = (formData.get('descripcion_larga') as string)?.trim() || null
   const portada = (formData.get('portada_key') as string)?.trim() || ''
   const publicadoEnHome = formData.get('publicado_en_home') === 'true'
+  const tipo = (formData.get('tipo') as string)?.trim() || 'curso_asincronico'
 
   if (!titulo) return { error: 'El título es obligatorio' }
+  if (!TIPOS_PROGRAMA.includes(tipo)) return { error: 'Tipo de programa inválido' }
   if (descripcionLarga && descripcionLarga.length > 6000) return { error: 'La descripción ampliada es demasiado larga' }
 
   // A diferencia de ebooks: portada opcional incluso publicado — las imágenes
@@ -411,6 +417,7 @@ export async function guardarPrograma(formData: FormData) {
     descripcion_larga: descripcionLarga,
     portada_key: portada || null,
     publicado_en_home: publicadoEnHome,
+    tipo,
   }
 
   if (id) {
@@ -809,7 +816,7 @@ export async function revisarEntrega(entregaId: string, comentario: string) {
 // COHORTES
 // ============================================================
 
-// Una comisión puede cursar VARIOS programas (tabla puente cohortes_programas). La
+// Una formación puede cursar VARIOS programas (tabla puente cohortes_programas). La
 // columna vieja cohortes.programa_id quedó nullable por compatibilidad de deploy, pero
 // ya no se lee ni se escribe desde acá: la fuente de verdad es la tabla puente.
 async function guardarProgramasDeCohorte(
@@ -841,14 +848,14 @@ async function guardarProgramasDeCohorte(
   return { ok: true }
 }
 
-// Los inscriptos de una comisión tienen acceso a TODOS sus programas. Se recalcula acá y
-// no solo al inscribir, para que sumarle un programa a una comisión que ya tiene gente
+// Los inscriptos de una formación tienen acceso a TODOS sus programas. Se recalcula acá y
+// no solo al inscribir, para que sumarle un programa a una formación que ya tiene gente
 // adentro les llegue sin volver a tocar la inscripción.
 //
 // Devuelve los pares (alumno_id, programa_id) que agregó DE VERDAD (no los que ya
 // existían) — el upsert no distingue insert real de no-op, así que hay que leer antes
 // de escribir para saber qué es nuevo. Sin esto, notificar desde acá re-mandaría un
-// mail a toda la cohorte cada vez que se toca cualquier cosa menor de la comisión.
+// mail a toda la cohorte cada vez que se toca cualquier cosa menor de la formación.
 async function sincronizarAccesosDeCohorte(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseAdmin: any,
@@ -1003,7 +1010,7 @@ export async function eliminarCohorte(id: string) {
   return { success: true }
 }
 
-// Inscribe alumnos a una comisión y les da acceso a todos sus programas.
+// Inscribe alumnos a una formación y les da acceso a todos sus programas.
 export async function inscribirAlumnosEnCohorte(cohorteId: string, alumnoIds: string[]) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -1047,9 +1054,9 @@ export async function quitarAlumnoDeCohorte(cohorteId: string, alumnoId: string)
 
   await supabaseAdmin.from('cohortes_alumnos').delete().eq('cohorte_id', cohorteId).eq('alumno_id', alumnoId)
 
-  // Se revoca solo lo que el alumno ya no tenga por otra comisión. Con varios programas
-  // por comisión esto deja de ser un booleano: hay que restar conjuntos, porque dos
-  // comisiones distintas pueden compartir parte de los programas.
+  // Se revoca solo lo que el alumno ya no tenga por otra formación. Con varios programas
+  // por formación esto deja de ser un booleano: hay que restar conjuntos, porque dos
+  // formaciones distintas pueden compartir parte de los programas.
   const idsDeEsta = (programasDeEsta ?? []).map((p: { programa_id: string }) => p.programa_id)
   if (idsDeEsta.length > 0) {
     const { data: otrasCohortes } = await supabaseAdmin
@@ -1075,11 +1082,11 @@ export async function quitarAlumnoDeCohorte(cohorteId: string, alumnoId: string)
   return { success: true }
 }
 
-// Agenda las clases que salen del horario de la comisión, entre su fecha de inicio y la
+// Agenda las clases que salen del horario de la formación, entre su fecha de inicio y la
 // de fin. Son filas normales de agenda_sesiones con cohorte_id: la policy agenda_select
 // ya hace que las vea cada inscripto, así que no hace falta una fila por alumno.
 //
-// Idempotente y no destructiva: lee lo que ya está agendado para esa comisión y solo
+// Idempotente y no destructiva: lee lo que ya está agendado para esa formación y solo
 // inserta los horarios que faltan. Volver a apretar el botón no duplica, y las clases del
 // horario viejo (o las cargadas a mano desde Agenda) no se tocan — si el horario cambió,
 // la UI avisa cuáles quedaron fuera y el borrado es una decisión aparte.
@@ -1094,7 +1101,7 @@ export async function generarClasesDeCohorte(cohorteId: string) {
     .eq('id', cohorteId)
     .single()
 
-  if (errorCohorte || !cohorte) return { error: 'No se encontró la comisión' }
+  if (errorCohorte || !cohorte) return { error: 'No se encontró la formación' }
   if (!horarioCompleto(cohorte)) {
     return { error: 'Faltan datos del horario: días, hora de inicio y las dos fechas.' }
   }
@@ -1147,7 +1154,7 @@ export async function generarClasesDeCohorte(cohorteId: string) {
   return { success: true, creadas: faltantes.length, total: fechas.length }
 }
 
-// Borra solo las clases FUTURAS de la comisión. Es la salida para cuando se cambió el
+// Borra solo las clases FUTURAS de la formación. Es la salida para cuando se cambió el
 // horario y quedaron agendadas las del anterior; el pasado no se toca, porque son clases
 // que efectivamente ocurrieron.
 export async function borrarClasesFuturasDeCohorte(cohorteId: string) {
@@ -1171,9 +1178,9 @@ export async function borrarClasesFuturasDeCohorte(cohorteId: string) {
 }
 
 // Notifica clases nuevas agendadas — sesión única, semanas recurrentes, o el horario
-// completo de una comisión (hasta MAXIMO_CLASES fechas de una vez). SIEMPRE es UN mail
+// completo de una formación (hasta MAXIMO_CLASES fechas de una vez). SIEMPRE es UN mail
 // por alumno afectado resumiendo cantidad + primera fecha, nunca uno por fecha: una
-// comisión con 20 inscriptos y 20 fechas nuevas mandaría 400 mails si esto no agrupara.
+// formación con 20 inscriptos y 20 fechas nuevas mandaría 400 mails si esto no agrupara.
 async function notificarClasesAgendadas(
   destino: {
     alumno_id: string | null
@@ -1376,7 +1383,7 @@ export async function agregarSesionUnica(formData: FormData) {
   if (!fecha_hora) return { error: 'Falta la fecha y hora' }
 
   // "YYYY-MM-DDTHH:mm" sin zona: se interpreta como hora de Argentina, igual que el
-  // horario de las comisiones. Con `new Date(str)` quedaba en la zona del servidor.
+  // horario de las formaciones. Con `new Date(str)` quedaba en la zona del servidor.
   const [diaUnica, horaUnica] = fecha_hora.split('T')
   const fechaHoraISO = instanteArgentina(diaUnica, horaUnica)
 
@@ -1419,7 +1426,7 @@ export async function generarSesionesRecurrentes(formData: FormData) {
 
   // El recorrido va sobre fechas ancladas en UTC (el día de la semana no puede depender
   // de la zona del runtime) y la hora se aplica con instanteArgentina, igual que las
-  // clases de comisión — si no, la misma "21:00" cae en dos instantes distintos según por
+  // clases de formación — si no, la misma "21:00" cae en dos instantes distintos según por
   // dónde se haya agendado.
   const hoy = new Date()
   const cursor = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate()))

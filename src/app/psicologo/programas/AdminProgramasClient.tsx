@@ -32,7 +32,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SelectorArchivoR2 } from '@/components/SelectorArchivoR2'
+import { LABEL_TIPO_PROGRAMA } from '@/utils/taxonomia-labels'
 import { guardarPrograma, eliminarPrograma } from '../actions'
 import { Loader2, Settings2, Plus, ArrowRight, Trash2, ImageOff } from 'lucide-react'
 import { toast } from 'sonner'
@@ -45,6 +47,7 @@ type Programa = {
   portada_key: string | null
   portada_url: string | null
   publicado_en_home: boolean
+  tipo: string
   cantidad_lecciones: number
 }
 
@@ -56,11 +59,13 @@ export function AdminProgramasClient({ programas }: { programas: Programa[] }) {
   const [isPending, startTransition] = useTransition()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [portada, setPortada] = useState('')
+  const [tipo, setTipo] = useState('curso_asincronico')
   const [publicadoEnHome, setPublicadoEnHome] = useState(false)
 
   const openModal = (programa: Programa | null = null) => {
     setSelectedPrograma(programa)
     setPortada(programa?.portada_key ?? '')
+    setTipo(programa?.tipo ?? 'curso_asincronico')
     setPublicadoEnHome(programa?.publicado_en_home ?? false)
     setOpen(true)
     setErrorMsg(null)
@@ -133,7 +138,12 @@ export function AdminProgramasClient({ programas }: { programas: Programa[] }) {
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="font-medium text-tinta max-w-[300px] truncate">{programa.titulo}</TableCell>
+                <TableCell className="font-medium text-tinta max-w-[300px]">
+                  <div className="truncate">{programa.titulo}</div>
+                  <span className="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground">
+                    {LABEL_TIPO_PROGRAMA[programa.tipo] ?? LABEL_TIPO_PROGRAMA.curso_asincronico}
+                  </span>
+                </TableCell>
                 <TableCell>{programa.cantidad_lecciones}</TableCell>
                 <TableCell>
                   <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
@@ -183,6 +193,29 @@ export function AdminProgramasClient({ programas }: { programas: Programa[] }) {
             <div className="space-y-2">
               <Label htmlFor="titulo" className="font-bold text-tinta">Título del programa</Label>
               <Input id="titulo" name="titulo" defaultValue={selectedPrograma?.titulo || ''} placeholder="Ej: Manejo de la ansiedad" className="bg-card border-border" required />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tipo" className="font-bold text-tinta">Tipo de programa</Label>
+              <Select
+                name="tipo"
+                required
+                value={tipo}
+                onValueChange={(val) => setTipo(val || 'curso_asincronico')}
+                items={LABEL_TIPO_PROGRAMA}
+              >
+                <SelectTrigger className="bg-card border-border">
+                  <SelectValue placeholder="Elegí el tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="curso_asincronico">{LABEL_TIPO_PROGRAMA.curso_asincronico}</SelectItem>
+                  <SelectItem value="formacion">{LABEL_TIPO_PROGRAMA.formacion}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Una <b>formación</b> son módulos con su PDF más clases en vivo con enlace, que
+                cursa un grupo. Un <b>curso asincrónico</b> lo recorre el alumno a su ritmo.
+              </p>
             </div>
 
             <div className="space-y-2">
