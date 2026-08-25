@@ -132,6 +132,23 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
 
   const [searchTerm, setSearchTerm] = useState('')
 
+  // Las cuatro secciones se renderizan SIEMPRE, aunque estén vacías: son los cajones
+  // donde cae cada tipo de material, y verlos vacíos es la pista de que ahí se puede
+  // subir algo. Antes esto era una lista plana y no se veía qué faltaba.
+  const SECCIONES = [
+    { clave: 'pdf', titulo: 'Libros', vacio: 'Subí un PDF a la carpeta Libros desde Disco Duro y aparece acá solo.' },
+    { clave: 'audio', titulo: 'Audios', vacio: 'Todavía no hay audios en la biblioteca.' },
+    { clave: 'video', titulo: 'Videos', vacio: 'Todavía no hay videos en la biblioteca.' },
+    { clave: 'otros', titulo: 'Otros recursos', vacio: 'Todavía no hay otros recursos.' },
+  ] as const
+
+  function seccionDeRecurso(tipoContenido: string): string {
+    if (tipoContenido.includes('pdf')) return 'pdf'
+    if (tipoContenido.includes('audio')) return 'audio'
+    if (tipoContenido.includes('video')) return 'video'
+    return 'otros'
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filteredRecursos = recursos.filter((r: any) =>
     r.titulo?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -227,12 +244,22 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
         </DialogContent>
       </Dialog>
 
-      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-        {filteredRecursos.length === 0 ? (
-          <div className="p-12 text-center flex flex-col items-center justify-center">
-            <Library className="w-12 h-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-bold text-tinta">Sin resultados</h3>
-            <p className="text-muted-foreground mt-1">Subí materiales de apoyo para tus alumnos, o probá otra búsqueda.</p>
+      <div className="space-y-6">
+        {SECCIONES.map((seccion) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const deLaSeccion = filteredRecursos.filter((r: any) => seccionDeRecurso(r.tipo_contenido) === seccion.clave)
+          return (
+        <div key={seccion.clave} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+            <h2 className="font-heading font-bold text-tinta">{seccion.titulo}</h2>
+            <span className="text-xs text-muted-foreground">
+              {deLaSeccion.length} {deLaSeccion.length === 1 ? 'recurso' : 'recursos'}
+            </span>
+          </div>
+        {deLaSeccion.length === 0 ? (
+          <div className="p-8 text-center">
+            <Library className="w-8 h-8 text-muted-foreground mb-2 mx-auto" />
+            <p className="text-muted-foreground text-sm">{seccion.vacio}</p>
           </div>
         ) : (
           <Table>
@@ -245,7 +272,7 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredRecursos.map((rec) => (
+              {deLaSeccion.map((rec) => (
                 <TableRow key={rec.id} className="hover:bg-muted transition-colors">
                   <TableCell className="font-medium text-tinta">
                     <div className="flex items-center gap-2">
@@ -304,6 +331,9 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
             </TableBody>
           </Table>
         )}
+        </div>
+          )
+        })}
       </div>
 
       <Dialog open={openAssign} onOpenChange={setOpenAssign}>

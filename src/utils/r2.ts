@@ -218,7 +218,10 @@ export async function crearCarpetaR2(prefijo: string): Promise<void> {
 
 // Todas las keys que cuelgan de un prefijo, sin Delimiter y paginando: es lo que hace
 // falta para borrar una "carpeta", que en S3 no es más que un prefijo compartido.
-export async function listarKeysRecursivo(prefijo: string): Promise<string[]> {
+// `soloNivel` corta en el primer nivel usando Delimiter: R2 no devuelve lo que cuelga de
+// las subcarpetas, así que la sincronización de Biblioteca (que solo publica los PDF
+// sueltos en la raíz) no tiene que traer ni recorrer portadas/, fuente/ ni nada de eso.
+export async function listarKeysRecursivo(prefijo: string, soloNivel = false): Promise<string[]> {
   const keys: string[] = []
   let token: string | undefined
 
@@ -227,6 +230,7 @@ export async function listarKeysRecursivo(prefijo: string): Promise<string[]> {
       new ListObjectsV2Command({
         Bucket: process.env.R2_BUCKET_NAME,
         Prefix: prefijo,
+        Delimiter: soloNivel ? '/' : undefined,
         ContinuationToken: token,
         MaxKeys: 1000,
       }),

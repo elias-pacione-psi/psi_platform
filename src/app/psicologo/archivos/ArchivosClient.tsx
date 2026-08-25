@@ -25,12 +25,17 @@ import {
 } from './actions'
 import {
   esCarpetaFijaBibliotecaR2, esZonaBibliotecaR2, seccionBibliotecaR2,
-  PREFIJO_BIBLIOTECA_R2, SECCIONES_BIBLIOTECA_R2,
+  PREFIJO_BIBLIOTECA_R2,
 } from '@/utils/r2-marcador'
 import type { CarpetaR2, ListadoR2, ObjetoR2 } from '@/utils/r2'
 import { fechaNumerica } from '@/utils/fecha-ar'
 
 const TIPOS_ACEPTADOS = '.pdf,.txt,.md,.jpg,.jpeg,.png,.webp,.gif,.svg,.mp3,.m4a,.ogg,.oga,.wav,.mp4,.webm,.mov,.doc,.docx,.ppt,.pptx'
+
+// Formatos de Office: no hay navegador que los renderice, así que abrirlos en una pestaña
+// nueva siempre termina en descarga. Todo lo demás que se acepta subir (pdf, imágenes,
+// audio, video, texto) sí lo abre el visor nativo del navegador.
+const SIN_VISTA_PREVIA = new Set(['doc', 'docx', 'ppt', 'pptx'])
 
 function formatearBytes(bytes: number): string {
   if (bytes === 0) return '0 B'
@@ -132,7 +137,7 @@ export function ArchivosClient({
 
     const resumen = subidos === total ? 'Subida completa' : `${subidos} de ${total} subido(s)`
 
-    // Lo subido a Biblioteca R2 tiene que aparecer del otro lado sin un paso extra.
+    // Lo subido a Libros tiene que aparecer del otro lado sin un paso extra.
     if (esZonaBibliotecaR2(prefijo)) {
       const res = await sincronizarBiblioteca()
       if ('error' in res) toast.error(`${resumen}, pero no se pudo publicar en Biblioteca: ${res.error}`)
@@ -208,6 +213,16 @@ export function ArchivosClient({
   }
 
   async function handleVistaPrevia(key: string) {
+    // Ningún navegador trae visor para formatos de Office: si se abre igual, la pestaña
+    // nueva dispara la descarga y parece que el botón "no anda". Se avisa en vez de eso.
+    // El resto (pdf, imágenes, audio, video, texto) sí lo muestra el visor nativo, que es
+    // justamente lo que hace firmarUrlR2 al no mandar Content-Disposition: attachment.
+    const extension = key.split('.').pop()?.toLowerCase() ?? ''
+    if (SIN_VISTA_PREVIA.has(extension)) {
+      toast.info(`Los .${extension} no se pueden previsualizar en el navegador — usá el botón de descarga.`)
+      return
+    }
+
     const res = await pedirVistaPrevia(key)
     if ('error' in res) { toast.error(res.error); return }
     window.open(res.url, '_blank', 'noopener,noreferrer')
@@ -301,30 +316,18 @@ export function ArchivosClient({
           <Library className="w-5 h-5 text-marca shrink-0 mt-0.5" />
           <div className="space-y-2 text-tinta">
             <p className="font-bold">
-              La carpeta <span className="font-mono">Biblioteca R2</span> está enlazada con la sección Biblioteca.
+              La carpeta <span className="font-mono">Libros</span> está enlazada con la sección Biblioteca.
             </p>
             <p className="text-muted-foreground">
               Lo que subas ahí aparece solo en <b>Biblioteca</b>, listo para asignar a tus alumnos —
               no hace falta volver a cargarlo. Si borrás un archivo de la carpeta, también sale de
-              Biblioteca. La carpeta y sus secciones no se pueden borrar ni renombrar.
+              Biblioteca. La carpeta no se puede borrar ni renombrar.
             </p>
-            {seccionActual ? (
-              <p className="text-muted-foreground">
-                Estás en <b>{seccionActual.carpeta}</b>: lo que subas acá se ve en la pestaña{' '}
-                <b>{seccionActual.pestana}</b> del alumno. Acepta {seccionActual.extensiones.join(', ')}.
-              </p>
-            ) : (
-              <p className="text-muted-foreground">
-                Cada subcarpeta es una pestaña de la vista del alumno:{' '}
-                {SECCIONES_BIBLIOTECA_R2.map((s, i) => (
-                  <span key={s.carpeta}>
-                    {i > 0 && ' · '}
-                    <b>{s.carpeta}</b> → {s.pestana}
-                  </span>
-                ))}
-                .
-              </p>
-            )}
+            <p className="text-muted-foreground">
+              Se publican los <b>PDF sueltos en la raíz</b> de la carpeta. Lo que pongas en una
+              subcarpeta (por ejemplo <span className="font-mono">portadas/</span> o{' '}
+              <span className="font-mono">fuente/</span>) queda guardado pero no se publica.
+            </p>
           </div>
         </div>
       )}
