@@ -26,7 +26,7 @@ const TIPO_LABEL: Record<string, string> = {
   drive_video: 'Video', drive_audio: 'Audio', drive_pdf: 'PDF', drive_image: 'Imagen',
   dropbox_video: 'Video', dropbox_audio: 'Audio', dropbox_pdf: 'PDF',
   supabase_video: 'Video', supabase_audio: 'Audio', supabase_pdf: 'PDF',
-  texto_markdown: 'Texto', quiz: 'Quiz', entrega: 'Entrega',
+  texto_markdown: 'Texto', quiz: 'Quiz', ejercicio: 'Ejercicios', entrega: 'Entrega',
 }
 
 const TIPO_CONTENIDO_DEFAULT = 'drive_video'
@@ -287,7 +287,7 @@ export function AdminLeccionesClient({ programa, modulos, lecciones }: { program
         <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-crema">
           <DialogHeader>
             <DialogTitle className="font-heading text-2xl text-tinta">{selectedLeccion ? 'Editar lección' : 'Agregar nueva lección'}</DialogTitle>
-            <DialogDescription className="font-sans">Elegí el tipo de contenido: material, texto, quiz o entrega de trabajo.</DialogDescription>
+            <DialogDescription className="font-sans">Elegí el tipo de contenido: material, texto, quiz, ejercicios o entrega de trabajo.</DialogDescription>
           </DialogHeader>
           <form action={handleLeccionSubmit} className="space-y-4 mt-4">
             {selectedLeccion && <input type="hidden" name="id" value={selectedLeccion.id} />}
@@ -305,7 +305,7 @@ export function AdminLeccionesClient({ programa, modulos, lecciones }: { program
                     drive_video: 'Video (Google Drive/R2)', drive_audio: 'Audio (Google Drive/R2)', drive_pdf: 'PDF (Google Drive/R2)', drive_image: 'Imagen (Google Drive/URL)',
                     dropbox_video: 'Video (Dropbox/R2)', dropbox_audio: 'Audio (Dropbox/R2)', dropbox_pdf: 'PDF (Dropbox/R2)',
                     supabase_video: 'Video (Subir archivo — Supabase)', supabase_audio: 'Audio (Subir archivo — Supabase)', supabase_pdf: 'PDF (Subir archivo — Supabase)',
-                    texto_markdown: 'Texto (Markdown)', quiz: 'Quiz (autoevaluación)', entrega: 'Entrega de trabajo',
+                    texto_markdown: 'Texto (Markdown)', quiz: 'Quiz (autoevaluación)', ejercicio: 'Ejercicios personales', entrega: 'Entrega de trabajo',
                   }}
                 >
                   <SelectTrigger className="bg-card border-border"><SelectValue placeholder="Seleccioná un tipo" /></SelectTrigger>
@@ -322,13 +322,30 @@ export function AdminLeccionesClient({ programa, modulos, lecciones }: { program
                     <SelectItem value="supabase_pdf">PDF (Subir archivo — Supabase)</SelectItem>
                     <SelectItem value="texto_markdown">Texto (Markdown)</SelectItem>
                     <SelectItem value="quiz">Quiz (autoevaluación)</SelectItem>
+                    <SelectItem value="ejercicio">Ejercicios personales</SelectItem>
                     <SelectItem value="entrega">Entrega de trabajo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            {tipoContenido === 'quiz' ? (
+            {tipoContenido === 'ejercicio' ? (
+              <div className="space-y-2">
+                <Label htmlFor="url_recurso" className="font-bold text-tinta">Consignas del ejercicio</Label>
+                <Textarea
+                  id="url_recurso"
+                  name="url_recurso"
+                  defaultValue={selectedLeccion?.url_recurso || ''}
+                  className="bg-card border-border h-48 font-mono text-sm"
+                  placeholder={'Texto de introducción en Markdown...\n\n? ¿Qué situación te resultó más difícil esta semana?\n? ¿Qué harías distinto la próxima vez?'}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Markdown normal, y cada línea que arranca con <b>?</b> se convierte en una
+                  consigna con su campo de respuesta. Son opcionales: el alumno no las entrega
+                  ni se corrigen, y sus respuestas <b>no se guardan</b> — solo puede descargarlas.
+                </p>
+              </div>
+            ) : tipoContenido === 'quiz' ? (
               <p className="text-sm text-muted-foreground bg-card border border-border rounded-lg p-3">
                 <ListChecks className="w-4 h-4 inline mr-1 text-marca" />
                 Guardá la lección y después usá el botón <b>Preguntas</b> en la fila para cargar el cuestionario.

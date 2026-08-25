@@ -11,6 +11,7 @@ import { firmarUrlsRecursos, firmarUrlEntrega } from '@/utils/supabase/recursos'
 import { obtenerPreguntasSinRespuesta } from '@/utils/supabase/quiz'
 import { QuizSolver } from './QuizSolver'
 import { EntregaForm } from './EntregaForm'
+import { EjerciciosCliente } from './EjerciciosCliente'
 import { CompletarButton } from './CompletarButton'
 
 export default async function LeccionPage(props: { params: Promise<{ programaId: string, leccionId: string }> }) {
@@ -74,6 +75,18 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
       <div className="max-w-4xl mx-auto">
         {Header}
         <QuizSolver preguntas={preguntas} leccionId={leccionId} programaId={programaId} />
+      </div>
+    )
+  }
+
+  // --- EJERCICIOS ---
+  // Las respuestas no se guardan en ningún lado: todo pasa en el cliente (ver el
+  // comentario de EjerciciosCliente sobre por qué es a propósito y no una limitación).
+  if (tipo === 'ejercicio') {
+    return (
+      <div className="max-w-4xl mx-auto">
+        {Header}
+        <EjerciciosCliente contenido={leccion.url_recurso ?? ''} titulo={leccion.titulo} />
       </div>
     )
   }
