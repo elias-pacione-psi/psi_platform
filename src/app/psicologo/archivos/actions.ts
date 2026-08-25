@@ -25,7 +25,6 @@ import {
   seccionBibliotecaR2,
   PREFIJO_BIBLIOTECA_R2,
   PREFIJO_ENTREGAS_R2,
-  SECCIONES_BIBLIOTECA_R2,
 } from '@/utils/r2-marcador'
 import { sincronizarBibliotecaR2 } from '@/utils/supabase/biblioteca-r2'
 import { errorSiEstanEnUso } from '@/utils/supabase/referencias-r2'
@@ -94,7 +93,7 @@ function esZonaDeEntregas(ruta: string): boolean {
   return ruta.startsWith(PREFIJO_ENTREGAS_R2)
 }
 
-// "Biblioteca R2" y sus carpetas de sección son la referencia que usa la sincronización
+// "Libros" es la referencia que usa la sincronización
 // con la sección Biblioteca: si se borran o se renombran, los recursos que colgaban de
 // ahí dejan de tener sección y desaparecen del lado del alumno. Adentro se sube y se
 // borra con normalidad; lo que está congelado es la estructura, no el contenido.
@@ -111,12 +110,12 @@ function errorSubidaEnBiblioteca(prefijo: string, nombreArchivo: string): string
 
   const seccion = seccionBibliotecaR2(`${prefijo}${nombreArchivo}`)
   if (!seccion) {
-    return `Elegí una de las carpetas de sección (${SECCIONES_BIBLIOTECA_R2.map((s) => s.carpeta).join(', ')}): los archivos sueltos en la raíz no se publican.`
+    return 'La Biblioteca publica solo PDFs sueltos en la raíz de Libros: lo que va en una subcarpeta no se publica.'
   }
 
   const extension = extensionDe(nombreArchivo)
   if (!(seccion.extensiones as readonly string[]).includes(extension)) {
-    return `"${seccion.carpeta}" acepta ${seccion.extensiones.join(', ')}. Un archivo .${extension} va en otra sección.`
+    return `La Biblioteca acepta ${seccion.extensiones.join(', ')}. Un archivo .${extension} va en otra carpeta del bucket.`
   }
 
   return null
@@ -317,7 +316,7 @@ export async function borrarCarpeta(prefijo: string) {
   }
 }
 
-// Vuelve a alinear la sección Biblioteca con lo que hay en la carpeta "Biblioteca R2" del
+// Vuelve a alinear la sección Biblioteca con lo que hay en la carpeta "Libros" del
 // bucket. La llaman las acciones que tocan esa zona y el cliente después de subir; la
 // sección Biblioteca también la corre al abrirse, para tomar lo que se haya subido desde
 // el panel de Cloudflare.

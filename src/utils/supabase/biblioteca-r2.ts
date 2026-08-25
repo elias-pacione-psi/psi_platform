@@ -1,7 +1,7 @@
 import 'server-only'
 import {
   PREFIJO_BIBLIOTECA_R2,
-  SECCIONES_BIBLIOTECA_R2,
+  CARPETAS_ORGANIZACION_BIBLIOTECA,
   extensionDe,
   marcarKeyR2,
   seccionBibliotecaR2,
@@ -15,7 +15,7 @@ import {
 } from '@/utils/r2'
 import { tipoMedioPorTipoContenido } from '@/utils/taxonomia'
 
-// La carpeta "Biblioteca R2" del bucket es un espejo de la sección Biblioteca: lo que hay
+// La carpeta "Libros" del bucket es un espejo de la sección Biblioteca: lo que hay
 // adentro es lo que existe como recurso, y nada más. La sincronización es en un solo
 // sentido (bucket → tabla) a propósito: si fuera bidireccional habría dos lugares donde
 // crear lo mismo y ninguna forma de decidir cuál gana cuando difieren.
@@ -51,7 +51,7 @@ export async function asegurarCarpetasBibliotecaR2(): Promise<void> {
 
   const prefijos = [
     PREFIJO_BIBLIOTECA_R2,
-    ...SECCIONES_BIBLIOTECA_R2.map((s) => `${PREFIJO_BIBLIOTECA_R2}${s.carpeta}/`),
+    ...CARPETAS_ORGANIZACION_BIBLIOTECA.map((c) => `${PREFIJO_BIBLIOTECA_R2}${c}/`),
   ]
 
   try {
@@ -62,7 +62,7 @@ export async function asegurarCarpetasBibliotecaR2(): Promise<void> {
     )
   } catch (err) {
     // Best-effort: que falle crear una carpeta no debería tirar abajo la página entera.
-    console.error('No se pudieron asegurar las carpetas de Biblioteca R2:', err)
+    console.error('No se pudo asegurar la carpeta Libros:', err)
   }
 }
 
@@ -73,12 +73,12 @@ export async function sincronizarBibliotecaR2(
 
   let keys: string[]
   try {
-    keys = await listarKeysRecursivo(PREFIJO_BIBLIOTECA_R2)
+    keys = await listarKeysRecursivo(PREFIJO_BIBLIOTECA_R2, true)
   } catch (err) {
     // Si el listado falla no se borra nada: sin la foto del bucket, "no está en R2" y "no
     // pude preguntar" son indistinguibles, y confundirlos vaciaría la biblioteca entera.
-    console.error('No se pudo listar Biblioteca R2:', err)
-    return { error: 'No se pudo leer la carpeta Biblioteca R2 del bucket.' }
+    console.error('No se pudo listar la carpeta Libros:', err)
+    return { error: 'No se pudo leer la carpeta Libros del bucket.' }
   }
 
   const publicables = new Map<string, string>() // key → tipo_contenido

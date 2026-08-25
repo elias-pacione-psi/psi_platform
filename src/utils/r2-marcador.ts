@@ -27,40 +27,50 @@ export function keyDeMarcadorR2(valor: string): string | null {
 export const PREFIJO_ENTREGAS_R2 = 'entregas/'
 
 // ---------------------------------------------------------------------------
-// Biblioteca R2: la carpeta espejo de la sección Biblioteca
+// Libros: la carpeta espejo de la sección Biblioteca
 // ---------------------------------------------------------------------------
-// Todo lo que se sube acá aparece solo por estar en el bucket — no hay que volver a
-// cargarlo a mano desde Biblioteca. Cada subcarpeta corresponde 1 a 1 con una pestaña de
-// /alumno/materiales, así que el psicólogo elige la sección poniendo el archivo en la
-// carpeta que va. La carpeta raíz y las de sección son fijas: no se borran ni se
-// renombran desde el gestor, porque el nombre ES la referencia que usa la sincronización.
-export const PREFIJO_BIBLIOTECA_R2 = 'Biblioteca R2/'
+// Todo PDF que se sube acá aparece en Biblioteca solo por estar en el bucket — no hay
+// que volver a cargarlo a mano. La carpeta raíz es fija: no se borra ni se renombra
+// desde el gestor, porque el nombre ES la referencia que usa la sincronización.
+//
+// Antes esto era "Biblioteca R2/" con cuatro subcarpetas de sección (Lecturas, Audios,
+// Videos, Otros), una por pestaña de /alumno/materiales. Se simplificó a solo libros
+// (2026-08-22): los audios eran material de curso duplicado acá, y las imágenes eran
+// portadas de ebook — ambas cosas ya viven donde corresponde (junto al curso y en
+// Libros/portadas/), así que la biblioteca dejó de ser un cajón mezclado.
+export const PREFIJO_BIBLIOTECA_R2 = 'Libros/'
 
-export const SECCIONES_BIBLIOTECA_R2 = [
-  { carpeta: 'Lecturas', pestana: 'Lecturas (PDF)', extensiones: ['pdf'], tipoContenido: 'r2_pdf' },
-  { carpeta: 'Audios', pestana: 'Audios', extensiones: ['mp3', 'm4a', 'ogg', 'oga', 'wav'], tipoContenido: 'r2_audio' },
-  { carpeta: 'Videos', pestana: 'Videos', extensiones: ['mp4', 'webm', 'mov'], tipoContenido: 'r2_video' },
-  { carpeta: 'Otros', pestana: 'Otros recursos', extensiones: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'], tipoContenido: 'r2_imagen' },
-] as const
+export const SECCION_LIBROS = {
+  pestana: 'Libros',
+  extensiones: ['pdf'],
+  tipoContenido: 'r2_pdf',
+} as const
+
+// Subcarpetas de organización dentro de Libros/. NO publican nada por sí solas: al alumno
+// solo llegan los PDF sueltos en la raíz (ver seccionBibliotecaR2). Existen para que el
+// psicólogo tenga dónde dejar audios, videos y material suelto sin mezclarlo con los
+// libros, y se crean siempre para que se vean en Disco Duro aunque estén vacías.
+export const CARPETAS_ORGANIZACION_BIBLIOTECA = ['Audios', 'Videos', 'Otros'] as const
 
 export function esZonaBibliotecaR2(ruta: string): boolean {
   return ruta.startsWith(PREFIJO_BIBLIOTECA_R2)
 }
 
-// La raíz y las cuatro carpetas de sección. Cualquier otra carpeta que el psicólogo cree
-// adentro (para ordenar por tema, por ejemplo) sí se puede borrar y renombrar.
+// La raíz y las carpetas de organización: son parte de la estructura, no material que el
+// psicólogo cargó. Cualquier otra subcarpeta que cree él sí se puede borrar y renombrar.
 export function esCarpetaFijaBibliotecaR2(prefijo: string): boolean {
   if (prefijo === PREFIJO_BIBLIOTECA_R2) return true
-  return SECCIONES_BIBLIOTECA_R2.some((s) => prefijo === `${PREFIJO_BIBLIOTECA_R2}${s.carpeta}/`)
+  return CARPETAS_ORGANIZACION_BIBLIOTECA.some((c) => prefijo === `${PREFIJO_BIBLIOTECA_R2}${c}/`)
 }
 
-// Sección a la que pertenece una key, por la carpeta en la que está. Devuelve null para
-// un archivo suelto en la raíz de Biblioteca R2: sin sección no hay pestaña donde
-// mostrarlo, así que la sincronización lo ignora.
+// Un archivo se publica como libro si es un PDF que está SUELTO en la raíz de Libros/.
+// Lo que cuelga de una subcarpeta (portadas/, fuente/) queda fuera a propósito: son
+// insumos del ebook, no material para el alumno.
 export function seccionBibliotecaR2(key: string) {
   if (!esZonaBibliotecaR2(key)) return null
   const resto = key.slice(PREFIJO_BIBLIOTECA_R2.length)
-  return SECCIONES_BIBLIOTECA_R2.find((s) => resto.startsWith(`${s.carpeta}/`)) ?? null
+  if (!resto || resto.includes('/')) return null
+  return SECCION_LIBROS.extensiones.includes(extensionDe(resto) as 'pdf') ? SECCION_LIBROS : null
 }
 
 export function extensionDe(nombreArchivo: string): string {

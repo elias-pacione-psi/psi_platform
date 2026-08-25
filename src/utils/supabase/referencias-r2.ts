@@ -1,6 +1,6 @@
 import 'server-only'
 import { createAdminClient } from '@/utils/supabase/admin'
-import { keyDeMarcadorR2 } from '@/utils/r2-marcador'
+import { keyDeMarcadorR2, seccionBibliotecaR2 } from '@/utils/r2-marcador'
 
 // ¿Quién está usando este archivo del bucket?
 //
@@ -30,7 +30,7 @@ async function todasLasReferencias(): Promise<Fila[]> {
 
   const [lecciones, biblioteca, ebooks, programas] = await Promise.all([
     supabaseAdmin.from('lecciones').select('titulo, url_recurso'),
-    supabaseAdmin.from('biblioteca_recursos').select('titulo, url_recurso'),
+    supabaseAdmin.from('biblioteca_recursos').select('titulo, url_recurso, origen'),
     supabaseAdmin.from('ebooks').select('titulo, archivo_key, portada_key'),
     supabaseAdmin.from('programas').select('titulo, portada_key'),
   ])
@@ -41,6 +41,13 @@ async function todasLasReferencias(): Promise<Fila[]> {
     filas.push({ url: l.url_recurso, etiqueta: `la lección "${l.titulo}"` })
   }
   for (const b of biblioteca.data ?? []) {
+    // Las filas espejadas desde la carpeta Libros/ NO cuentan como uso: existen solo
+    // porque el archivo está en el bucket, y la sincronización las borra sola cuando el
+    // archivo deja de estar. Si contaran, la fila que creó el propio espejo bloquearía
+    // borrar el libro desde Disco Duro — un candado que el sistema se pone a sí mismo, y
+    // que obligaba a borrar desde el panel de Cloudflare para poder sacar un PDF.
+    const key = b.url_recurso ? keyDeMarcadorR2(b.url_recurso) : null
+    if (b.origen === 'r2' && key && seccionBibliotecaR2(key)) continue
     filas.push({ url: b.url_recurso, etiqueta: `el recurso de Biblioteca "${b.titulo}"` })
   }
   for (const e of ebooks.data ?? []) {
