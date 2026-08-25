@@ -15,7 +15,7 @@ interface AsignacionProgramaEmailProps {
   nombre: string
   /** Títulos de los programas a los que se acaba de dar acceso (uno o más). */
   programas: string[]
-  /** Nombre de la comisión, si el acceso vino de una inscripción a cohorte. */
+  /** Nombre de la formación, si el acceso vino de una inscripción a cohorte. */
   nombreCohorte?: string | null
   fechaInicio?: string | null
   fechaFin?: string | null
@@ -31,8 +31,8 @@ const formatFecha = (f: string | null | undefined): string | null =>
 
 /**
  * Email que recibe el alumno cuando se le da acceso a uno o más programas nuevos —
- * por inscripción a una comisión, por edición manual del psicólogo, o porque se le
- * agregó un programa a una comisión en la que ya estaba.
+ * por inscripción a una formación, por edición manual del psicólogo, o porque se le
+ * agregó un programa a una formación en la que ya estaba.
  */
 export function AsignacionProgramaEmail({
   nombre,
@@ -108,7 +108,7 @@ export default function Preview() {
     <AsignacionProgramaEmail
       nombre="Julieta"
       programas={['Formación en TCC', 'Supervisión clínica grupal']}
-      nombreCohorte="Comisión Marzo 2026"
+      nombreCohorte="Formación Marzo 2026"
       fechaInicio="2026-03-02"
       fechaFin="2026-08-15"
       urlPlataforma="https://eliaspacione.com/alumno"

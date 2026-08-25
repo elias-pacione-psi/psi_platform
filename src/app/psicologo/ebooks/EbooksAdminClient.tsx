@@ -155,7 +155,7 @@ export function EbooksAdminClient({ ebooks }: { ebooks: Ebook[] }) {
               {seleccionado ? 'Editar ebook' : 'Nuevo ebook'}
             </DialogTitle>
             <DialogDescription className="font-sans">
-              El PDF y la portada se eligen de lo que ya subiste en Archivos.
+              El PDF y la portada se eligen de lo que ya subiste en Disco Duro.
             </DialogDescription>
           </DialogHeader>
 
@@ -234,7 +234,7 @@ export function EbooksAdminClient({ ebooks }: { ebooks: Ebook[] }) {
           <AlertDialogHeader>
             <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Eliminar este ebook?</AlertDialogTitle>
             <AlertDialogDescription className="font-sans text-muted-foreground">
-              Se elimina <b>{aBorrar?.titulo}</b> de la tienda. El PDF y la portada quedan en Archivos
+              Se elimina <b>{aBorrar?.titulo}</b> de la tienda. El PDF y la portada quedan en Disco Duro
               — esto solo borra la ficha de venta.
             </AlertDialogDescription>
           </AlertDialogHeader>

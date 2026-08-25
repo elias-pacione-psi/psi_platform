@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
         }),
       })
     } else if (s.cohorte_id && s.cohortes) {
-      // Sesión grupal — un mail por cada alumno activo de la comisión
+      // Sesión grupal — un mail por cada alumno activo de la formación
       const nombreCohorte: string = s.cohortes.nombre
       const inscriptos: { alumnos: { id: string; email: string; nombre: string; estado: string } | null }[] =
         s.cohortes.cohortes_alumnos ?? []

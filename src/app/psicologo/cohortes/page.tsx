@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { CohortesClient } from './CohortesClient'
 
-export const metadata = { title: 'Comisiones | Elias Pacione' }
+export const metadata = { title: 'Formaciones | Elias Pacione' }
 
 export default async function CohortesPage() {
   const supabase = await createClient()
@@ -29,19 +29,19 @@ export default async function CohortesPage() {
       .order('created_at', { ascending: false }),
     supabase.from('programas').select('id, titulo').order('titulo', { ascending: true }),
     supabase.from('alumnos').select('id, nombre, email').eq('estado', 'activo').eq('rol', 'alumno').order('nombre', { ascending: true }),
-    // Para saber si una comisión ya tiene clases agendadas y cuántas quedan por delante.
+    // Para saber si una formación ya tiene clases agendadas y cuántas quedan por delante.
     supabase.from('agenda_sesiones').select('cohorte_id, fecha_hora').not('cohorte_id', 'is', null),
   ])
 
   // Sin esto el error se comía en silencio: `cohortes` venía null, la página mostraba
-  // "todavía no hay comisiones" y parecía que no se guardaban.
+  // "todavía no hay formaciones" y parecía que no se guardaban.
   if (errorCohortes) {
-    console.error('Error cargando comisiones:', errorCohortes)
+    console.error('Error cargando formaciones:', errorCohortes)
     return (
       <div className="space-y-6 max-w-6xl mx-auto">
-        <h1 className="text-4xl font-heading font-bold text-tinta">Comisiones</h1>
+        <h1 className="text-4xl font-heading font-bold text-tinta">Formaciones</h1>
         <div className="bg-red-50 dark:bg-red-950/20 border border-red-300 dark:border-red-900 text-red-700 dark:text-red-400 rounded-2xl p-6 font-sans space-y-2">
-          <p className="font-bold">No se pudieron cargar las comisiones.</p>
+          <p className="font-bold">No se pudieron cargar las formaciones.</p>
           <p className="text-sm">{errorCohortes.message}</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default async function CohortesPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-4xl font-heading font-bold text-tinta">Comisiones</h1>
+        <h1 className="text-4xl font-heading font-bold text-tinta">Formaciones</h1>
         <p className="text-muted-foreground mt-2 font-sans">
           Camadas que cursan juntas. Inscribí alumnos y les das acceso al contenido automáticamente;
           con un horario cargado, además podés generarles las clases en la agenda.

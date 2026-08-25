@@ -4,7 +4,7 @@ import { listarCarpeta, obtenerUsoTotal } from './actions'
 import { asegurarCarpetasBibliotecaR2 } from '@/utils/supabase/biblioteca-r2'
 import { ArchivosClient } from './ArchivosClient'
 
-export const metadata = { title: 'Archivos' }
+export const metadata = { title: 'Disco Duro' }
 
 export default async function ArchivosPage() {
   const supabase = await createClient()
@@ -31,7 +31,7 @@ export default async function ArchivosPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-4xl font-heading font-bold text-tinta">Archivos</h1>
+        <h1 className="text-4xl font-heading font-bold text-tinta">Disco Duro</h1>
         <p className="text-muted-foreground mt-2 font-sans">
           Subí y organizá el material del curso directamente acá, sin pasar por el panel de Cloudflare.
         </p>

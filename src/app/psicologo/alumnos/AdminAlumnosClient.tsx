@@ -91,7 +91,7 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
           <TableHeader className="bg-muted">
             <TableRow>
               <TableHead className="font-heading font-semibold text-tinta">Nombre / Email</TableHead>
-              <TableHead className="font-heading font-semibold text-tinta">Comisión</TableHead>
+              <TableHead className="font-heading font-semibold text-tinta">Formación</TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Progreso</TableHead>
               <TableHead className="font-heading font-semibold text-tinta">Entregas</TableHead>
               <TableHead className="text-right font-heading font-semibold text-tinta">Acciones</TableHead>
@@ -109,7 +109,7 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
                   <div className="text-muted-foreground text-sm">{alumno.email}</div>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">
-                  {alumno.cohorteNombre || 'Sin comisión'}
+                  {alumno.cohorteNombre || 'Sin formación'}
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">
                   {alumno.progresoTexto || '0/0 · 0%'}
