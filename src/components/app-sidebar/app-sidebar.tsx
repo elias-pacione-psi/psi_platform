@@ -77,7 +77,7 @@ const itemsPsicologo = [
     icon: LayoutList,
   },
   {
-    title: "Comisiones",
+    title: "Formaciones",
     url: "/psicologo/cohortes",
     icon: GraduationCap,
   },
@@ -105,7 +105,7 @@ const itemsPsicologo = [
     icon: Library,
   },
   {
-    title: "Archivos",
+    title: "Disco Duro",
     url: "/psicologo/archivos",
     icon: FolderCog,
   },

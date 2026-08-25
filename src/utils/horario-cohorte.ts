@@ -13,7 +13,7 @@ const OFFSET_ARGENTINA = '-03:00'
 
 // Convierte "2026-08-05" + "21:00" en el instante UTC correspondiente a esa hora EN
 // ARGENTINA. Lo usan las tres vías que agendan (sesión única, recurrentes y clases de
-// comisión) para que "21:00" signifique lo mismo en todas: antes cada una hacía
+// formación) para que "21:00" signifique lo mismo en todas: antes cada una hacía
 // `new Date(...)` a secas y quedaba a merced de la zona del servidor — en Vercel UTC, en
 // una máquina local la que tenga puesta — así que la misma hora escrita a mano y la
 // generada automáticamente caían en instantes distintos.

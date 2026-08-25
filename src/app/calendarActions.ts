@@ -20,7 +20,7 @@ export type EventoCalendario = {
 function armarSesion(sesion: any, titulo: string): EventoCalendario {
   const start = new Date(sesion.fecha_hora)
   // Duración real de la sesión. Antes era 1 hora fija para todo, lo que dibujaba mal las
-  // clases de comisión: una cursada de 8 a 12 aparecía como un bloque de una hora.
+  // clases de formación: una cursada de 8 a 12 aparecía como un bloque de una hora.
   const minutos = sesion.duracion_minutos ?? 60
   const end = new Date(start.getTime() + minutos * 60 * 1000)
   // Enlace de la sesión, o el del alumno como fallback en sesiones individuales virtuales
@@ -61,12 +61,12 @@ export async function obtenerEventosCalendario(): Promise<EventoCalendario[]> {
       if (esPsicologo) {
         titulo = sesion.cohorte_id
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? `Comisión: ${(sesion.cohortes as any)?.nombre || ''}`
+          ? `Formación: ${(sesion.cohortes as any)?.nombre || ''}`
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           : `Sesión - ${(sesion.alumnos as any)?.nombre || 'Alumno'}`
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        titulo = sesion.cohorte_id ? `${(sesion.cohortes as any)?.nombre || 'Comisión'}` : 'Sesión'
+        titulo = sesion.cohorte_id ? `${(sesion.cohortes as any)?.nombre || 'Formación'}` : 'Sesión'
       }
       eventos.push(armarSesion(sesion, titulo))
     })

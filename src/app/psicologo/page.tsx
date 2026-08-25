@@ -74,7 +74,7 @@ export default async function PsicologoHomePage() {
   const secciones = [
     { titulo: 'Alumnos', descripcion: 'Cuentas, contacto y programas asignados', url: '/psicologo/alumnos', icon: Users, dato: `${alumnosActivos ?? 0} ${alumnosActivos === 1 ? 'activo' : 'activos'}` },
     { titulo: 'Programas', descripcion: 'Módulos y lecciones de cada formación', url: '/psicologo/programas', icon: LayoutList, dato: `${totalProgramas ?? 0} ${totalProgramas === 1 ? 'programa' : 'programas'}` },
-    { titulo: 'Comisiones', descripcion: 'Camadas que cursan juntas', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'comisión' : 'comisiones'}` },
+    { titulo: 'Formaciones', descripcion: 'Camadas que cursan juntas', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'formación' : 'formaciones'}` },
     { titulo: 'Biblioteca', descripcion: 'Libros de Lecturas, con acceso por alumno', url: '/psicologo/biblioteca', icon: Library, dato: `${totalRecursos ?? 0} ${totalRecursos === 1 ? 'recurso' : 'recursos'}` },
     { titulo: 'Archivos', descripcion: 'El bucket: subir y organizar el material', url: '/psicologo/archivos', icon: FolderCog, dato: 'Gestor' },
     // Ventas ya no es su propia tarjeta: se fusionó como pestaña de ebooks.

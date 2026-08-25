@@ -83,7 +83,7 @@ export default async function EbooksAdminPage({ searchParams }: Props) {
         <h1 className="text-4xl font-heading font-bold text-tinta">ebooks</h1>
         <p className="text-muted-foreground mt-2 font-sans">
           El único producto que se compra directo desde la web. El resto del contenido
-          (cursos, formaciones) sigue asignándose desde Programas y Comisiones.
+          (cursos, formaciones) sigue asignándose desde Programas y Formaciones.
         </p>
       </div>
 

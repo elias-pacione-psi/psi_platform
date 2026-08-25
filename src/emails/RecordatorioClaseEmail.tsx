@@ -13,7 +13,7 @@ const C = {
 
 interface RecordatorioClaseEmailProps {
   nombre: string
-  contexto: string           // Comisión o 'Sesión individual'
+  contexto: string           // Formación o 'Sesión individual'
   tipo: 'virtual' | 'presencial'
   fechaHora: string          // ISO string
   duracionMinutos?: number | null
@@ -123,7 +123,7 @@ export default function Preview() {
   return (
     <RecordatorioClaseEmail
       nombre="Julieta"
-      contexto="Comisión Marzo 2026"
+      contexto="Formación Marzo 2026"
       tipo="virtual"
       fechaHora="2026-03-07T21:00:00.000Z"
       duracionMinutos={90}

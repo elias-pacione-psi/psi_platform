@@ -88,7 +88,7 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
       <div className="bg-card rounded-2xl border border-border shadow-sm p-4 md:p-6">
         <Tabs defaultValue="documentos" className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
-            <TabsTrigger value="documentos">Lecturas (PDF)</TabsTrigger>
+            <TabsTrigger value="documentos">Libros</TabsTrigger>
             <TabsTrigger value="audios">Audios</TabsTrigger>
             <TabsTrigger value="videos">Videos</TabsTrigger>
             <TabsTrigger value="extras">Otros recursos</TabsTrigger>
@@ -178,7 +178,7 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
                       <audio src={selectedRecurso.url_recurso} controls className="w-full max-w-2xl" />
                     </div>
                   ) : selectedRecurso.tipo_contenido === 'r2_imagen' ? (
-                    /* Imagen del bucket (carpeta "Biblioteca R2/Otros"): <img> directo y no
+                    /* Imagen del bucket: <img> directo y no
                        iframe — el iframe genérico de más abajo asume una página de preview
                        de Drive/Dropbox, no un archivo propio. */
                     <div className="w-full h-full flex items-center justify-center bg-muted p-4 relative z-0">

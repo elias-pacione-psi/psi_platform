@@ -60,7 +60,7 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
     startTransition(async () => {
       const result = await guardarCohorte(formData)
       if (result?.error) setErrorMsg(result.error)
-      else { toast.success('Comisión guardada'); setOpenForm(false) }
+      else { toast.success('Formación guardada'); setOpenForm(false) }
     })
   }
 
@@ -69,7 +69,7 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
     startTransition(async () => {
       const result = await eliminarCohorte(toDelete)
       if (result?.error) toast.error(result.error)
-      else toast.success('Comisión eliminada')
+      else toast.success('Formación eliminada')
       setToDelete(null)
     })
   }
@@ -93,7 +93,7 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
     startTransition(async () => {
       const result = await quitarAlumnoDeCohorte(cohorteId, alumnoId)
       if (result?.error) toast.error(result.error)
-      else toast.success('Alumno dado de baja de la comisión')
+      else toast.success('Alumno dado de baja de la formación')
     })
   }
 
@@ -143,14 +143,14 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
     <div className="space-y-4">
       <div className="flex justify-end">
         <Button onClick={() => openFormModal(null)} className="bg-marca hover:bg-marca/90 text-crema">
-          <Plus className="w-4 h-4 mr-2" /> Crear comisión
+          <Plus className="w-4 h-4 mr-2" /> Crear formación
         </Button>
       </div>
 
       {cohortes.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-12 text-center text-muted-foreground">
           <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          Todavía no hay comisiones. Creá una para inscribir alumnos a uno o más programas.
+          Todavía no hay formaciones. Creá una para inscribir alumnos a uno o más programas.
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -257,11 +257,11 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
         </div>
       )}
 
-      {/* Crear/editar comisión */}
+      {/* Crear/editar formación */}
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogContent className="sm:max-w-[560px] bg-crema max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="font-heading text-2xl text-tinta">{selected ? 'Editar comisión' : 'Nueva comisión'}</DialogTitle>
+            <DialogTitle className="font-heading text-2xl text-tinta">{selected ? 'Editar formación' : 'Nueva formación'}</DialogTitle>
             <DialogDescription className="font-sans">
               Los inscriptos ven el contenido de todos los programas que asocies acá.
             </DialogDescription>
@@ -271,7 +271,7 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
 
             <div className="space-y-2">
               <Label className="font-bold text-tinta">Nombre</Label>
-              <Input name="nombre" defaultValue={selected?.nombre || ''} placeholder="Ej: Formación 2026 · Comisión A" className="bg-card border-border" required />
+              <Input name="nombre" defaultValue={selected?.nombre || ''} placeholder="Ej: Formación 2026 · Grupo A" className="bg-card border-border" required />
             </div>
 
             <div className="space-y-2">
@@ -388,9 +388,9 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent className="bg-crema">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Eliminar esta comisión?</AlertDialogTitle>
+            <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Eliminar esta formación?</AlertDialogTitle>
             <AlertDialogDescription className="font-sans">
-              Se elimina la comisión, sus inscripciones y las clases que tenga agendadas.
+              Se elimina la formación, sus inscripciones y las clases que tenga agendadas.
               Los alumnos NO se borran; conservan su cuenta.
             </AlertDialogDescription>
           </AlertDialogHeader>

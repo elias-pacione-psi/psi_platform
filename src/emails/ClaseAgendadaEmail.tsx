@@ -13,7 +13,7 @@ const C = {
 
 interface ClaseAgendadaEmailProps {
   nombre: string
-  /** Nombre de la comisión (si es grupal) o 'Sesión individual' */
+  /** Nombre de la formación (si es grupal) o 'Sesión individual' */
   contexto: string
   tipo: 'virtual' | 'presencial'
   /** Cuántas clases nuevas se agendaron de una — evita mandar un mail por fecha. */
@@ -33,7 +33,7 @@ const formatFechaHora = (iso: string) => ({
 
 /**
  * Email que recibe el alumno cuando se agenda una o más clases nuevas de una vez
- * (sesión única, semanas recurrentes, o el horario completo de una comisión).
+ * (sesión única, semanas recurrentes, o el horario completo de una formación).
  */
 export function ClaseAgendadaEmail({
   nombre,
@@ -127,7 +127,7 @@ export default function Preview() {
   return (
     <ClaseAgendadaEmail
       nombre="Julieta"
-      contexto="Comisión Marzo 2026"
+      contexto="Formación Marzo 2026"
       tipo="virtual"
       cantidad={8}
       primeraFechaHora="2026-03-07T21:00:00.000Z"

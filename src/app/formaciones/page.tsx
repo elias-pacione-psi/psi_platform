@@ -12,8 +12,8 @@ export const revalidate = 3600
 const PASOS = [
   {
     icono: CalendarCheck,
-    titulo: 'Te inscribís en una cohorte',
-    texto: 'Cada comisión tiene fecha de inicio y un grupo con el que recorrés la formación.',
+    titulo: 'Te inscribís en un grupo',
+    texto: 'Cada grupo tiene su fecha de inicio y recorrés la formación acompañado por los demás.',
   },
   {
     icono: Presentation,
@@ -43,8 +43,8 @@ export default function FormacionesPage() {
               Un recorrido en grupo, con encuentros en vivo
             </h1>
             <p className="font-serif text-tinta/75 text-lg leading-relaxed mb-8">
-              Formación por comisiones: clases en vivo con un grupo, programa
-              estructurado y un ebook que acompaña todo el recorrido.
+              Clases en vivo con un grupo, programa estructurado y un ebook que
+              acompaña todo el recorrido.
             </p>
             <Link
               href="/?interes=formacion#contacto"
@@ -129,7 +129,7 @@ export default function FormacionesPage() {
           </h2>
           <p className="font-serif text-crema/75 text-base leading-relaxed mb-8">
             La inscripción no es online: contanos qué te interesa y Elias te escribe
-            con las próximas fechas de comisión.
+            con las próximas fechas de inicio.
           </p>
           <Link
             href="/?interes=formacion#contacto"

@@ -73,7 +73,7 @@ export default async function AdminAlumnosPage() {
     
     // Cohorte más reciente (tomamos la primera como ref)
     const cohorteInfo = a.cohortes_alumnos?.[0]?.cohortes
-    const cohorteNombre = cohorteInfo?.nombre || 'Sin comisión'
+    const cohorteNombre = cohorteInfo?.nombre || 'Sin formación'
 
     // Progreso
     const totalLeccionesAlumno = lecciones?.filter(l => programasSeleccionados.includes(l.programa_id)).length || 0
