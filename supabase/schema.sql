@@ -587,25 +587,19 @@ create policy "quiz_intentos_select" on public.quiz_intentos
 -- patrón que quiz_preguntas, sin este policy no queda otro camino de escritura.
 drop policy if exists "quiz_intentos_insert_propio" on public.quiz_intentos;
 
--- Contar intentos y registrar el nuevo, en una sola transacción serializada por
--- (alumno, lección). responderQuiz() hacía count-then-insert en dos queries, y eso es una
--- race: dos envíos en paralelo con 2 intentos usados leían ambos "2", los dos pasaban el
--- tope de 3 y quedaban 4+. Con feedback por pregunta en cada respuesta, disparar N
--- requests concurrentes daba muchas más combinaciones de las permitidas.
+-- Intentos libres (sin tope): registra el intento y listo. El único caso que NO inserta
+-- es "ya había aprobado antes" — si no, quien repasa un quiz ya aprobado para practicar
+-- engordaría la tabla sin límite. Esa condición corría antes solo al agotar el cupo de 3;
+-- sin cupo, tiene que valer siempre.
 --
--- El lock es advisory y por par alumno+lección: no bloquea filas de negocio ni serializa
--- a dos alumnos distintos, ni a la misma persona en dos quizzes distintos.
---
--- `registrado` distingue "no te quedan intentos" de "ya aprobaste y estás repasando": en
--- el segundo caso se corrige y se muestra el resultado, pero NO se inserta una fila más
--- (si no, quien ya aprobó podía reenviar para siempre y engordar la tabla sin límite).
+-- El lock es advisory y por par alumno+lección: serializa el count-then-insert para que
+-- dos envíos en paralelo no lean el mismo "no aprobado todavía" y los dos inserten.
 create or replace function public.registrar_intento_quiz(
   p_alumno_id uuid,
   p_leccion_id uuid,
   p_puntaje int,
   p_total int,
-  p_aprobado boolean,
-  p_maximo int default 3
+  p_aprobado boolean
 )
 returns jsonb
 language plpgsql
@@ -618,20 +612,11 @@ declare
 begin
   perform pg_advisory_xact_lock(hashtext(p_alumno_id::text || ':' || p_leccion_id::text)::bigint);
 
-  select count(*) into v_usados
+  select count(*), bool_or(aprobado) into v_usados, v_aprobado_previo
     from public.quiz_intentos
    where alumno_id = p_alumno_id and leccion_id = p_leccion_id;
 
-  if v_usados >= p_maximo then
-    select exists (
-      select 1 from public.quiz_intentos
-       where alumno_id = p_alumno_id and leccion_id = p_leccion_id and aprobado
-    ) into v_aprobado_previo;
-
-    if not v_aprobado_previo then
-      return jsonb_build_object('error', 'sin_intentos', 'usados', v_usados);
-    end if;
-
+  if v_aprobado_previo then
     return jsonb_build_object('ok', true, 'registrado', false, 'usados', v_usados);
   end if;
 
@@ -642,19 +627,23 @@ begin
 end;
 $$;
 
+-- La firma vieja (con p_maximo) queda huérfana si no se dropea: create or replace no
+-- puede sacar un parámetro, así que sin este drop las dos versiones convivirían.
+drop function if exists public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int);
+
 -- Sólo el servidor (service-role) la llama, desde responderQuiz. Sin este revoke, el
 -- `grant all on all routines ... to authenticated` de la sección 3.5 la dejaría invocable
 -- por cualquier alumno vía /rest/v1/rpc — que es justo el camino que quiz_intentos cerró
 -- al quedarse sin policy de insert. Postgres además da EXECUTE a PUBLIC por default en
 -- toda función nueva, así que el revoke tiene que nombrar a public explícitamente.
-revoke all on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
+revoke all on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean)
   from public, anon, authenticated;
 
 -- Explícito y no heredado del `alter default privileges` de la sección 3.5: si esa línea
 -- no hubiera corrido en esta base, la función quedaría sin EXECUTE para nadie y
 -- responderQuiz fallaría para todos los alumnos. Un grant de más no cuesta nada; que se
 -- rompa el quiz entero por un privilegio implícito, sí.
-grant execute on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean, int)
+grant execute on function public.registrar_intento_quiz(uuid, uuid, int, int, boolean)
   to service_role;
 
 -- entregas: el alumno crea/ve/edita la suya (el trigger protege campos del

@@ -8,15 +8,13 @@ import { responderQuiz } from '@/app/alumno/actions'
 import { toast } from 'sonner'
 
 type Pregunta = { id: string, pregunta: string, opciones: string[] }
-// `correcta` es opcional a propósito: el servidor sólo la manda cuando ya no puede usarse
-// para reintentar (aprobado o sin intentos restantes). Mientras queden, llega sólo
-// `acertada` — el alumno ve qué falló, no cuál era la buena.
+// `correcta` es opcional a propósito: el servidor sólo la manda cuando ya aprobó. Mientras
+// no apruebe, llega sólo `acertada` — el alumno ve qué falló, no cuál era la buena.
 type Solucion = { correcta?: string, acertada: boolean }
 type Resultado = {
   puntaje: number
   total: number
   aprobado: boolean
-  intentosRestantes: number
   solucion: Record<string, Solucion>
 }
 
@@ -39,7 +37,6 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
         puntaje: r.puntaje!,
         total: r.total!,
         aprobado: r.aprobado!,
-        intentosRestantes: r.intentosRestantes!,
         solucion: r.solucion!,
       })
     })
@@ -67,9 +64,7 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
               <p className="text-sm text-muted-foreground">
                 {resultado.aprobado
                   ? '¡Aprobado! La lección quedó completada.'
-                  : resultado.intentosRestantes > 0
-                    ? `Para aprobar necesitás ${aciertosNecesarios(resultado.total)} de ${resultado.total}. Repasá y volvé a intentar — te ${resultado.intentosRestantes === 1 ? 'queda 1 intento' : `quedan ${resultado.intentosRestantes} intentos`}.`
-                    : `Para aprobar hacían falta ${aciertosNecesarios(resultado.total)} de ${resultado.total} y usaste todos tus intentos. Abajo están las respuestas correctas. Escribile a tu instructor: puede devolverte los intentos para que lo rindas de nuevo.`}
+                  : `Para aprobar necesitás ${aciertosNecesarios(resultado.total)} de ${resultado.total}. Repasá y volvé a intentar cuando quieras — no hay límite de intentos.`}
               </p>
             </div>
           </CardContent>
@@ -125,12 +120,9 @@ export function QuizSolver({ preguntas, leccionId, programaId }: { preguntas: Pr
 
       <div className="flex justify-end">
         {resultado ? (
-          // Sin intentos restantes no se ofrece reintentar: el servidor lo rechazaría igual
-          // (MAXIMO_INTENTOS_QUIZ en alumno/actions.ts), y un botón que sólo sirve para
-          // recibir un error es peor que no tenerlo.
-          !resultado.aprobado && resultado.intentosRestantes > 0 && (
+          !resultado.aprobado && (
             <Button onClick={reintentar} className="bg-marca hover:bg-marca/90 text-crema px-8 h-12 rounded-xl">
-              <RotateCcw className="w-4 h-4 mr-2" /> Reintentar ({resultado.intentosRestantes})
+              <RotateCcw className="w-4 h-4 mr-2" /> Reintentar
             </Button>
           )
         ) : (
