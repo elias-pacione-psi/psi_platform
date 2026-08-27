@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { marcarOrdenReembolsada } from './actions'
-import { Loader2, TrendingUp, Receipt, Undo2 } from 'lucide-react'
+import { confirmarPagoOrden, marcarOrdenReembolsada } from './actions'
+import { Loader2, TrendingUp, Receipt, Undo2, CheckCircle2, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { fechaCorta } from '@/utils/fecha-ar'
 
@@ -17,6 +17,8 @@ type Fila = {
   precioCentavos: number
   estado: 'pendiente' | 'pagada' | 'fallida' | 'reembolsada'
   fecha: string
+  /** 'manual' = link de pago cargado a mano: no hay webhook, lo confirma el psicólogo. */
+  proveedor: string
 }
 
 const formatoARS = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 })
@@ -39,11 +41,28 @@ export function VentasClient({ filas, totalVentas, ingresosCentavos }: { filas: 
   const [busqueda, setBusqueda] = useState('')
   const [isPending, startTransition] = useTransition()
   const [aReembolsar, setAReembolsar] = useState<Fila | null>(null)
+  const [aConfirmar, setAConfirmar] = useState<Fila | null>(null)
 
   const filtradas = filas.filter((f) =>
     f.email.toLowerCase().includes(busqueda.toLowerCase()) ||
     f.ebookTitulo.toLowerCase().includes(busqueda.toLowerCase()),
   )
+
+  // Las pendientes son plata que puede haber entrado sin que nadie se entere: una compra
+  // por link manual no manda webhook, así que queda esperando a que el psicólogo la
+  // coteje. Van arriba de todo porque son lo único de esta pantalla que pide una acción.
+  const pendientes = filas.filter((f) => f.estado === 'pendiente')
+
+  function handleConfirmar() {
+    if (!aConfirmar) return
+    startTransition(async () => {
+      const res = await confirmarPagoOrden(aConfirmar.id)
+      if (res?.error) toast.error(res.error)
+      else if (res?.avisoMail) toast.warning(res.avisoMail, { duration: 10000 })
+      else toast.success('Pago confirmado — el comprador ya puede descargar el ebook')
+      setAConfirmar(null)
+    })
+  }
 
   function handleReembolsar() {
     if (!aReembolsar) return
@@ -57,6 +76,23 @@ export function VentasClient({ filas, totalVentas, ingresosCentavos }: { filas: 
 
   return (
     <div className="space-y-4">
+      {pendientes.length > 0 && (
+        <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-300 dark:border-orange-900 rounded-2xl p-5 flex items-start gap-4">
+          <Clock className="w-5 h-5 text-orange-700 dark:text-orange-300 shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-bold text-orange-900 dark:text-orange-200">
+              {pendientes.length === 1
+                ? 'Hay 1 compra esperando que confirmes el pago'
+                : `Hay ${pendientes.length} compras esperando que confirmes el pago`}
+            </p>
+            <p className="text-orange-800 dark:text-orange-300/90 mt-1 leading-relaxed">
+              Fijate en tu cuenta de Mercado Pago si la plata entró y confirmalas abajo con
+              el ✓. Hasta que las confirmes, esa gente no puede descargar lo que compró.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-marca/10 flex items-center justify-center shrink-0">
@@ -117,6 +153,15 @@ export function VentasClient({ filas, totalVentas, ingresosCentavos }: { filas: 
                     {fechaCorta(f.fecha)}
                   </TableCell>
                   <TableCell className="text-right">
+                    {f.estado === 'pendiente' && (
+                      <Button
+                        variant="ghost" size="sm" onClick={() => setAConfirmar(f)} disabled={isPending}
+                        className="h-8 px-2 text-marca hover:bg-marca/10"
+                        title="Confirmar que el pago entró"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                      </Button>
+                    )}
                     {f.estado === 'pagada' && (
                       <Button
                         variant="ghost" size="sm" onClick={() => setAReembolsar(f)} disabled={isPending}
@@ -133,6 +178,27 @@ export function VentasClient({ filas, totalVentas, ingresosCentavos }: { filas: 
           </Table>
         )}
       </div>
+
+      <AlertDialog open={!!aConfirmar} onOpenChange={(o) => !o && setAConfirmar(null)}>
+        <AlertDialogContent className="bg-crema">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Confirmás que el pago entró?</AlertDialogTitle>
+            <AlertDialogDescription className="font-sans text-muted-foreground">
+              Antes de confirmar, chequeá en tu cuenta de Mercado Pago que estén los{' '}
+              <b>{aConfirmar ? formatoARS.format(aConfirmar.precioCentavos / 100) : ''}</b> de{' '}
+              <b>{aConfirmar?.email}</b>. Esto no cobra nada: le habilita a esa persona la
+              descarga de <b>{aConfirmar?.ebookTitulo}</b> y le manda el link por mail.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); handleConfirmar() }} disabled={isPending} className="bg-marca hover:bg-marca/90 text-crema">
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Confirmar pago
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={!!aReembolsar} onOpenChange={(o) => !o && setAReembolsar(null)}>
         <AlertDialogContent className="bg-crema">

@@ -18,13 +18,19 @@ export type TipoEmail =
   | 'entrega_revisada'
   | 'clase_agendada'
   | 'recordatorio_clase'
+  | 'ebook_entregado'
 
 export interface OpcionesEmail {
   to: string
   subject: string
   react: JSX.Element
   tipo: TipoEmail
-  alumnoId: string
+  /**
+   * null para 'ebook_entregado': se puede comprar un ebook sin cuenta (decisión del
+   * 2026-08-04), así que no siempre hay un alumno al que colgar el envío. La identidad
+   * del destinatario en ese caso vive en `to`/destinatario_email, que igual se registra.
+   */
+  alumnoId: string | null
   /** Entrega/sesión/etc. relacionada, para trazabilidad. */
   referenciaId?: string | null
   /** Día (Argentina) que cubre el envío — solo lo usa 'recordatorio_clase' para el dedup. */
@@ -42,7 +48,7 @@ async function registrarEnvio(
   const supabaseAdmin = createAdminClient()
   const { error } = await supabaseAdmin.from('emails_enviados').insert({
     tipo: opts.tipo,
-    alumno_id: opts.alumnoId,
+    alumno_id: opts.alumnoId ?? null,
     destinatario_email: opts.to,
     referencia_id: opts.referenciaId ?? null,
     fecha_referencia: opts.fechaReferencia ?? null,

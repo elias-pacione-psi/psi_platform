@@ -137,7 +137,11 @@ export async function GET(req: NextRequest) {
       .in('alumno_id', [...alumnoIdsEnJuego])
 
     const yaNotificadosSet = new Set((yaNotificados ?? []).map((r: { alumno_id: string }) => r.alumno_id))
-    mailsAEnviar = mails.filter((m) => !yaNotificadosSet.has(m.alumnoId))
+    // alumnoId pasó a ser nullable (lo necesita 'ebook_entregado', que se manda a
+    // compradores sin cuenta). Acá siempre viene con valor —el recordatorio nace de un
+    // alumno de una cohorte— pero un mail sin alumno no se puede deduplicar por alumno,
+    // así que la guarda lo deja pasar en vez de descartarlo.
+    mailsAEnviar = mails.filter((m) => !m.alumnoId || !yaNotificadosSet.has(m.alumnoId))
   }
 
   const resultado = mailsAEnviar.length > 0

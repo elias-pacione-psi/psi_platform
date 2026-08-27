@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LayoutList, FolderHeart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { JoinMeetButton } from './JoinMeetButton'
+import { RecomendacionCursos } from '@/components/RecomendacionCursos'
 import { fechaLarga, hora } from '@/utils/fecha-ar'
 
 export const dynamic = 'force-dynamic';
@@ -105,6 +106,19 @@ export default async function AlumnoHomePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Cuenta recién creada desde la compra de un ebook: no tiene ningún programa
+          asignado todavía, así que las dos tarjetas de arriba son dos ceros y la pantalla
+          es un callejón sin salida. Ahí es donde la recomendación de cursos tiene sentido
+          — con material asignado, en cambio, lo que corresponde es que siga con lo suyo,
+          no que le ofrezcan otra cosa. */}
+      {!esPsicologo && cantidadProgramas === 0 && (
+        <Card className="border-none shadow-md">
+          <CardContent className="pt-6">
+            <RecomendacionCursos />
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

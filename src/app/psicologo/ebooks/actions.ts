@@ -94,6 +94,18 @@ export async function guardarEbook(formData: FormData) {
   if (linkPago) {
     if (linkPago.length > LINK_PAGO_MAX_LEN) return { error: 'El link de pago es demasiado largo' }
     if (!esUrlHttps(linkPago)) return { error: 'El link de pago tiene que ser una URL https válida' }
+
+    // Dos ebooks no pueden compartir el mismo link de pago. Detectado el 2026-08-28 en
+    // producción: "Pastor Alerta" y "Consulta Cero" tenían el mismo, así que quien
+    // compraba uno pagaba por la caja del otro. El precio del link lo fija el proveedor,
+    // no la plataforma, y el cotejo posterior lo hace una persona mirando importes —
+    // dos libros con la misma caja hacen imposible saber cuál se vendió.
+    let query = supabase.from('ebooks').select('id, titulo').eq('link_pago', linkPago)
+    if (id) query = query.neq('id', id)
+    const { data: choque } = await query.maybeSingle()
+    if (choque) {
+      return { error: `Ese link de pago ya lo usa "${choque.titulo}". Cada ebook necesita el suyo, si no no se puede saber cuál se vendió.` }
+    }
   }
 
   const slug = await slugDisponible(supabase, slugificar(titulo), id)

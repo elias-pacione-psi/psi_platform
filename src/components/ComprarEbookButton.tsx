@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { iniciarCompraEbook } from '@/app/ebooks/actions'
+import { iniciarCompraEbook, iniciarCompraEbookManual } from '@/app/ebooks/actions'
 import { ShoppingCart, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -16,10 +16,19 @@ import { toast } from 'sonner'
 // no algo que deba viajar al bundle del cliente más que como el booleano ya resuelto.
 //
 // `linkPago` es el link de pago manual de ESTE ebook puntual (cargado a mano en el
-// admin — columna ebooks.link_pago). Tiene prioridad sobre el flujo automático: no crea
-// orden ni dispara el webhook, así que no habilita la descarga automática, pero permite
-// vender un libro puntual (con Mercado Pago, Ualá, o lo que sea que devuelva un link de
-// pago) sin depender de tener el token de la API configurado.
+// admin — columna ebooks.link_pago). Permite vender un libro sin depender de tener el
+// token de la API configurado, con Mercado Pago, Ualá o lo que sea que devuelva un link.
+//
+// PRIORIDAD (invertida el 2026-08-28): manda el flujo automático cuando está
+// configurado, y el link manual queda de reserva. Estaba al revés, y con un link cargado
+// en cada ebook el flujo automático nunca llegaba a correr aunque estuviera disponible.
+// El automático se confirma solo por webhook y entrega el PDF sin que nadie intervenga;
+// el manual necesita que el psicólogo confirme el pago a mano. Cuando los dos están
+// disponibles, el que no depende de un humano es estrictamente mejor.
+//
+// Los dos caminos piden el email primero y crean la orden ANTES de mandar a pagar: sin
+// orden no hay forma de reconocer el pago después ni de entregar el PDF. Esa era la
+// causa del bug del 2026-08-28 — el camino manual iba derecho al link, sin orden.
 export function ComprarEbookButton(
   { ebookId, pagosHabilitados, linkPago }: { ebookId: string; pagosHabilitados: boolean; linkPago: string | null },
 ) {
@@ -27,19 +36,10 @@ export function ComprarEbookButton(
   const [email, setEmail] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  if (linkPago) {
-    return (
-      <Button
-        onClick={() => { window.location.href = linkPago }}
-        className="w-full bg-tinta hover:bg-marca text-crema font-bold h-14 rounded-xl text-lg"
-      >
-        <ShoppingCart className="w-5 h-5 mr-2" />
-        Comprar
-      </Button>
-    )
-  }
+  const modo: 'automatico' | 'manual' | null =
+    pagosHabilitados ? 'automatico' : linkPago ? 'manual' : null
 
-  if (!pagosHabilitados) {
+  if (!modo) {
     return (
       <div className="space-y-3">
         <Button disabled className="w-full bg-tinta text-crema font-bold h-14 rounded-xl text-lg opacity-60 cursor-not-allowed">
@@ -59,6 +59,18 @@ export function ComprarEbookButton(
 
   function handleComprar() {
     startTransition(async () => {
+      if (modo === 'manual') {
+        const res = await iniciarCompraEbookManual(ebookId, email)
+        if ('error' in res) { toast.error(res.error); return }
+        // Al pedido, NO al link de pago. La página del pedido es la que abre el pago en
+        // una pestaña nueva: así esta pestaña —la única que sabe qué orden es esta— sigue
+        // viva mientras la persona paga, y queda esperando la confirmación en vez de
+        // quedar abandonada en la pantalla de "pago acreditado" de Mercado Pago, que no
+        // tiene forma de volver acá.
+        window.location.href = `/pedido/${res.ordenId}`
+        return
+      }
+
       const res = await iniciarCompraEbook(ebookId, email)
       if ('error' in res) { toast.error(res.error); return }
       // Salida completa del sitio, no un router.push: init_point es un dominio de
@@ -79,7 +91,9 @@ export function ComprarEbookButton(
           <DialogHeader>
             <DialogTitle className="font-heading text-xl text-tinta">¿A qué email te lo mandamos?</DialogTitle>
             <DialogDescription className="font-sans">
-              Ahí vas a poder descargarlo apenas se acredite el pago. No hace falta crear una cuenta para comprar.
+              {modo === 'manual'
+                ? 'Te lo habilitamos ahí apenas confirmemos el pago, y te avisamos por mail. No hace falta crear una cuenta para comprar.'
+                : 'Ahí vas a poder descargarlo apenas se acredite el pago. No hace falta crear una cuenta para comprar.'}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
