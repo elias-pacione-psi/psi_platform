@@ -4,9 +4,29 @@ import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { createClient } from '@/utils/supabase/server'
-import { resolverUrlRecurso } from '@/utils/r2'
+import { resolverUrlRecurso, existeEnR2, firmarUrlR2, r2Configurado } from '@/utils/r2'
 
 export const metadata = { title: 'Cursos | Elias Pacione' }
+
+// Video de muestra del hero: a diferencia de portada_key (por programa, en la DB), es un
+// único archivo fijo para esta página, así que la key vive acá igual que el slug de
+// IlustracionSitio de al lado. Si el día de mañana se sube contenido nuevo con el mismo
+// nombre en esta carpeta, alcanza con reemplazar el archivo en el bucket.
+const KEY_VIDEO_HERO_CURSOS = 'Biblioteca R2/Videos/Videos Main Principal/Cursos asincronicos.mp4'
+
+// Mismo cuidado que firmarIlustracion: firmar es cálculo local, no confirma que el archivo
+// exista, así que sin el existeEnR2 una key movida o borrada dejaría un <video> roto en una
+// página pública. Devolver null hace que el hero caiga a la ilustración de siempre.
+async function firmarVideoHeroCursos(): Promise<string | null> {
+  if (!r2Configurado()) return null
+  try {
+    if (!(await existeEnR2(KEY_VIDEO_HERO_CURSOS))) return null
+    return await firmarUrlR2(KEY_VIDEO_HERO_CURSOS)
+  } catch (err) {
+    console.error('No se pudo firmar el video del hero de /cursos:', err instanceof Error ? err.message : err)
+    return null
+  }
+}
 
 const PASOS = [
   {
@@ -34,9 +54,12 @@ export default async function CursosPage() {
     .eq('publicado_en_home', true)
     .order('created_at', { ascending: false })
 
-  const programasPublicados = await Promise.all(
-    (programas ?? []).map(async (p) => ({ ...p, portada_url: await resolverUrlRecurso(p.portada_key) })),
-  )
+  const [programasPublicados, videoHeroUrl] = await Promise.all([
+    Promise.all(
+      (programas ?? []).map(async (p) => ({ ...p, portada_url: await resolverUrlRecurso(p.portada_key) })),
+    ),
+    firmarVideoHeroCursos(),
+  ])
 
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
@@ -63,12 +86,29 @@ export default async function CursosPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <IlustracionSitio
-            slug="cursos-leccion-grabada"
-            icon={PlayCircle}
-            etiqueta="Lección grabada"
-            variante="marca"
-          />
+          {videoHeroUrl ? (
+            <figure className="overflow-hidden rounded-2xl border border-border bg-card">
+              {/* preload="metadata" alcanza para mostrar el primer frame sin bajar todo el
+                  archivo apenas se carga la home — recién descarga el resto si alguien le
+                  da play. */}
+              <video
+                src={videoHeroUrl}
+                controls
+                preload="metadata"
+                className="block aspect-[4/3] w-full bg-tinta object-cover"
+              />
+              <figcaption className="border-t border-border px-4 py-2.5 font-serif text-xs text-muted-foreground">
+                Lección grabada
+              </figcaption>
+            </figure>
+          ) : (
+            <IlustracionSitio
+              slug="cursos-leccion-grabada"
+              icon={PlayCircle}
+              etiqueta="Lección grabada"
+              variante="marca"
+            />
+          )}
         </div>
       </section>
 
