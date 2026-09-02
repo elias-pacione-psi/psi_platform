@@ -7,8 +7,9 @@ import { createAdminClient } from '@/utils/supabase/admin'
 import { BUCKET_MATERIALES } from '@/utils/supabase/recursos'
 import { borrarDeR2, extraerKeyDeR2 } from '@/utils/r2'
 import { keysHuerfanas } from '@/utils/supabase/referencias-r2'
-import { esMarcadorR2, extensionDe } from '@/utils/r2-marcador'
+import { esMarcadorR2, extensionDe, marcarKeyR2 } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
+import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 import { baseUrl } from '@/utils/site-url'
 import { enviarMail, enviarMailBatch, type OpcionesEmail } from '@/utils/email/resend'
@@ -870,6 +871,50 @@ async function guardarRecursosDeCohorte(
   if (error) return { error: error.message }
 
   return { ok: true }
+}
+
+// Registra o recupera un archivo de R2 en la tabla biblioteca_recursos para poder
+// asociarlo como material de una formación o curso, sin importar en qué carpeta del bucket esté.
+export async function asegurarRecursoDeR2(key: string): Promise<
+  | { error: string }
+  | { recurso: { id: string; titulo: string; tipo_medio: string | null; tipo_contenido: string; url_recurso: string } }
+> {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const urlMarcada = marcarKeyR2(key)
+
+  // 1. Buscar si ya existe en biblioteca_recursos
+  const { data: existente, error: errBusqueda } = await supabase
+    .from('biblioteca_recursos')
+    .select('id, titulo, tipo_medio, tipo_contenido, url_recurso')
+    .eq('url_recurso', urlMarcada)
+    .maybeSingle()
+
+  if (errBusqueda) return { error: errBusqueda.message }
+  if (existente) return { recurso: existente }
+
+  // 2. Si no existe, crearlo automáticamente
+  const nombre = key.split('/').pop() ?? key
+  const titulo = nombre.replace(/\.[^.]+$/, '') || nombre
+  const tipoContenido = tipoContenidoPorExtension(nombre) ?? 'drive_pdf'
+  const tipoMedio = tipoMedioPorTipoContenido(tipoContenido) ?? 'documento'
+
+  const { data: creado, error: errCreacion } = await supabase
+    .from('biblioteca_recursos')
+    .insert({
+      titulo,
+      tipo_contenido: tipoContenido,
+      url_recurso: urlMarcada,
+      tipo_medio: tipoMedio,
+      origen: 'r2',
+    })
+    .select('id, titulo, tipo_medio, tipo_contenido, url_recurso')
+    .single()
+
+  if (errCreacion) return { error: errCreacion.message }
+  return { recurso: creado }
 }
 
 export async function guardarCohorte(formData: FormData) {
