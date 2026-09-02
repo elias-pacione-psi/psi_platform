@@ -88,12 +88,11 @@ export default async function CursosPage() {
           </div>
           {videoHeroUrl ? (
             <figure className="overflow-hidden rounded-2xl border border-border bg-card">
-              {/* preload="metadata" alcanza para mostrar el primer frame sin bajar todo el
-                  archivo apenas se carga la home — recién descarga el resto si alguien le
-                  da play. */}
               <video
-                src={videoHeroUrl}
+                src={`${videoHeroUrl}#t=0.001`}
+                poster="/hero-cursos-poster.jpg"
                 controls
+                playsInline
                 preload="metadata"
                 className="block aspect-[4/3] w-full bg-tinta object-cover"
               />

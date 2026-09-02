@@ -46,3 +46,7 @@ Cuentas asociadas Plataforma Elias.txt
 # salida de generar-ilustraciones.mjs — la copia publicada vive en el bucket de R2,
 # el script es la fuente (ver el encabezado de generar-ilustraciones.mjs)
 /.ilustraciones/
+
+# python
+__pycache__/
+*.pyc

@@ -1,0 +1,2961 @@
+[
+  {
+    "id": "4aa45448-284b-40d0-8ab1-06af3bc361cc",
+    "titulo": "Curso de ansiedad y fobias",
+    "descripcion": "Protocolos basados en evidencia para comprender la ansiedad y acompañar su tratamiento, paso a paso.",
+    "modulos": [
+      {
+        "id": "5d12fe69-0c08-478b-8c4a-484c30b3a348",
+        "titulo": "Resumen ejecutivo (presentación)",
+        "orden": -1,
+        "lecciones": [
+          {
+            "id": "16cc7669-8492-42d4-9a4e-81ddac18c505",
+            "orden": 0,
+            "titulo": "Presentación resumen del curso",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/presentacion-resumen-ejecutivo.pdf",
+            "tipo_contenido": "drive_pdf"
+          }
+        ],
+        "quiz": null
+      },
+      {
+        "id": "2c136133-adcf-49dc-999f-abe61036d5e3",
+        "titulo": "Lección 1 · Tu alarma biológica — por qué el cerebro genera ansiedad",
+        "orden": 0,
+        "lecciones": [
+          {
+            "id": "ec01f9aa-57d3-41f3-841a-85d9310e551d",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/leccion-1-tu-alarma-biologica-por-que-el-cerebro-genera-ansiedad.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "161be0fd-e1c4-44ea-873a-4c2e0a7e9edb",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "83a2ec17-0e18-424c-8557-09ceb43f81cc",
+            "orden": 2,
+            "titulo": "Ejercicio · Mapeo de mi circuito de ansiedad",
+            "url_recurso": "Con lo que acabás de aprender en esta lección sobre cómo se arma una alarma falsa en tu cerebro, este ejercicio te propone mapear tu propio circuito de ansiedad, paso a paso. **No hay respuestas correctas** — es un espacio de observación personal, tomate el tiempo que necesites.\n\n? Elegí una situación que te genere ansiedad significativa (mínimo 6/10 de intensidad) y describila con el mayor detalle posible.\n? Identificá el disparador exacto de esa situación: ¿qué estímulo activa tu amígdala (un objeto, una situación, un pensamiento, una sensación)? ¿Cuándo ocurrió la primera vez que lo sentiste así?\n? Mapeá tu cascada personal frente a esa situación: ¿cómo se ve en vos la detección, la activación, la interpretación y la respuesta?\n? Identificá el patrón de mantenimiento: ¿cómo tu respuesta habitual refuerza el circuito de miedo en vez de desactivarlo?\n? Evaluá, del 1 al 10, cuánto se sensibilizó ese miedo con el tiempo y cuánto se generalizó hacia otras situaciones parecidas.\n? Identificá el aprendizaje original detrás de esa situación (\"aprendí que [situación] = peligro de ___\"): ¿qué evidencia sostiene esa creencia? ¿Qué evidencia en contra suele ignorar tu amígdala?\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "2f43f537-767c-4107-a186-c697eb2f9b32",
+              "pregunta": "¿Qué estructura cerebral, según la lección, detecta amenazas en 100-300 milisegundos, antes de que puedas pensar conscientemente?",
+              "opciones": [
+                "El hipocampo",
+                "La amígdala",
+                "La corteza prefrontal",
+                "El hipotálamo"
+              ],
+              "respuesta_correcta": "La amígdala",
+              "orden": 0
+            },
+            {
+              "id": "513e9c15-a337-440d-988b-b1ce490bc0c8",
+              "pregunta": "Según los cuatro principios de neuroplasticidad de la lección, ¿qué es la 'reconsolidación de memoria'?",
+              "opciones": [
+                "Exponerse de forma repetida crea una nueva memoria de seguridad",
+                "En la ventana de 3 a 6 horas después de reactivar un recuerdo de miedo, sumar información nueva puede modificarlo",
+                "La corteza prefrontal fortalece su capacidad de regular a la amígdala",
+                "Aprender cuándo una situación es segura y cuándo no"
+              ],
+              "respuesta_correcta": "En la ventana de 3 a 6 horas después de reactivar un recuerdo de miedo, sumar información nueva puede modificarlo",
+              "orden": 1
+            },
+            {
+              "id": "eb12fcc8-3138-4ad4-9e72-110c8de0c1f7",
+              "pregunta": "¿Cuáles son los dos mecanismos neurobiológicos que hacen que un miedo puntual se convierta en un problema generalizado?",
+              "opciones": [
+                "Habituación y extinción",
+                "Sensibilización y generalización",
+                "Consolidación y reconsolidación",
+                "Detección y amplificación"
+              ],
+              "respuesta_correcta": "Sensibilización y generalización",
+              "orden": 2
+            },
+            {
+              "id": "63db2d21-b331-4384-80da-616c5834b903",
+              "pregunta": "Un estudio con fMRI citado en la lección (Straube et al., 2006) mostró que 12 semanas de exposición gradual...",
+              "opciones": [
+                "Eliminan por completo la actividad de la amígdala",
+                "Reducen la activación de la amígdala en un 40% y aumentan la de la corteza prefrontal en un 35%",
+                "No producen ningún cambio medible en el cerebro",
+                "Solo funcionan combinadas con medicación"
+              ],
+              "respuesta_correcta": "Reducen la activación de la amígdala en un 40% y aumentan la de la corteza prefrontal en un 35%",
+              "orden": 3
+            },
+            {
+              "id": "3608313d-c807-4f35-87d2-851c1ed02442",
+              "pregunta": "¿A quién se atribuye la cita que abre esta lección sobre que el cerebro que produce ansiedad es el mismo que puede aprender a regularla?",
+              "opciones": [
+                "Joseph LeDoux",
+                "Aaron Beck",
+                "Viktor Frankl",
+                "Organización Mundial de la Salud"
+              ],
+              "respuesta_correcta": "Joseph LeDoux",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "d605e780-4a92-4cff-a6c5-12504b3ed4f5",
+        "titulo": "Lección 2 · El espectro de la ansiedad — identificar tu perfil específico",
+        "orden": 1,
+        "lecciones": [
+          {
+            "id": "8b1992f5-a3c7-4c74-9e28-752bbea0c738",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/leccion-2-el-espectro-de-la-ansiedad-identificar-tu-perfil-especifico.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "dd8d7c25-ace5-4544-ba44-29560281a497",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "7e0a231d-a37b-492f-92b3-498db62ca77e",
+            "orden": 2,
+            "titulo": "Ejercicio · Mi perfil completo de ansiedad",
+            "url_recurso": "Esta autoevaluación te invita a mirar con más detalle los tipos de ansiedad que identificaste en esta lección: su intensidad, desde cuándo están y cómo impactan en distintas áreas de tu vida. **No hay respuestas correctas** — tomate el tiempo que necesites.\n\n? Para cada tipo revisado en esta lección (preocupación generalizada, pánico, miedo social, fobia específica, TOC), calificá de 0 a 10: ¿qué tan presentes están esos síntomas en vos? ¿Cuánto interfieren con tu día a día? ¿Desde cuándo los experimentás?\n? De los tipos que acabás de calificar, marcá los que tengan intensidad 6 o más: ansiedad generalizada, ataques de pánico, agorafobia, miedo social, fobia específica (indicá cuál), síntomas de tipo TOC, otro.\n? Pensando en cuándo empezó: ¿hubo un evento desencadenante o fue gradual? ¿Cómo evolucionó desde entonces? ¿Qué lo empeora y qué lo mejora?\n? Calificá de 0 a 10 cuánto interfiere tu ansiedad en cada área de tu vida: trabajo o estudios, relaciones íntimas, vida social, actividades cotidianas, salud física, bienestar emocional.\n? Hacé una lista de todo lo que evitás por tu ansiedad (mínimo 10 ítems — sé todo lo honesto/a que puedas).\n? ¿Qué estás haciendo actualmente para manejar tu ansiedad? ¿Qué te gustaría lograr con este curso? Definí 3 objetivos concretos.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "6a41b246-e573-43f1-9498-638836b89dfa",
+              "pregunta": "Según la lección, ¿cuánto tiempo debe persistir la preocupación excesiva para hablar de Trastorno de Ansiedad Generalizada (TAG)?",
+              "opciones": [
+                "Dos semanas o más",
+                "Un mes o más",
+                "Seis meses o más",
+                "Un año o más"
+              ],
+              "respuesta_correcta": "Seis meses o más",
+              "orden": 0
+            },
+            {
+              "id": "fde70f0e-a9a6-41c7-8f52-24a993de8091",
+              "pregunta": "Un ataque de pánico se reconoce, según la lección, por la presencia de al menos...",
+              "opciones": [
+                "2 síntomas",
+                "4 síntomas",
+                "6 síntomas",
+                "10 síntomas"
+              ],
+              "respuesta_correcta": "4 síntomas",
+              "orden": 1
+            },
+            {
+              "id": "4ffbc475-c056-4311-9a9c-04261e3ef4bf",
+              "pregunta": "¿Qué es la agorafobia, según la lección?",
+              "opciones": [
+                "El miedo a hablar en público",
+                "El miedo a lugares o situaciones donde escapar sería difícil si aparece un ataque",
+                "Un sinónimo de trastorno de ansiedad generalizada",
+                "El miedo específico a las arañas"
+              ],
+              "respuesta_correcta": "El miedo a lugares o situaciones donde escapar sería difícil si aparece un ataque",
+              "orden": 2
+            },
+            {
+              "id": "54fd9cdc-0d09-40bb-a15b-bf1fd4dab319",
+              "pregunta": "Según la tabla de fobias específicas, ¿qué tipo de fobia es la única que puede causar desmayo?",
+              "opciones": [
+                "Animal",
+                "Entorno natural",
+                "Sangre-inyecciones-daño",
+                "Situacional"
+              ],
+              "respuesta_correcta": "Sangre-inyecciones-daño",
+              "orden": 3
+            },
+            {
+              "id": "a83d9a65-b814-4791-b727-42e7bc5cbd3d",
+              "pregunta": "¿Cuál es la tasa de éxito aproximada del tratamiento con exposición para las fobias específicas, según la lección?",
+              "opciones": [
+                "Alrededor del 50%",
+                "Alrededor del 65%",
+                "Alrededor del 90%",
+                "Alrededor del 99%"
+              ],
+              "respuesta_correcta": "Alrededor del 90%",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "79960e1f-1fa6-40b6-922e-c321883c67f2",
+        "titulo": "Lección 3 · Tu kit de emergencia anti-pánico — 8 protocolos de rescate inmediato",
+        "orden": 2,
+        "lecciones": [
+          {
+            "id": "80ae6b29-530a-4438-a2d2-8548a540be8e",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/leccion-3-tu-kit-de-emergencia-anti-panico-8-protocolos-de-rescate-inmediato.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "1b377829-ae30-4c05-8ca8-2d61a610c879",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "858f55d7-cb5d-40db-8a80-90401322bd1e",
+            "orden": 2,
+            "titulo": "Ejercicio · Mi kit personalizado de intervención inmediata",
+            "url_recurso": "## Tus propias declaraciones de realidad\n\nYa viste tres ejemplos de cómo transformar un pensamiento catastrófico en una declaración basada en evidencia real. Ahora armá las tuyas.\n\n? Escribí tus propias declaraciones de realidad para tus 3 pensamientos catastróficos más frecuentes, y guardalas donde puedas encontrarlas rápido.\n\n## Mi kit personalizado de intervención inmediata\n\nDurante los próximos 7 días vas a probar cada técnica en un estado de calma, para identificar cuáles funcionan mejor para vos. **No hay respuestas correctas** — esto es para armar tu propio protocolo.\n\n? A lo largo de los próximos 7 días, practicá una técnica distinta cada día en estado de calma (día 1: respiración 4-7-8, día 2: frío facial, día 3: anclaje 5-4-3-2-1, día 4: presión profunda, día 5: contracción muscular, día 6: movimiento bilateral, día 7: protocolos 7 y 8). Anotá acá cómo te fue con cada una.\n? Para cada técnica que probaste, anotá: facilidad de ejecución (1-10), efectividad percibida (1-10), cuánto tiempo requiere, si podés hacerla discretamente en público y si necesita materiales especiales.\n? Armá tu kit por niveles de intensidad: ¿qué técnica principal y de respaldo usarías en el nivel 1 (ansiedad 6-7/10)? ¿Qué combinación en el nivel 2 (8-9/10)? ¿Qué técnica corporal inmediata seguida de declaraciones de realidad usarías en el nivel 3 (pánico total, 10/10)?\n? Armá el contenido de tu tarjeta de bolsillo (física o en el teléfono): tus 3 técnicas principales con instrucciones brevísimas paso a paso, tus declaraciones de realidad y el número de una persona de apoyo.\n? Hacé un simulacro: en un momento de calma, simulá mentalmente una crisis, activá tu protocolo de nivel 3 como si fuera real, cronometralo y anotá qué ajustarías.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "643d9024-f869-482e-8345-bbdf70429646",
+              "pregunta": "¿Cuántos protocolos de rescate inmediato presenta esta lección?",
+              "opciones": [
+                "5",
+                "6",
+                "8",
+                "10"
+              ],
+              "respuesta_correcta": "8",
+              "orden": 0
+            },
+            {
+              "id": "50a9cf92-2989-42ce-8b22-4b0eca0054b1",
+              "pregunta": "La técnica de respiración 4-7-8 modificada para pánico funciona porque, entre otras cosas...",
+              "opciones": [
+                "Aumenta la hiperventilación para liberar más adrenalina",
+                "Normaliza la química sanguínea y activa el nervio vago",
+                "Bloquea por completo la amígdala",
+                "Reemplaza la necesidad de exposición gradual"
+              ],
+              "respuesta_correcta": "Normaliza la química sanguínea y activa el nervio vago",
+              "orden": 1
+            },
+            {
+              "id": "8f22832e-1939-4c17-8d0e-a7d1b990bb1c",
+              "pregunta": "El protocolo de 'frío facial' (reflejo de inmersión) reduce el ritmo cardíaco activando...",
+              "opciones": [
+                "El sistema nervioso simpático",
+                "El reflejo de inmersión de los mamíferos, desactivando el sistema simpático",
+                "La corteza prefrontal exclusivamente",
+                "La liberación de cortisol"
+              ],
+              "respuesta_correcta": "El reflejo de inmersión de los mamíferos, desactivando el sistema simpático",
+              "orden": 2
+            },
+            {
+              "id": "790271d3-7d3f-44ac-8d1a-5cae6fef3a84",
+              "pregunta": "El protocolo de anclaje 5-4-3-2-1 se basa en nombrar, en orden...",
+              "opciones": [
+                "5 sonidos, 4 sabores, 3 texturas, 2 olores, 1 color",
+                "5 cosas que ves, 4 que podés tocar, 3 sonidos, 2 aromas, 1 sabor",
+                "5 emociones, 4 pensamientos, 3 recuerdos, 2 miedos, 1 deseo",
+                "5 personas, 4 lugares, 3 objetos, 2 animales, 1 color"
+              ],
+              "respuesta_correcta": "5 cosas que ves, 4 que podés tocar, 3 sonidos, 2 aromas, 1 sabor",
+              "orden": 3
+            },
+            {
+              "id": "b66a6c73-985a-4779-9359-b56adf833ab2",
+              "pregunta": "¿Qué investigador es citado como referencia de la técnica de 'hablarte en segunda persona'?",
+              "opciones": [
+                "Aaron Beck",
+                "Joseph LeDoux",
+                "Ethan Kross",
+                "Jeffrey Young"
+              ],
+              "respuesta_correcta": "Ethan Kross",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "9a18867c-6cc5-4731-b9a6-a0ba3a31c4ef",
+        "titulo": "Lección 4 · La ciencia de enfrentar el miedo — exposición terapéutica gradual",
+        "orden": 3,
+        "lecciones": [
+          {
+            "id": "70ef4c06-61e1-43ab-a9ea-0fd2ac4cb327",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/leccion-4-la-ciencia-de-enfrentar-el-miedo-exposicion-terapeutica-gradual.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "eaa4ce47-d0a2-4a22-a748-5515f5ebdc3b",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "816ebfd7-40b8-4da0-bb54-83f5a56875a3",
+            "orden": 2,
+            "titulo": "Ejercicio · Mi plan de exposición de 8 semanas",
+            "url_recurso": "Esta actividad integradora te guía en la construcción y ejecución de un plan completo de exposición gradual para tu fobia o ansiedad específica, a lo largo de 8 semanas. **No hay respuestas correctas** — andá completando cada bloque a su tiempo.\n\n? Semana 1 — Elegí una fobia o ansiedad específica para trabajar y construí tu jerarquía de exposición: entre 12 y 15 ítems, del ítem 1 (2-3/10) al ítem final (9-10/10), sin que la diferencia entre un ítem y el siguiente supere los 2 puntos. Anotá también tus conductas de seguridad a eliminar.\n? Semanas 2 y 3 — trabajá los ítems 1 a 6 de tu jerarquía (2 a 3 exposiciones por semana, repitiendo cada ítem entre 2 y 3 veces con el protocolo completo). Registrá cada sesión: qué hiciste, tu ansiedad antes y después, y qué aprendiste.\n? Semanas 4 y 5 — trabajá los ítems 7 a 12, aumentando la dificultad de forma gradual y eliminando tus conductas de seguridad de a poco. ¿Qué fuiste registrando?\n? Semanas 6 y 7 — completá los ítems 13 a 15 y generalizá lo aprendido a distintos contextos. ¿Qué fue cambiando?\n? Semana 8 — hacé tu evaluación final: ¿cuál fue tu progreso objetivo? ¿Qué impacto tuvo en tu vida? ¿Qué aprendizajes clave te llevás? ¿Cuál es tu plan de mantenimiento para evitar una recaída?\n\n**Un compromiso:** “Me comprometo a seguir este plan de exposición durante 8 semanas, entendiendo que requiere valentía y que la incomodidad temporal es parte del proceso.”\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "1e51780e-908e-4098-9f5f-2fb87e191fe5",
+              "pregunta": "Según la lección, ¿cuál es la tasa de éxito de la exposición terapéutica cuando se hace correctamente?",
+              "opciones": [
+                "30 a 40%",
+                "50 a 60%",
+                "80 a 90%",
+                "100%"
+              ],
+              "respuesta_correcta": "80 a 90%",
+              "orden": 0
+            },
+            {
+              "id": "8e2045ea-bb9d-4695-b070-7a09c1413e4d",
+              "pregunta": "¿Cuáles son los tres principios neurobiológicos que explican por qué funciona la exposición gradual?",
+              "opciones": [
+                "Sensibilización, generalización y consolidación",
+                "Habituación, extinción del miedo y reconsolidación",
+                "Detección, activación e interpretación",
+                "Defusión, aceptación y valores"
+              ],
+              "respuesta_correcta": "Habituación, extinción del miedo y reconsolidación",
+              "orden": 1
+            },
+            {
+              "id": "9927cd97-e153-4bc6-9f92-c43011eed0ce",
+              "pregunta": "Según las reglas para armar una jerarquía de exposición, ¿cuál es la diferencia de ansiedad máxima recomendada entre un ítem y el siguiente?",
+              "opciones": [
+                "0.5 puntos",
+                "2 puntos",
+                "5 puntos",
+                "No hay límite"
+              ],
+              "respuesta_correcta": "2 puntos",
+              "orden": 2
+            },
+            {
+              "id": "93307497-2ce1-4b74-b393-54194846ad80",
+              "pregunta": "¿Cuál es el criterio de salida correcto durante una exposición, según la lección?",
+              "opciones": [
+                "Salir apenas se siente incomodidad",
+                "Salir cuando la ansiedad baja un 50% o más desde el pico",
+                "Salir a los 5 minutos exactos, sin importar la ansiedad",
+                "No hay un criterio definido, cada persona decide en el momento"
+              ],
+              "respuesta_correcta": "Salir cuando la ansiedad baja un 50% o más desde el pico",
+              "orden": 3
+            },
+            {
+              "id": "08f8a139-7850-4849-8caf-cba6eea1584e",
+              "pregunta": "¿Qué es la exposición interoceptiva?",
+              "opciones": [
+                "Exponerse a situaciones sociales temidas",
+                "Provocar deliberadamente sensaciones corporales (taquicardia, mareo, etc.) para desensibilizarlas",
+                "Usar realidad virtual en vez de exposición real",
+                "Exponerse a un miedo una sola vez, sin repetición"
+              ],
+              "respuesta_correcta": "Provocar deliberadamente sensaciones corporales (taquicardia, mareo, etc.) para desensibilizarlas",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "583bcd1a-6cea-4c19-b82e-edbb2436a69e",
+        "titulo": "Lección 5 · Herramientas avanzadas — ACT, DBT y estrategias para casos complejos",
+        "orden": 4,
+        "lecciones": [
+          {
+            "id": "60d43a1a-4136-4faf-8f83-f1146a7ccefd",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/leccion-5-herramientas-avanzadas-act-dbt-y-estrategias-para-casos-complejos.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "ce734048-fb20-4531-8791-ed01fecf3a4f",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "77fd2f41-1b21-4136-8ccd-f0847c0712b4",
+            "orden": 2,
+            "titulo": "Ejercicio · Mi caja de herramientas avanzada",
+            "url_recurso": "Esta actividad te ayuda a elegir, de todo lo visto en esta lección, qué herramientas tienen más sentido para tu situación particular. **No hay respuestas correctas** — es para pensar tu propio caso.\n\n? De todo lo que viste en esta lección, ¿qué resuena más con tu situación: la defusión y aceptación, la tolerancia al malestar, o ambas? Anotá por qué.\n? Escribí tu propia versión de la metáfora del “invitado en la fiesta” o de “la mente como plataforma de streaming”, adaptada a tu propia experiencia, con tus palabras.\n? Si notás que postergás la exposición: ¿qué es lo bueno de mantenerte como estás? ¿Qué es lo malo? En una escala de 0 a 10, ¿qué tan dispuesto/a estás a cambiar hoy?\n? ¿Hay algo en tu contexto cultural, familiar o de valores que convenga tener en cuenta al diseñar tu exposición? ¿Y alguna otra dificultad (sueño, ánimo, atención) que convenga ordenar en paralelo?\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "ca2a516b-4e00-4050-bc68-4d60b47bb1dc",
+              "pregunta": "¿De qué corriente terapéutica proviene la técnica de 'defusión cognitiva' presentada en esta lección?",
+              "opciones": [
+                "Terapia de Aceptación y Compromiso (ACT)",
+                "Terapia Dialéctico-Conductual (DBT)",
+                "Terapia de Esquemas",
+                "Psicoanálisis"
+              ],
+              "respuesta_correcta": "Terapia de Aceptación y Compromiso (ACT)",
+              "orden": 0
+            },
+            {
+              "id": "36af6ab5-acfd-4c33-9ce9-3fcdd78580da",
+              "pregunta": "Según la metáfora de ACT usada en la lección, la mente se compara con...",
+              "opciones": [
+                "Un juez implacable",
+                "Una plataforma de streaming que produce contenido todo el tiempo",
+                "Un archivo que guarda solo lo negativo",
+                "Un GPS que siempre marca el camino correcto"
+              ],
+              "respuesta_correcta": "Una plataforma de streaming que produce contenido todo el tiempo",
+              "orden": 1
+            },
+            {
+              "id": "aef9a058-7a43-43e6-9601-9ff058444823",
+              "pregunta": "¿Qué propone la lección en vez de plantear la exposición como 'exponerse a la situación temida'?",
+              "opciones": [
+                "Reformularla como 'hacer algo que valoro, aunque la ansiedad esté presente'",
+                "Evitar la situación indefinidamente",
+                "Usar solo medicación para reducir la ansiedad",
+                "Esperar a que la ansiedad desaparezca antes de actuar"
+              ],
+              "respuesta_correcta": "Reformularla como 'hacer algo que valoro, aunque la ansiedad esté presente'",
+              "orden": 2
+            },
+            {
+              "id": "13b2627c-c37c-4f0c-90de-553099a382e1",
+              "pregunta": "Según la investigación citada (Parsons & Rizzo, 2008), la exposición mediante realidad virtual...",
+              "opciones": [
+                "Es menos efectiva que la exposición real en todos los casos",
+                "Mostró resultados equivalentes a la exposición real para fobias específicas",
+                "Reemplaza por completo el trabajo terapéutico",
+                "Solo sirve para el miedo a las arañas"
+              ],
+              "respuesta_correcta": "Mostró resultados equivalentes a la exposición real para fobias específicas",
+              "orden": 3
+            },
+            {
+              "id": "4b0bb4b7-a2d3-4514-8169-2f3fba34a616",
+              "pregunta": "Cuando la ansiedad viene acompañada de problemas de sueño severos, ¿qué suele convenir según la lección?",
+              "opciones": [
+                "Trabajar la exposición y el sueño exactamente al mismo tiempo, con la misma intensidad",
+                "Ignorar el sueño y priorizar solo la exposición",
+                "Ordenar primero el sueño y recién después avanzar con la exposición gradual",
+                "Suspender el curso hasta resolver el sueño con un profesional"
+              ],
+              "respuesta_correcta": "Ordenar primero el sueño y recién después avanzar con la exposición gradual",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "42d6a80e-3408-4ee0-a0ac-02fc8fa6b6be",
+        "titulo": "Lección 6 · Tu plan personalizado — adaptar todo lo aprendido a cada historia",
+        "orden": 5,
+        "lecciones": [
+          {
+            "id": "a77d3fad-b8e9-4649-b74f-dce4459cf6d3",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/leccion-6-tu-plan-personalizado-adaptar-todo-lo-aprendido-a-cada-historia.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "8883828a-1130-4fd0-8c30-8cb097014919",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "3eb9f9c6-5666-4239-9863-b1ad0fbd78cb",
+            "orden": 2,
+            "titulo": "Ejercicio · Mi plan personal anti-ansiedad de 90 días",
+            "url_recurso": "## Mi plan personal anti-ansiedad de 90 días\n\nEste es el proyecto integrador del curso. Vas a diseñar tu propio sistema, combinando todo lo trabajado en las lecciones anteriores.\n\n? Diagnóstico de partida — resumí tu perfil de ansiedad, tu circuito específico y tu nivel de interferencia actual en la vida cotidiana.\n? Tu kit de emergencia — anotá tus 2 o 3 técnicas de rescate elegidas y el criterio para usar cada nivel según la intensidad de la ansiedad.\n? Tu jerarquía de exposición — volcá tu jerarquía de 10 a 15 ítems y el cronograma de 8 semanas para trabajarla.\n? Tus herramientas complementarias — elegí 1 o 2 herramientas avanzadas que vas a incorporar de forma regular.\n? Señales tempranas y plan escalonado — escribí tus señales tempranas personales (cognitivas, conductuales, fisiológicas, emocionales) y tu plan de acción de 3 niveles.\n? Calendario de seguimiento — definí fechas de revisión (al mes, a los 3 meses y a los 6 meses) y qué vas a evaluar en cada una.\n? Compromiso — escribí, con tus palabras, tu compromiso con este plan. Firmalo y ponele fecha.\n\n## Autoevaluación\n\nNo es un examen ni una nota final: es una forma de ver, con claridad, qué tanto incorporaste de lo que trabajaste en este curso, y qué te gustaría seguir reforzando. Calificá cada dimensión del 0 al 10.\n\n? Comprensión de tu ansiedad — ¿qué tan bien entendés qué le pasa a tu cuerpo y por qué? (0 a 10)\n? Diferenciación adaptativa/limitante — ¿qué tan bien distinguís la ansiedad que te cuida de la que te limita? (0 a 10)\n? Kit de emergencia — ¿qué tan cómodo/a te sentís usando tus técnicas de rescate del capítulo 3? (0 a 10)\n? Exposición gradual — ¿qué tan bien podés construir y sostener una jerarquía de exposición? (0 a 10)\n? Tolerancia al malestar — ¿qué tan bien podés sostener la ansiedad sin escapar de ella? (0 a 10)\n? Herramientas avanzadas — ¿qué tan cómodo/a te sentís usando defusión, aceptación o tolerancia al malestar? (0 a 10)\n? Plan de sostenimiento — ¿qué tan claro tenés tu plan de 90 días y tus señales tempranas? (0 a 10)\n? Autocompasión en el proceso — ¿qué tan amable sos con vos mismo/a en los días en que la ansiedad gana terreno? (0 a 10)\n\nNo hay un puntaje que apruebe o desapruebe nada. Esto es solo para que veas con claridad todo lo que ya tenés incorporado, y hacia dónde te gustaría seguir creciendo. Podés volver a completarlo en unos meses y comparar.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "aac53abf-0117-4635-a6dd-9beb66ddf617",
+              "pregunta": "Sin un plan de prevención, ¿qué porcentaje de personas tiene una recaída dentro de los 6 a 12 meses siguientes, según la lección?",
+              "opciones": [
+                "Entre 5% y 10%",
+                "Entre 10% y 15%",
+                "Entre 30% y 40%",
+                "Más del 70%"
+              ],
+              "respuesta_correcta": "Entre 30% y 40%",
+              "orden": 0
+            },
+            {
+              "id": "d35d75b0-cfc2-432b-b783-e6fbde066c2f",
+              "pregunta": "Con un plan estructurado de prevención de recaídas, ¿a cuánto baja esa cifra según la lección?",
+              "opciones": [
+                "Entre 10% y 15%",
+                "Entre 20% y 25%",
+                "A 0%",
+                "No cambia significativamente"
+              ],
+              "respuesta_correcta": "Entre 10% y 15%",
+              "orden": 1
+            },
+            {
+              "id": "bd6dc9c9-968e-4fac-a33d-7d8f9177c442",
+              "pregunta": "En el plan de acción escalonado de 3 niveles, ¿qué corresponde al Nivel 2?",
+              "opciones": [
+                "Retomar el registro de pensamientos y releer las notas del curso",
+                "Implementar una mini-jerarquía de exposición, avisar a la red de apoyo y considerar una sesión de refuerzo profesional",
+                "Una evaluación completa y retomar acompañamiento profesional",
+                "No hacer nada y esperar que pase solo"
+              ],
+              "respuesta_correcta": "Implementar una mini-jerarquía de exposición, avisar a la red de apoyo y considerar una sesión de refuerzo profesional",
+              "orden": 2
+            },
+            {
+              "id": "d0b3e730-53bc-4033-9746-cc681da328fb",
+              "pregunta": "¿Cuál es la duración del sistema personal que integra el proyecto final de la lección 6?",
+              "opciones": [
+                "30 días",
+                "60 días",
+                "90 días",
+                "180 días"
+              ],
+              "respuesta_correcta": "90 días",
+              "orden": 3
+            },
+            {
+              "id": "1252ff48-18f9-45b7-a855-5f48c479a951",
+              "pregunta": "Según el cierre del curso, ¿qué significa 'la calma' que se busca lograr?",
+              "opciones": [
+                "La ausencia total y permanente de ansiedad",
+                "La capacidad de sostenerte a vos mismo/a cuando la ansiedad aparece",
+                "Un estado que se alcanza una sola vez y no vuelve a perderse",
+                "Una técnica de respiración específica"
+              ],
+              "respuesta_correcta": "La capacidad de sostenerte a vos mismo/a cuando la ansiedad aparece",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "ee142f2e-ce07-41e0-9c16-081724f3f768",
+        "titulo": "Material expandido",
+        "orden": 6,
+        "lecciones": [
+          {
+            "id": "32622b0d-a21b-4338-9dca-a3ca917d405b",
+            "orden": 0,
+            "titulo": "Cómo recalibrar el circuito del pánico",
+            "url_recurso": "r2key://Formaciones/Curso de ansiedad y fobias/audio/como-recalibrar-el-circuito-del-panico.m4a",
+            "tipo_contenido": "drive_audio"
+          }
+        ],
+        "quiz": null
+      }
+    ]
+  },
+  {
+    "id": "caef0085-8015-4480-902c-a2376fbc6141",
+    "titulo": "Curso de Herramientas Cognitivas Avanzadas",
+    "descripcion": "Herramientas de terapia cognitivo-conductual para identificar pensamientos distorsionados, trabajar tus creencias nucleares y reescribir tu diálogo interno, paso a paso.",
+    "modulos": [
+      {
+        "id": "a9ca1b39-6456-4b21-9521-a3c1ebe15fb8",
+        "titulo": "Resumen ejecutivo (presentación)",
+        "orden": -1,
+        "lecciones": [
+          {
+            "id": "efa9f6aa-88c2-495d-be0d-77c922eadab2",
+            "orden": 0,
+            "titulo": "Presentación resumen del curso",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/presentacion-resumen-ejecutivo.pdf",
+            "tipo_contenido": "drive_pdf"
+          }
+        ],
+        "quiz": null
+      },
+      {
+        "id": "3510d257-1c86-4562-be2a-79cf05900e45",
+        "titulo": "Lección 1 · Cómo funciona el pensamiento: bases cognitivas",
+        "orden": 0,
+        "lecciones": [
+          {
+            "id": "fde1df7e-b8a1-4ff3-ae73-ae94685ace35",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/leccion-1-como-funciona-el-pensamiento-bases-cognitivas.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "47b6174b-2f5f-4839-acc3-8c925ab17189",
+            "orden": 1,
+            "titulo": "Infografía · Mapa del modelo ABC y las 15 distorsiones",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/infografias/infografia-leccion1.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "3dd00163-ad04-4c88-b797-c45f66d1d2f4",
+            "orden": 2,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "36139b5e-64b6-403d-a659-e54fe4bbd713",
+            "orden": 3,
+            "titulo": "Ejercicio · Mi inventario de distorsiones",
+            "url_recurso": "## Mi inventario de distorsiones\n\nDurante los próximos 3 días vas a convertirte en observador/a científico/a de tu propia mente. No para juzgarte, sino para conocerte con claridad.\n\n? Durante 3 días, anotá acá cada pensamiento negativo que notes, tal cual apareció (mínimo 3 por día).\n? Para cada pensamiento que anotaste, ¿a cuál de las 15 distorsiones corresponde? (puede haber más de una)\n? Del 1 al 10, ¿cuán fuerte fue la emoción que acompañó cada pensamiento?\n? ¿Qué hora era, dónde estabas, con quién y qué acababa de pasar en cada situación? El contexto revela patrones.\n? Al final de los 3 días, ¿qué distorsión se repite más? ¿Hay situaciones recurrentes?\n? Ponele a tu distorsión principal un apodo creativo o gracioso — eso la despersonaliza y reduce su poder. ¿Cómo la llamás?\n? ¿Cuándo aparece más frecuentemente esta distorsión, en qué situaciones?\n? ¿Qué costo emocional tiene esta distorsión en tu vida?\n\n## Antes de seguir\n\n? Antes de esta lección, ¿qué creías sobre tus pensamientos? ¿Qué comprendés ahora, después de esta lección?\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "0e4bac04-b9c0-4613-ac90-75d0d4a4e4c0",
+              "pregunta": "En el modelo ABC(DE) presentado en esta lección, ¿qué corresponde a la letra D?",
+              "opciones": [
+                "El Detonante inicial",
+                "Disputar la creencia irracional, cuestionando su validez",
+                "El Diagnóstico clínico",
+                "La Decisión de actuar"
+              ],
+              "respuesta_correcta": "Disputar la creencia irracional, cuestionando su validez",
+              "orden": 0
+            },
+            {
+              "id": "51268d13-5dc4-4dec-a156-418c52929204",
+              "pregunta": "¿A quién se atribuye la frase 'El pensamiento da forma a la experiencia que confirma el pensamiento', citada al inicio de esta lección?",
+              "opciones": [
+                "Aaron Beck",
+                "Albert Ellis",
+                "Viktor Frankl",
+                "Jeffrey Young"
+              ],
+              "respuesta_correcta": "Aaron Beck",
+              "orden": 1
+            },
+            {
+              "id": "7003671f-7f01-4ff8-8c35-d477a5f5e06e",
+              "pregunta": "¿Cuántas distorsiones cognitivas presenta esta lección en su lista central?",
+              "opciones": [
+                "10",
+                "12",
+                "15",
+                "20"
+              ],
+              "respuesta_correcta": "15",
+              "orden": 2
+            },
+            {
+              "id": "0d9a60a6-781a-4ef6-9ba9-a2a13a2589f3",
+              "pregunta": "Según el ejemplo del despido laboral que ilustra el modelo ABC, ¿qué corresponde al punto C (Consecuencias)?",
+              "opciones": [
+                "Actualizar el currículum y buscar nuevas oportunidades",
+                "Vergüenza intensa, desesperanza y ansiedad paralizante, con aislamiento social",
+                "Una reestructuración de la empresa",
+                "La creencia de que el despido demuestra incompetencia total"
+              ],
+              "respuesta_correcta": "Vergüenza intensa, desesperanza y ansiedad paralizante, con aislamiento social",
+              "orden": 3
+            },
+            {
+              "id": "59c1f59a-dafb-45f5-b732-0e643f208f57",
+              "pregunta": "¿Cuántos filtros cognitivos identifica la lección como los lentes con los que interpretás la realidad?",
+              "opciones": [
+                "3",
+                "4",
+                "5",
+                "6"
+              ],
+              "respuesta_correcta": "5",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "fccafd3c-c869-4fe8-8219-9ad7042ef9e0",
+        "titulo": "Lección 2 · Creencias nucleares: las raíces invisibles de tu comportamiento",
+        "orden": 1,
+        "lecciones": [
+          {
+            "id": "affd3fed-e09b-4c66-bcc0-3b047de1e73a",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/leccion-2-creencias-nucleares-las-raices-invisibles-de-tu-comportamiento.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "a2b91317-90e1-40d8-973a-877b4da1b612",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "155b5f21-318d-41ca-9406-b94e97a229fc",
+            "orden": 2,
+            "titulo": "Ejercicio · Creencias nucleares",
+            "url_recurso": "## La técnica de la flecha descendente\n\nEl corazón del trabajo con creencias nucleares. Requiere honestidad y disposición a explorar territorios incómodos. Andá despacio. Sé compasivo/a. Pero también honesto/a.\n\n*Ejemplo: \"Hablé de más en la reunión y dije algo tonto\" → \"la gente piensa que soy poco profesional\" → \"voy a perder el respeto de mis colegas\" → \"no merezco estar en este nivel profesional\" → creencia nuclear: \"Soy un impostor, no soy lo suficientemente competente.\"*\n\n? Escribí un pensamiento automático negativo reciente — el que más te haya molestado en los últimos 7 días, tal cual apareció en tu mente.\n? Sobre ese pensamiento: si esto fuera verdad, ¿qué significaría para mí?\n? Sobre esa respuesta anterior: si eso fuera verdad, ¿qué diría de mí, del mundo o de mi futuro?\n? Seguí descendiendo del mismo modo, pregunta tras pregunta, hasta llegar a una frase que empiece con \"yo soy...\", \"el mundo es...\" o \"los demás son...\". ¿Cuál es esa frase?\n? Esa última frase, la más global y absoluta, es tu creencia nuclear activada. ¿Cuál es?\n? ¿A qué categoría pertenece esta creencia: sobre mí mismo/a, sobre los demás o sobre el futuro?\n? Del 0 al 100%, ¿cuánto creés en esta afirmación cuando está activada?\n\n## Arqueología de mis primeras memorias\n\nLas creencias nucleares tienen un origen. No naciste con ellas: se instalaron en momentos específicos de tu historia. Esta actividad te invita a viajar hacia atrás en el tiempo, no para culpar a nadie, sino para comprender el contexto que dio origen a una conclusión que hoy, desde tu sabiduría adulta, podés reinterpretar.\n\nAntes de empezar, buscá un lugar tranquilo por al menos 20 minutos, con tu diario a mano.\n\n? Cerrá los ojos 2 minutos y traé a tu mente la creencia nuclear más fuerte que identificaste en el ejercicio anterior. ¿Cuál es?\n? ¿Cuándo fue la primera vez que sentiste esto? ¿Qué edad tenías, dónde estabas, quién estaba presente, qué pasaba?\n? Describí esa memoria con detalle, como una escena de película: ¿qué veías, qué escuchabas, qué sentías en el cuerpo?\n? Desde la perspectiva de ese niño o niña, ¿qué conclusión sacaste sobre vos, los demás o el mundo?\n? Desde tu perspectiva adulta, ¿qué le dirías a ese niño o niña? Escribile acá una carta breve, compasiva y sabia.\n? ¿Esa conclusión sigue siendo válida hoy? ¿Qué evidencia de tu vida adulta la contradice?\n? Escribí una nueva conclusión sobre vos mismo/a: más realista, compasiva y ajustada a quién sos hoy.\n\n**Nota de contención.** Si esta actividad remueve emociones intensas o recuerdos difíciles, está bien parar. La sanación profunda a veces requiere acompañamiento profesional. Lo que hiciste hasta acá ya es un acto de valentía. Sé gentil con vos mismo/a.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "e408f69d-9fd8-48b4-aeda-5324cc281816",
+              "pregunta": "En la pirámide cognitiva de esta lección, ¿qué nivel está en la base, sosteniendo a todos los demás?",
+              "opciones": [
+                "Los pensamientos automáticos",
+                "Los supuestos y reglas",
+                "Las creencias intermedias",
+                "Las creencias nucleares"
+              ],
+              "respuesta_correcta": "Las creencias nucleares",
+              "orden": 0
+            },
+            {
+              "id": "37e7ed9c-1def-40c2-af07-b12dbaa7fa11",
+              "pregunta": "Según la lección, las creencias nucleares se organizan en tres categorías. ¿Cuáles son?",
+              "opciones": [
+                "Sobre uno mismo, sobre los demás, sobre el futuro",
+                "Positivas, negativas y neutras",
+                "Conscientes, preconscientes e inconscientes",
+                "Racionales, irracionales y mixtas"
+              ],
+              "respuesta_correcta": "Sobre uno mismo, sobre los demás, sobre el futuro",
+              "orden": 1
+            },
+            {
+              "id": "19070409-ba9c-4b0a-a870-994fd0d6a385",
+              "pregunta": "¿En qué franja etaria, según la lección, se instalan las creencias nucleares ligadas al apego y la seguridad?",
+              "opciones": [
+                "0 a 3 años",
+                "3 a 7 años",
+                "7 a 12 años",
+                "12 a 18 años"
+              ],
+              "respuesta_correcta": "0 a 3 años",
+              "orden": 2
+            },
+            {
+              "id": "8b787471-3ed0-4945-94a4-ef583bba21d6",
+              "pregunta": "¿Cómo se llama la técnica que consiste en preguntarse repetidamente qué significaría eso, hasta llegar a la creencia más profunda?",
+              "opciones": [
+                "El Cuestionamiento Socrático",
+                "La flecha descendente",
+                "El Continuum Cognitivo",
+                "El Reencuadre Cognitivo"
+              ],
+              "respuesta_correcta": "La flecha descendente",
+              "orden": 3
+            },
+            {
+              "id": "dadcad98-5725-4c96-b463-7da3d25f6e54",
+              "pregunta": "La frase 'una creencia nuclear es como el sistema operativo de tu mente', citada al inicio de la lección, ¿a qué corriente se atribuye?",
+              "opciones": [
+                "Terapia Cognitivo-Conductual clásica",
+                "Terapia de Esquemas",
+                "Terapia de Aceptación y Compromiso (ACT)",
+                "Terapia Dialéctico-Conductual (DBT)"
+              ],
+              "respuesta_correcta": "Terapia de Esquemas",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "72648863-aca0-4f7d-99e5-f2d689542fce",
+        "titulo": "Lección 3 · Tu caja de herramientas cognitivas",
+        "orden": 2,
+        "lecciones": [
+          {
+            "id": "e6f09fe4-1af0-43d5-b5b8-bb811c53c80c",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/leccion-3-tu-caja-de-herramientas-cognitivas.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "05e2cb42-483e-4fe6-b3ce-0219634d4972",
+            "orden": 1,
+            "titulo": "Infografía · Las 7 técnicas de un vistazo",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/infografias/infografia-leccion3.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "50ba3e51-ae2b-4c67-8ccf-23a4b3f3f2e9",
+            "orden": 2,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "6d57e8a3-5710-4509-9893-4ffd73322fa7",
+            "orden": 3,
+            "titulo": "Ejercicio · Tu caja de herramientas cognitivas",
+            "url_recurso": "## El registro de pensamiento de 7 columnas\n\nEs momento de integrar todo lo aprendido. Esta es la herramienta central de esta lección, usada por millones de personas con resultados validados empíricamente.\n\n? Identificá una situación perturbadora de los últimos 7 días, con al menos 5/10 de intensidad emocional.\n? Columna 1 — Situación objetiva: describí solo los hechos observables, como una cámara de seguridad, sin interpretaciones.\n? Columna 2 — Emociones: nombrá todas las emociones que sentiste y calificá su intensidad (0-100%).\n? Columna 3 — Pensamientos automáticos: escribí los pensamientos exactamente como aparecieron y calificá cuánto creíste en cada uno.\n? Columna 4 — Distorsión cognitiva: ¿qué distorsión(es) de las 15 estudiadas contiene cada pensamiento?\n? Columna 5 — Cuestionamiento y evidencia: aplicá las preguntas socráticas y buscá evidencia a favor y en contra.\n? Columna 6 — Pensamiento alternativo equilibrado: basándote en la evidencia, escribí una interpretación más realista y compasiva.\n? Columna 7 — Volvé a calificar la intensidad de cada emoción. ¿Cambió?\n? Reflexión post-ejercicio: ¿qué dos o tres conclusiones te deja haber hecho este registro?\n\n## Diseñá tu primer experimento conductual\n\nEs momento de trascender el análisis mental y entrar al laboratorio de la vida real. Los experimentos conductuales transforman creencias abstractas en hipótesis que podés testear.\n\n? Elegí una creencia que quieras poner a prueba — una que limite tu conducta actual, con formato \"si hago X, entonces Y va a pasar (y va a ser terrible)\". ¿Cuál es esa creencia?\n? Escribí tu predicción de forma específica y medible (no \"va a ser malo\", sí \"al menos 3 de cada 5 personas van a...\"). ¿Qué probabilidad le asignás?\n? Diseñá una acción concreta y realizable esta semana: bajo tu control, segura, con fecha y hora específica. ¿Cuál es?\n? ¿Cómo vas a medir el resultado? ¿Qué contaría como confirmación de tu predicción? ¿Qué como refutación?\n? Después de ejecutar el experimento: ¿qué pasó realmente? Registrá solo hechos observables, sin interpretación emocional.\n? Comparando tu predicción con la realidad, en porcentajes, ¿qué tanto se cumplió lo que habías previsto?\n? Antes del experimento, ¿qué porcentaje de creencia tenías en tu predicción original? ¿Y después? ¿Qué aprendiste?\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "34a15906-90b3-49b2-9633-0731c0475b62",
+              "pregunta": "¿Cuál de estas 7 técnicas describe la lección como 'el estándar de oro' de la reestructuración cognitiva?",
+              "opciones": [
+                "El Cuestionamiento Socrático",
+                "El Registro de Pensamientos",
+                "El Reencuadre Cognitivo",
+                "El Experimento Conductual"
+              ],
+              "respuesta_correcta": "El Registro de Pensamientos",
+              "orden": 0
+            },
+            {
+              "id": "8eb6f3dc-0538-41d3-a93c-98fbb36f0eaf",
+              "pregunta": "En la Técnica 1 (Registro de Pensamientos), ¿qué se califica de 0 a 100 en la columna de 'Pensamientos automáticos'?",
+              "opciones": [
+                "El nivel de estrés general",
+                "El porcentaje de creencia en el pensamiento",
+                "La duración del pensamiento en minutos",
+                "La frecuencia con la que aparece por día"
+              ],
+              "respuesta_correcta": "El porcentaje de creencia en el pensamiento",
+              "orden": 1
+            },
+            {
+              "id": "22385e0e-311e-41cb-8634-75197f654532",
+              "pregunta": "¿Qué técnica de esta lección consiste en visualizar el pensamiento como una nube que pasa, para generar distancia psicológica de él?",
+              "opciones": [
+                "El Reencuadre Cognitivo",
+                "La Distancia Cognitiva (Defusión)",
+                "El Continuum Cognitivo",
+                "La Reestructuración por Evidencia"
+              ],
+              "respuesta_correcta": "La Distancia Cognitiva (Defusión)",
+              "orden": 2
+            },
+            {
+              "id": "33a3cd15-c7e4-4336-9f65-ac1eccd79e3b",
+              "pregunta": "El Experimento Conductual, la séptima técnica de la lección, se caracteriza principalmente por...",
+              "opciones": [
+                "Poner la creencia a prueba directamente en la realidad",
+                "Registrar pensamientos automáticos por escrito",
+                "Formular preguntas socráticas",
+                "Ubicar un pensamiento en un continuo de 0 a 100"
+              ],
+              "respuesta_correcta": "Poner la creencia a prueba directamente en la realidad",
+              "orden": 3
+            },
+            {
+              "id": "382fbc66-bca3-4cd4-918e-a4d96c2bdaa8",
+              "pregunta": "Según la guía rápida de la lección, ¿qué técnica conviene usar frente a un pensamiento de tipo todo-o-nada?",
+              "opciones": [
+                "El Continuum Cognitivo",
+                "El Cuestionamiento Socrático",
+                "El Experimento Conductual",
+                "La Distancia Cognitiva"
+              ],
+              "respuesta_correcta": "El Continuum Cognitivo",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "75cc7047-5ea9-4646-a3a3-2b76397af0e4",
+        "titulo": "Lección 4 · La voz que nunca te abandona: transformá tu diálogo interno",
+        "orden": 3,
+        "lecciones": [
+          {
+            "id": "25df7f00-ada6-48b2-9044-3008b5bd04f8",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/leccion-4-la-voz-que-nunca-te-abandona-transforma-tu-dialogo-interno.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "1f03a1a2-8a64-41a2-8d19-7f3e874bae3c",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "254a272b-745a-481c-91d6-dfafead63aa9",
+            "orden": 2,
+            "titulo": "Ejercicio · Diálogo interno y autocompasión",
+            "url_recurso": "## Entrevistá a tu crítico interno\n\nEn lugar de luchar contra tu crítico interno o intentar suprimirlo, vas a hacer algo distinto: conocerlo. Cuando entendés que tu crítico, por destructivo que sea, cree que te está ayudando, podés negociar una nueva forma de relación con él.\n\n? Cerrá los ojos 2-3 minutos y dejá que tu crítico interno tome forma. ¿Qué apariencia, tamaño, edad y expresión tiene? ¿Qué postura y qué ropa?\n? Ponele un nombre a tu crítico — gracioso, irónico o descriptivo. El objetivo es despersonalizarlo: que deje de ser \"vos\" y pase a ser \"una parte de vos\". ¿Cómo se llama?\n? Hacele estas preguntas a tu crítico y escribí lo que \"responde\": ¿cuántos años tenés? ¿Cuándo apareciste? ¿Qué intentás protegerme? ¿Qué pasaría si te callaras? ¿Cuál es tu mayor miedo sobre mí? ¿Qué necesitarías para ser menos duro? ¿Qué parte de mi historia representás?\n? Respondele ahora desde tu yo adulto compasivo: agradecele por intentar protegerte (aunque su método sea disfuncional) y reconocé su intención. ¿Qué le decís?\n? ¿Qué le vas a pedir a tu crítico que haga distinto a partir de hoy? No que desaparezca, sino que cambie el tono.\n\nLa mayoría de las personas descubre que su crítico interno es más joven de lo que imaginaba (a menudo con la edad emocional de un niño de 7 a 12 años), está asustado y cree genuinamente que sin su vigilancia constante algo terrible va a pasar.\n\n## La carta del amigo compasivo\n\nSos infinitamente más compasivo/a con otros que con vos mismo/a. Cuando un amigo sufre, lo escuchás sin juicio, validás su dolor, le recordás que no está solo. ¿Por qué no hacer lo mismo con vos?\n\n? Identificá tu dolor actual: una situación por la que te estés juzgando duramente (un error, una característica que no te gusta, una meta no alcanzada). ¿Cuál es?\n? Escribí brevemente la situación: la situación es... me siento... me estoy diciendo a mí mismo/a...\n? Imaginá a tu amigo compasivo: alguien infinitamente sabio y compasivo que te conoce perfectamente y te acepta tal como sos. ¿Quién es o cómo te lo imaginás?\n? Escribí acá la carta que él o ella te enviaría. Debe incluir: reconocimiento de tu dolor sin minimizarlo, un recordatorio de humanidad compartida, palabras de bondad genuina y una sugerencia de autocuidado.\n? Leé la carta en voz alta. Al leerla, ¿qué sentiste? ¿Cuál es tu compromiso a partir de ahora?\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "89df0ea0-1214-4689-b639-8a4aaf10d2a3",
+              "pregunta": "Según la lección, ¿cuál de estos tipos de crítico interno suele decir 'Si no es perfecto, es un fracaso'?",
+              "opciones": [
+                "El Catastrofista",
+                "El Perfeccionista",
+                "El Comparador",
+                "El Juez"
+              ],
+              "respuesta_correcta": "El Perfeccionista",
+              "orden": 0
+            },
+            {
+              "id": "d31b7c9c-78e1-4ad9-9bc9-23d7df27ddfd",
+              "pregunta": "Según la lección, ¿cuáles son los tres componentes de la autocompasión?",
+              "opciones": [
+                "Mindfulness, Humanidad compartida, Bondad hacia uno mismo",
+                "Aceptación, Defusión, Valores",
+                "Perdón, Paciencia, Disciplina",
+                "Autoestima, Autoconfianza, Autoexigencia"
+              ],
+              "respuesta_correcta": "Mindfulness, Humanidad compartida, Bondad hacia uno mismo",
+              "orden": 1
+            },
+            {
+              "id": "36d942a3-48a8-4bd0-8e13-849692b9b85e",
+              "pregunta": "Según la lección, ¿qué diferencia a la autocompasión de la autoestima?",
+              "opciones": [
+                "La autocompasión depende de tus logros; la autoestima no",
+                "La autocompasión es un valor intrínseco estable que no depende del éxito o el fracaso, a diferencia de la autoestima",
+                "Son exactamente lo mismo, solo cambia el nombre",
+                "La autoestima solo aparece cuando fallás"
+              ],
+              "respuesta_correcta": "La autocompasión es un valor intrínseco estable que no depende del éxito o el fracaso, a diferencia de la autoestima",
+              "orden": 2
+            },
+            {
+              "id": "4f3509fa-44a1-4fa1-96ec-3a568e9f8a7e",
+              "pregunta": "Frente al pensamiento '¿cómo pudiste ser tan idiota?', ¿cuál sería la respuesta del 'entrenador interno' según el contraste de la lección?",
+              "opciones": [
+                "'Cometiste un error. ¿Qué podés aprender de esto?'",
+                "'Tenés razón en sentirte así, sos un desastre.'",
+                "'No pienses en eso, ignoralo por completo.'",
+                "'Esto demuestra que nunca vas a poder confiar en vos.'"
+              ],
+              "respuesta_correcta": "'Cometiste un error. ¿Qué podés aprender de esto?'",
+              "orden": 3
+            },
+            {
+              "id": "4084a825-9829-48ef-a81c-529805626f2f",
+              "pregunta": "¿Cuántos minutos dura, según el protocolo diario de diálogo interno saludable de la lección, la 'pausa de medio día'?",
+              "opciones": [
+                "1",
+                "2",
+                "5",
+                "10"
+              ],
+              "respuesta_correcta": "2",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "188f7fec-f28d-43ca-ae8a-640371ece444",
+        "titulo": "Lección 5 · Los esquemas: los planos invisibles que dirigen tu vida",
+        "orden": 4,
+        "lecciones": [
+          {
+            "id": "efc6e1c8-a42e-4c57-a2c5-efd3326a7e61",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/leccion-5-los-esquemas-los-planos-invisibles-que-dirigen-tu-vida.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "826e86e5-23f9-487d-a5e5-f349de40fcb5",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "3ece4935-6a53-49ac-929d-3c611bc8aea4",
+            "orden": 2,
+            "titulo": "Ejercicio · Mapa de mis esquemas y modos",
+            "url_recurso": "## Mapa de mis esquemas activados\n\nEsta actividad conecta la teoría con tu experiencia vivida. Los esquemas no son abstracciones: son patrones que se activan en situaciones concretas, generan emociones intensas y llevan a respuestas predecibles.\n\n? Identificá tus 3 esquemas con mayor puntuación según el cuestionario de rastreo de la lección. ¿Cuáles son?\n? Para cada uno de esos esquemas, identificá 3 situaciones recientes (de los últimos 30 días) donde se activó. Describilas con detalle.\n? Para esas situaciones, ¿cuál fue tu respuesta de afrontamiento: rendición, evitación o sobrecompensación?\n? ¿Qué costo tuvo esa respuesta? ¿Qué precio pagaste a corto y largo plazo? ¿Qué oportunidad perdiste?\n? Si hubieras respondido desde tu yo adulto y consciente (tu \"adulto saludable\"), ¿qué habrías hecho distinto?\n? ¿Podés identificar una experiencia de tu infancia o adolescencia que instaló este esquema?\n? Escribí una carta breve desde tu perspectiva adulta hacia ese niño o niña herido/a, ofreciendo comprensión y validación.\n\n## Mi diario de modos\n\nEsta actividad te entrena en reconocer qué modo está activo en tiempo real. Cuando podés nombrar el modo (\"ah, mi Niño Vulnerable se activó\"), creás distancia suficiente para que tu Adulto Saludable pueda intervenir. Durante 14 días, registrá al menos un momento donde notes que un modo se activó: qué pasó, qué modo era, qué sentiste y cómo respondió tu Adulto Saludable. Guiate por la tabla de modos de la lección.\n\n? Días 1 a 7: registrá cada día que notes un modo activarse — qué pasó, qué modo era, qué sentiste y cómo respondió tu Adulto Saludable.\n? Días 8 a 14: continuá el mismo registro diario — modo activado, situación y respuesta de tu Adulto Saludable.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "d18ea6b6-f2ef-44dc-9744-98418a8bc618",
+              "pregunta": "¿Cuántos esquemas maladaptativos tempranos identifica el modelo de Jeffrey Young presentado en la lección?",
+              "opciones": [
+                "10",
+                "14",
+                "18",
+                "25"
+              ],
+              "respuesta_correcta": "18",
+              "orden": 0
+            },
+            {
+              "id": "01f24dd8-aafc-422d-8759-347d1864abc6",
+              "pregunta": "El dominio 'Desconexión y rechazo' agrupa esquemas relacionados con la necesidad no satisfecha de...",
+              "opciones": [
+                "Autonomía, competencia e identidad separada",
+                "Seguridad, cuidado, amor y pertenencia",
+                "Límites realistas y autodisciplina",
+                "Espontaneidad, juego y expresión emocional"
+              ],
+              "respuesta_correcta": "Seguridad, cuidado, amor y pertenencia",
+              "orden": 1
+            },
+            {
+              "id": "a0055f11-f60c-4c7f-9607-1194433ad9b6",
+              "pregunta": "Ante un esquema de abandono, ¿qué implica la respuesta esquemática de 'Sobrecompensación', según el ejemplo de la lección?",
+              "opciones": [
+                "Ceder al esquema, alejándose antes de que el otro lo abandone",
+                "Evitar enamorarse para no arriesgarse",
+                "Actuar en el extremo opuesto de forma rígida, por ejemplo volviéndose indispensable para el otro",
+                "Ignorar por completo que el esquema existe"
+              ],
+              "respuesta_correcta": "Actuar en el extremo opuesto de forma rígida, por ejemplo volviéndose indispensable para el otro",
+              "orden": 2
+            },
+            {
+              "id": "981889dd-6828-43b5-89f8-596d47a754ed",
+              "pregunta": "¿Qué grupo de modos esquemáticos representa 'el objetivo': tu yo consciente, compasivo y racional?",
+              "opciones": [
+                "Modos Niño",
+                "Modos de afrontamiento maladaptativo",
+                "Modos parentales",
+                "Modo Adulto Saludable"
+              ],
+              "respuesta_correcta": "Modo Adulto Saludable",
+              "orden": 3
+            },
+            {
+              "id": "5ad05533-c651-41a6-94f9-0ae9c8f53689",
+              "pregunta": "Dentro de los 'Modos Niño', ¿cuál se caracteriza por la rabia desproporcionada?",
+              "opciones": [
+                "Niño Vulnerable",
+                "Niño Enojado",
+                "Niño Impulsivo",
+                "Niño Feliz"
+              ],
+              "respuesta_correcta": "Niño Enojado",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "8996b9b5-eb2b-4982-871d-8e5c2381eb6f",
+        "titulo": "Lección 6 · Todo junto: tu arquitectura cognitiva personal",
+        "orden": 5,
+        "lecciones": [
+          {
+            "id": "5af1638e-2969-4d99-bdda-19ca46bc86de",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/leccion-6-todo-junto-tu-arquitectura-cognitiva-personal.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "f5ab392b-e955-437a-9c6b-48361dc91539",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "29b3ca2c-4603-4fb6-996d-b1fe3666c81b",
+            "orden": 2,
+            "titulo": "Ejercicio · Integración y plan personal",
+            "url_recurso": "## Mi perfil cognitivo completo\n\nEsta es la actividad más importante del curso. Vas a integrar todo lo que descubriste sobre vos en un perfil cognitivo unificado, que será tu mapa de navegación.\n\n? Reuní todas tus actividades completadas: juntá los registros, cuestionarios y reflexiones de todo el curso.\n? Completá tu tabla de perfil cognitivo: tus 3 distorsiones más frecuentes, tus creencias nucleares, tus esquemas dominantes, tu tipo de crítico interno, tu respuesta de afrontamiento habitual y tu modo más frecuente.\n? Elegí tu técnica preferida para cada elemento: de todas las técnicas aprendidas, ¿cuál funcionó mejor para cada patrón específico?\n? Diseñá tu protocolo personal de reestructuración: para cada patrón, ¿cuál es la señal de alerta? ¿Qué hacés en el momento (2-5 min)? ¿Qué hacés en el trabajo profundo (15-30 min)? ¿Cómo te cuidás después?\n? Definí tu frecuencia de práctica: diario, 3 veces por semana, semanal, o cuando surja malestar intenso.\n? Establecé tu cita semanal con vos mismo/a: día y hora fija, 20-30 minutos, para revisar registros, identificar patrones, celebrar avances y ajustar estrategias.\n\n## Mi plan de reestructuración cognitiva personal — 90 días\n\nEste es tu proyecto final: un plan de trabajo de 90 días para transformar UNA creencia nuclear específica. El cambio profundo requiere repetición consistente, y 90 días es el tiempo mínimo para debilitar significativamente una creencia y consolidar una alternativa.\n\n? Elegí una creencia nuclear para trabajar: de todas las que identificaste, ¿cuál es la que más limita tu vida hoy? Elegí una sola, y anotá por qué.\n? Definí el punto de partida: del 0 al 100%, ¿cuánto creés en esta creencia ahora mismo? ¿Cómo impacta tu vida hoy?\n? Diseñá tu intervención semanal (12 semanas): ¿qué técnica vas a aplicar cada semana? Podés repetir o rotar. Lo importante es la consistencia.\n? Planificá 3 experimentos conductuales progresivos: experimento 1 (semana 2), experimento 2 (semana 5), experimento 3 (semana 9). ¿Cuál es la predicción y la acción de cada uno?\n? Definí tu indicador de cambio observable: ¿cómo vas a saber que la creencia está cambiando en tu vida real?\n? Establecé tu protocolo de autorregistro: cada semana, 1 registro de pensamiento de 7 columnas, reevaluación del % de creencia, reflexión escrita de 5 minutos.\n? A medida que pasen los meses, registrá acá tu % de creencia: inicio (día 1), mes 1 (día 30), mes 2 (día 60) y mes 3 (día 90). ¿Cómo fue cambiando?\n\nCuando tengas tu plan armado, cerralo con tu propio compromiso, tal como lo plantea el curso: **\"Me comprometo a trabajar con mi creencia nuclear elegida durante los próximos 90 días, usando las herramientas que aprendí. Entiendo que el cambio cognitivo profundo requiere tiempo, repetición y paciencia. Me comprometo a ser compasivo/a conmigo mismo/a durante este proceso.\"**\n\n? Cerrá tu plan con tu firma de compromiso: escribí tu nombre y la fecha de hoy.\n\n## Test de integración final\n\nRespondé estas preguntas para evaluar tu comprensión:\n\n? ¿Cuál es la diferencia entre un pensamiento automático, una creencia nuclear y un esquema?\n? Nombrá las tres respuestas de afrontamiento esquemático y da un ejemplo de cada una.\n? ¿Cuál es la técnica que te resultó más poderosa y por qué?\n? Explicá los tres componentes de la autocompasión.\n? ¿Cuál es tu distorsión cognitiva más frecuente y qué técnica vas a usar para trabajarla?\n? ¿Cuál es tu esquema dominante y cómo se manifiesta en tu vida cotidiana?\n? Describí tu modo más frecuentemente activado.\n? ¿Qué diferencia al crítico interno del entrenador interno?\n? Explicá el modelo ABC con un ejemplo personal.\n? ¿Cuál de las 7 técnicas avanzadas resonó más con vos y por qué?\n\n## Escala de confianza\n\nCalificá del 1 al 10 cuánto te sentís capaz de aplicar estas herramientas:\n\n? Calificá del 1 al 10 tu confianza actual en cada una de estas habilidades: identificar distorsiones cognitivas en tiempo real; completar un registro de pensamiento de 7 columnas; usar el cuestionamiento socrático efectivamente; diseñar y ejecutar experimentos conductuales; practicar autocompasión en momentos difíciles; reconocer cuándo un esquema se activa; activar mi Adulto Saludable cuando un modo disfuncional toma control.\n\n## Espacio de reflexión personal\n\n? El pensamiento que más cambió en vos durante este curso: ¿cuál es?\n? El insight más poderoso que tuviste durante este curso: ¿cuál fue?\n? La técnica que más te ayudó de todas las que aprendiste: ¿cuál es?\n? Tu compromiso para los próximos 90 días: ¿cuál es?\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "efc4f51d-67f4-4a1f-b963-5efb0c14f2cf",
+              "pregunta": "En el ciclo completo de la reestructuración cognitiva de 6 pasos, ¿cuál es el primer paso?",
+              "opciones": [
+                "Identificar",
+                "Cuestionar",
+                "Observar",
+                "Reencuadrar"
+              ],
+              "respuesta_correcta": "Observar",
+              "orden": 0
+            },
+            {
+              "id": "be308d02-7a9d-4586-b80e-aa90c9db7c2c",
+              "pregunta": "Según el ciclo de 6 pasos, ¿qué técnicas se aplican específicamente en el paso 'Cuestionar'?",
+              "opciones": [
+                "Defusión y Mindfulness",
+                "Cuestionamiento Socrático y Reestructuración por Evidencia",
+                "Experimento Conductual y exposición gradual",
+                "Registro semanal y protocolo de diálogo interno diario"
+              ],
+              "respuesta_correcta": "Cuestionamiento Socrático y Reestructuración por Evidencia",
+              "orden": 1
+            },
+            {
+              "id": "a0f115ee-4a24-4d8d-80d3-c7b073310396",
+              "pregunta": "El paso 'Consolidar', el último del ciclo de 6 pasos, consiste en...",
+              "opciones": [
+                "Poner la nueva creencia a prueba en la realidad por primera vez",
+                "Repetir el ciclo cada vez que el pensamiento reaparezca",
+                "Nombrar qué distorsión está operando",
+                "Someter el pensamiento al método científico"
+              ],
+              "respuesta_correcta": "Repetir el ciclo cada vez que el pensamiento reaparezca",
+              "orden": 2
+            },
+            {
+              "id": "f49b74e5-6712-4d5e-8777-0d3fbd4c18d4",
+              "pregunta": "La frase 'No sos tus pensamientos. Sos la consciencia que observa esos pensamientos', que cierra el curso, se atribuye a...",
+              "opciones": [
+                "Aaron Beck",
+                "Albert Ellis",
+                "Anónimo",
+                "Jeffrey Young"
+              ],
+              "respuesta_correcta": "Anónimo",
+              "orden": 3
+            },
+            {
+              "id": "6f2e8104-331e-4c57-9baa-12fad0ce8f08",
+              "pregunta": "¿A quién se atribuye la frase de cierre 'El día que empezás a cambiar tu forma de pensar es el día que empezás a cambiar tu vida'?",
+              "opciones": [
+                "Albert Ellis",
+                "Aaron Beck",
+                "Viktor Frankl",
+                "Ethan Kross"
+              ],
+              "respuesta_correcta": "Albert Ellis",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "c8adf0e4-8ff9-462b-9400-fd919a1fc130",
+        "titulo": "Material expandido",
+        "orden": 6,
+        "lecciones": [
+          {
+            "id": "998c5788-327f-4cb6-8fae-dbd41f981ea7",
+            "orden": 0,
+            "titulo": "Reprogramacion de creencias nucleares",
+            "url_recurso": "r2key://Formaciones/Reestructuracion Cognitiva Avanzada/audio/reprogramar-creencias-nucleares.m4a",
+            "tipo_contenido": "drive_audio"
+          }
+        ],
+        "quiz": null
+      }
+    ]
+  },
+  {
+    "id": "931b8dc3-2dc1-44c2-802f-6ff9987be08e",
+    "titulo": "Curso de Neuropsicología Aplicada",
+    "descripcion": "Cómo funciona tu cerebro, tu sistema nervioso y tus hábitos — y cómo usar esa ciencia para cambiar de forma intencional.",
+    "modulos": [
+      {
+        "id": "58905624-6466-4ca7-b791-65454c9a4a6f",
+        "titulo": "Resumen ejecutivo (presentación)",
+        "orden": -1,
+        "lecciones": [
+          {
+            "id": "8a7f59e6-2940-4172-b3e3-53579e1de784",
+            "orden": 0,
+            "titulo": "Presentación resumen del curso",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/presentacion-resumen-ejecutivo.pdf",
+            "tipo_contenido": "drive_pdf"
+          }
+        ],
+        "quiz": null
+      },
+      {
+        "id": "8559c827-2c01-4c6c-9fd8-bde77e0509c4",
+        "titulo": "Lección 1 · El Cerebro Triuno",
+        "orden": 0,
+        "lecciones": [
+          {
+            "id": "9be51095-c3be-40a6-bc23-f97b693966bd",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/leccion-1-el-cerebro-triuno.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "06554e37-2235-4cfe-b298-17e0b475e635",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "4fa6ef71-578b-40fd-9873-db0ef148adab",
+            "orden": 2,
+            "titulo": "Ejercicio · Identificá tu cerebro dominante",
+            "url_recurso": "Esta actividad te va a ayudar a tomar consciencia de cuál de tus tres cerebros —reptiliano, límbico o racional— tiende a dominar tu comportamiento en distintas situaciones. **No hay respuestas correctas ni incorrectas**: el objetivo es el autoconocimiento, para que puedas elegir conscientemente cómo querés responder.\n\nPara cada una de estas situaciones (podés sumar otras propias), pensá con qué frecuencia reaccionás desde cada uno de tus tres cerebros, usando esta escala: 1 = Nunca, 2 = Raramente, 3 = A veces, 4 = Frecuentemente, 5 = Siempre.\n\n| Situación | Reptiliano | Límbico | Racional |\n| --- | --- | --- | --- |\n| Alguien te critica en público | Te defendés o te retirás | Vergüenza o ira intensa | Evaluás y respondés con calma |\n| Tenés una presentación importante | Corazón acelerado, manos sudorosas | Recordás fracasos pasados, ansiedad | Te preparás metódicamente |\n| Ves comida que te encanta estando a dieta | Impulso inmediato de comer | Recordás el placer que te produce | Considerás tus objetivos de salud |\n| Cambio inesperado en tus planes | Resistencia automática | Frustración, ansiedad | Adaptás tu estrategia con flexibilidad |\n| Conflicto con un ser querido | Impulso de atacar o huir | Dolor emocional, miedo al abandono | Buscás comprender y resolver |\n| Error significativo que cometiste | Negás o culpás a otros | Vergüenza, autocrítica severa | Analizás qué aprender |\n\n**Interpretación de tu perfil**\n\n| Perfil dominante | Qué significa | Estrategia de equilibrio |\n| --- | --- | --- |\n| Reptiliano | Tu cerebro primitivo tiende a tomar el control con frecuencia: vivís en alerta y reaccionás automáticamente ante lo que percibís como amenaza. | Practicá técnicas de regulación del sistema nervioso (las vas a ver en la Lección 3) y establecé rutinas que te den sensación de seguridad. |\n| Límbico | Vivís intensamente a través de tus emociones. Sos profundamente empático/a, aunque puede costarte decidir \"con la cabeza\" cuando el corazón dice otra cosa. | Practicá observar tus emociones sin ser arrastrado/a por ellas, y desarrollá la pausa entre estímulo y respuesta. |\n| Racional | Tu neocórtex gobierna la mayoría de tus decisiones: sos analítico/a y mantenés la calma bajo presión, aunque a veces te desconectás de tus emociones. | Practicá conectar con tus sensaciones corporales, y recordá que las emociones también son información valiosa. |\n\n? Recorré la tabla de arriba (podés sumar tus propias situaciones) y para cada una anotá, del 1 al 5, con qué frecuencia reaccionás desde cada cerebro. ¿Qué perfil te dio el puntaje más alto: reptiliano, límbico o racional?\n? ¿Te sorprendió ese resultado o confirma lo que ya sabías de vos?\n? ¿En qué situaciones de tu vida reconocés a cada uno de tus tres cerebros en acción?\n? ¿Qué te gustaría cambiar de tu forma de reaccionar en automático?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "5472562d-586b-40f7-8e0e-f0003f6fcd92",
+              "pregunta": "¿Qué lóbulo del neocórtex funciona como 'centro ejecutivo': planificación, toma de decisiones y control de impulsos?",
+              "opciones": [
+                "Occipital",
+                "Temporal",
+                "Parietal",
+                "Frontal"
+              ],
+              "respuesta_correcta": "Frontal",
+              "orden": 0
+            },
+            {
+              "id": "df88c4da-0463-4a1b-bdf5-d08d23b0257f",
+              "pregunta": "¿Cuál de los siguientes es el lóbulo encargado de procesar la información visual, según la lección?",
+              "opciones": [
+                "Occipital",
+                "Temporal",
+                "Parietal",
+                "Frontal"
+              ],
+              "respuesta_correcta": "Occipital",
+              "orden": 1
+            },
+            {
+              "id": "6b6367a3-8e2c-4d25-bbca-d05edd5ee0ff",
+              "pregunta": "Según el modelo del cerebro triuno de la lección, ¿cuál de las tres capas es el 'centro de supervivencia' que gestiona funciones vitales automáticas?",
+              "opciones": [
+                "El cerebro reptiliano",
+                "El sistema límbico",
+                "El neocórtex",
+                "El cerebelo"
+              ],
+              "respuesta_correcta": "El cerebro reptiliano",
+              "orden": 2
+            },
+            {
+              "id": "3fb6277d-2a7c-44ea-bbee-1d310ec43172",
+              "pregunta": "¿Qué capa del cerebro triuno describe la lección como 'el asiento de tus emociones'?",
+              "opciones": [
+                "El cerebro reptiliano",
+                "El sistema límbico",
+                "El neocórtex",
+                "El tronco encefálico"
+              ],
+              "respuesta_correcta": "El sistema límbico",
+              "orden": 3
+            },
+            {
+              "id": "d92f895b-d605-40c7-a1aa-6d672514391b",
+              "pregunta": "La actividad 'Identificá tu cerebro dominante' de esta lección te pide evaluar tu reacción ante distintas situaciones para reconocer...",
+              "opciones": [
+                "Qué cerebro está 'al mando' en cada momento: el reptiliano, el límbico o el racional",
+                "Tu coeficiente intelectual",
+                "Tu tipo de personalidad según el DSM",
+                "Tu nivel de estrés crónico"
+              ],
+              "respuesta_correcta": "Qué cerebro está 'al mando' en cada momento: el reptiliano, el límbico o el racional",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "05417b55-577a-419f-b332-0c08345b9f8b",
+        "titulo": "Lección 2 · Neuroplasticidad",
+        "orden": 1,
+        "lecciones": [
+          {
+            "id": "2db035a8-fcaa-4d7a-aeb8-73c51835b0f8",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/leccion-2-neuroplasticidad.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "b26e14d0-9886-4f64-8ce2-308aa7c6d4f6",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "fddeca8a-a432-4ba9-ab92-0c4ac2ba6e31",
+            "orden": 2,
+            "titulo": "Ejercicio · Mapa de mis circuitos limitantes",
+            "url_recurso": "## Mapa de mis circuitos limitantes\n\nEsta actividad te ayuda a identificar creencias que repetiste tanto que se convirtieron en circuitos neuronales automáticos, y a comenzar a instalar circuitos nuevos y más potenciadores. Recordá: las creencias son solo pensamientos que pensaste muchas veces.\n\n? Escribí 5 creencias limitantes que repetís seguido sobre vos mismo/a (por ejemplo: \"no soy bueno con los números\", \"siempre termino saboteándome\").\n? Para cada una, rastreá el origen: ¿a qué edad aproximada la aprendiste? ¿de dónde vino? ¿quién te la dijo?\n? ¿Qué comportamiento concreto genera esa creencia hoy? ¿Qué evitás hacer por ella? ¿Qué oportunidades rechazaste?\n? Para cada creencia limitante, escribí una alternativa basada en evidencia real de tu vida.\n? Elegí una de tus nuevas creencias potenciadoras: ¿cómo vas a repetirla conscientemente durante los próximos 21 días (escribirla, decirla en voz alta, visualizarla)?\n\n## Tu protocolo de 21 días\n\nLa lección te propuso una rutina matutina de 5 minutos para activar la neuroplasticidad, sostenida durante 21 días. Este espacio es para vos: no queda guardado en ningún lado, así que usalo como punto de partida y después llevá tu propio seguimiento en papel, calendario o la app que prefieras.\n\n? ¿Cómo vas a llevar el seguimiento de tus 21 días, y qué vas a hacer los días que se te complique sostenerlo?\n? Escribí tu compromiso con tus propias palabras: ¿qué vas a practicar cada mañana durante las próximas 3 semanas, aunque sea de forma imperfecta?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "43f4774e-c822-4e62-8720-af6f426c7583",
+              "pregunta": "¿Cuál es la 'regla de Hebb' mencionada en esta lección?",
+              "opciones": [
+                "Las neuronas que se activan juntas, se conectan juntas",
+                "El cerebro deja de cambiar después de los 25 años",
+                "Cada neurona funciona de forma completamente independiente",
+                "Solo el hipocampo puede generar nuevas conexiones"
+              ],
+              "respuesta_correcta": "Las neuronas que se activan juntas, se conectan juntas",
+              "orden": 0
+            },
+            {
+              "id": "c1223495-d688-4dfc-85e6-e0e62d0813a6",
+              "pregunta": "Según la lección, ¿qué tipo de neuroplasticidad explica que un taxista desarrolle un hipocampo más grande por la navegación espacial constante?",
+              "opciones": [
+                "Neuroplasticidad estructural",
+                "Neuroplasticidad funcional",
+                "Sinaptogénesis exclusivamente",
+                "Neurogénesis cerebelar"
+              ],
+              "respuesta_correcta": "Neuroplasticidad estructural",
+              "orden": 1
+            },
+            {
+              "id": "cb89ea3d-ae23-4753-b937-5b219ed1c9d3",
+              "pregunta": "¿Cuál es la verdad científica, según la lección, detrás del mito de que 'usamos solo el 10% del cerebro'?",
+              "opciones": [
+                "Usamos prácticamente todo el cerebro, aunque no todas las áreas al mismo tiempo",
+                "Es cierto: solo se usa el 10%",
+                "Usamos el 50% del cerebro en promedio",
+                "Depende exclusivamente del coeficiente intelectual de cada persona"
+              ],
+              "respuesta_correcta": "Usamos prácticamente todo el cerebro, aunque no todas las áreas al mismo tiempo",
+              "orden": 2
+            },
+            {
+              "id": "b371d15f-ec59-4687-804b-aaaa05ee6758",
+              "pregunta": "Frente al mito de 'reprogramar tu cerebro en 21 días', ¿qué dice la lección sobre cuánto toma formar un hábito en promedio?",
+              "opciones": [
+                "7 días",
+                "21 días",
+                "66 días",
+                "365 días"
+              ],
+              "respuesta_correcta": "66 días",
+              "orden": 3
+            },
+            {
+              "id": "864ffd7e-b54c-499e-a21d-da8e316c5269",
+              "pregunta": "¿Qué tipo de neuroplasticidad permite que el cerebro traslade funciones de un área dañada a otra intacta, explicando cierta recuperación tras un daño cerebral?",
+              "opciones": [
+                "Neuroplasticidad estructural",
+                "Neuroplasticidad funcional",
+                "Sinaptogénesis",
+                "Ninguna, el daño siempre es permanente"
+              ],
+              "respuesta_correcta": "Neuroplasticidad funcional",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "0f710687-108c-46d4-b98b-f89042324179",
+        "titulo": "Lección 3 · Sistema Nervioso y Emociones",
+        "orden": 2,
+        "lecciones": [
+          {
+            "id": "55555cda-b9de-4b5a-99db-9362325a5ea0",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/leccion-3-sistema-nervioso-y-emociones.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "af22a5cf-665a-4d81-b6f9-f39d384576ee",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "209f7fd5-e3f0-4d62-9993-c9b43aec7c1d",
+            "orden": 2,
+            "titulo": "Ejercicio · Inventario de mi respuesta al estrés y kit de regulación",
+            "url_recurso": "## Inventario de mi respuesta al estrés\n\nEsta actividad te ayuda a mapear tu respuesta personal al estrés. Al traer consciencia a tus reacciones automáticas, empezás a poder elegir respuestas diferentes.\n\n? Elegí una situación estresante de los últimos 7 días (de intensidad moderada-alta, no la más difícil de tu vida) y describila: ¿qué pasó, dónde, con quién?\n? Hacé un mapa corporal de esa situación: ¿dónde sentiste la respuesta al estrés en tu cuerpo? (tensión en los hombros, nudo en el estómago, mandíbula apretada, etc.)\n? ¿Cuál fue tu respuesta dominante — lucha, huida o congelamiento?\n? ¿Qué pensamiento o interpretación activó esa respuesta? ¿Ese pensamiento era 100% verdad, o solo parcialmente?\n? Si tu sistema nervioso hubiera estado regulado, ¿cómo te hubiera gustado responder? ¿Qué necesitabas en ese momento — respirar, pausar, apoyo, salir un momento?\n? Mirando esta situación y otras parecidas: ¿ves algún patrón en tu forma de responder al estrés? ¿Tendés hacia lucha, huida o congelamiento, y en qué contextos se activa más?\n\n## Mi kit de regulación personal\n\nLas técnicas de regulación solo funcionan si las practicás hasta que se vuelven automáticas. Esta actividad te ayuda a probar cada técnica, identificar cuáles funcionan mejor para vos, y armar un protocolo personalizado.\n\nCuatro técnicas respaldadas por neurociencia:\n\n| Técnica | Cómo hacerla | Cuándo usarla |\n| --- | --- | --- |\n| Respiración fisiológica (doble inhalación) | Inhalá profundo por la nariz, sin exhalar tomá una segunda inhalación corta, y exhalá completamente por la boca con un suspiro audible. Repetí 2-3 veces. | En medio de activación intensa, antes de una reunión importante, después de una noticia estresante. |\n| Estimulación por frío | Sumergí tu cara en agua helada 15-30 segundos, o aplicá una bolsa de hielo alrededor de ojos y mejillas. | Durante picos de ansiedad aguda. |\n| Movimiento bilateral | Golpeá suavemente con las manos alternando hombros (izquierda-derecha) durante 2-3 minutos, o marchá en el lugar con ritmo constante. | Después de una situación emocionalmente intensa, o antes de dormir si tu mente está acelerada. |\n| Mirada panorámica | Relajá la mirada y expandí tu campo visual periférico sin enfocar en un punto, durante 1-2 minutos. | Durante trabajo intenso frente a pantallas, o antes de una situación estresante. |\n\n? Probá cada técnica durante 3 minutos y calificá tu nivel de calma antes y después (escala 1-10 en cada caso). ¿Cuáles dos te dieron el mayor cambio?\n? Armá tu secuencia personal de 3 pasos (5 minutos o menos) combinando las técnicas que más te sirvieron: anotá técnica y duración de cada paso.\n? Escribí tu compromiso: ¿con qué frecuencia vas a practicar este protocolo en las próximas semanas, aunque no te sientas especialmente estresado/a?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "b43e059a-c4e1-4671-807d-1d6e3a9c1dc7",
+              "pregunta": "¿Cuál de estos es un ejemplo de situación que activa el sistema nervioso simpático, según la lección?",
+              "opciones": [
+                "Después de comer",
+                "Una entrevista laboral",
+                "Sueño profundo",
+                "Un abrazo largo"
+              ],
+              "respuesta_correcta": "Una entrevista laboral",
+              "orden": 0
+            },
+            {
+              "id": "e77e5159-0130-4891-95d9-d6fc3d79f25d",
+              "pregunta": "Según la lección, ¿qué estado del nervio vago corresponde al 'congelamiento' o disociación, el más primitivo de los tres?",
+              "opciones": [
+                "Seguridad social (ventral vagal)",
+                "Movilización (simpático)",
+                "Inmovilización (dorsal vagal)",
+                "Ninguno de los anteriores"
+              ],
+              "respuesta_correcta": "Inmovilización (dorsal vagal)",
+              "orden": 1
+            },
+            {
+              "id": "6a5ff495-69c1-4104-9649-2fa9e1aaa8cc",
+              "pregunta": "¿Qué significa aumentar tu 'tono vagal', según la lección?",
+              "opciones": [
+                "La capacidad de tu nervio vago de activar el estado de calma y seguridad con más facilidad",
+                "La fuerza física de tu diafragma",
+                "La velocidad de tu ritmo cardíaco en reposo",
+                "La cantidad de cortisol que producís por día"
+              ],
+              "respuesta_correcta": "La capacidad de tu nervio vago de activar el estado de calma y seguridad con más facilidad",
+              "orden": 2
+            },
+            {
+              "id": "2339f80f-1cf3-44d1-a2c6-b5463e6bf3b0",
+              "pregunta": "Frente al estrés crónico, ¿qué le pasa al sistema simpático según el problema que señala la lección?",
+              "opciones": [
+                "Se desactiva por completo y deja de responder",
+                "Se activa de forma prolongada, cuando evolucionó para activarse solo brevemente ante una amenaza",
+                "Solo se activa una vez en la vida",
+                "No tiene ninguna relación con el estrés"
+              ],
+              "respuesta_correcta": "Se activa de forma prolongada, cuando evolucionó para activarse solo brevemente ante una amenaza",
+              "orden": 3
+            },
+            {
+              "id": "9a6a04aa-1cb9-4154-a88e-8f2d93e3ee74",
+              "pregunta": "¿Cuál de estas es una de las cuatro técnicas respaldadas por neurociencia que presenta el 'kit de regulación personal' de esta lección?",
+              "opciones": [
+                "Estimulación por frío",
+                "Ayuno prolongado",
+                "Exposición solar de 3 horas",
+                "Restricción total de movimiento"
+              ],
+              "respuesta_correcta": "Estimulación por frío",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "bc13b91b-769b-4962-9b54-402d4e6c94eb",
+        "titulo": "Lección 4 · Neurotransmisores",
+        "orden": 3,
+        "lecciones": [
+          {
+            "id": "569e8fe3-f3f8-4cc7-bb21-567e5ce8e083",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/leccion-4-neurotransmisores.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "72aa67b8-16b8-48e9-a398-5a8ffc7f2edc",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "eae6799e-7f33-4405-b569-eac6ef601508",
+            "orden": 2,
+            "titulo": "Ejercicio · Perfil de mis neurotransmisores y menú de bienestar",
+            "url_recurso": "## Perfil de mis neurotransmisores\n\nEste cuestionario de autoevaluación te ayuda a identificar qué neurotransmisores podrían beneficiarse de más atención en tu caso. **No es un diagnóstico médico**, sino una herramienta de autoconocimiento.\n\nPara cada sección, puntuá cada afirmación del 0 al 3 (0 = nunca, 1 = a veces, 2 = frecuentemente, 3 = siempre) y sumá el total (máximo 15 por sección).\n\n**Dopamina**: me cuesta comenzar tareas aunque sepa que son importantes · siento que nada me emociona o motiva como antes · necesito cafeína, azúcar u otros estimulantes para \"funcionar\" · abandono proyectos o metas antes de completarlos · me distraigo fácilmente con redes sociales o entretenimiento.\n\n**Serotonina**: me siento triste o \"gris\" sin razón aparente · tengo problemas para mantenerme dormido/a · me irrito fácilmente o tengo cambios de humor frecuentes · tengo antojos intensos de carbohidratos o dulces · me critico severamente o repito pensamientos negativos.\n\n**Oxitocina**: me siento solo/a o desconectado/a incluso con gente cerca · me cuesta confiar en las intenciones de los demás · evito la intimidad emocional o las conversaciones profundas · no recuerdo la última vez que di o recibí un abrazo significativo · prefiero hacer todo solo/a antes que pedir o aceptar ayuda.\n\n**Endorfinas**: mi vida es mayormente sedentaria · siento dolores o molestias físicas frecuentes sin causa clara · todo me parece requerir demasiado esfuerzo físico · no recuerdo la última vez que reí a carcajadas · evito actividades que impliquen esfuerzo físico temporal.\n\nCómo interpretar cada puntaje: 0-5 (funcionando bien), 6-9 (área de atención), 10-15 (prioridad alta).\n\n? Sumá tu puntaje de Dopamina (sobre 15) y anotalo. ¿Qué te dice ese número?\n? Sumá tu puntaje de Serotonina (sobre 15) y anotalo. ¿Qué te dice ese número?\n? Sumá tu puntaje de Oxitocina (sobre 15) y anotalo. ¿Qué te dice ese número?\n? Sumá tu puntaje de Endorfinas (sobre 15) y anotalo. ¿Qué te dice ese número?\n? De los que dieron 6 o más, elegí 2 estrategias concretas para cada uno (podés mirarlas en la lección) y escribilas acá.\n\n## Mi menú diario de bienestar neuroquímico\n\nAhora que conocés los cuatro grandes neurotransmisores y varias estrategias para optimizarlos, armá un plan práctico para los próximos 7 días. No es un plan rígido: es un menú de opciones para elegir cada día.\n\nAlgunas opciones por neurotransmisor, para combinar como quieras:\n\n| Neurotransmisor | Algunas opciones para elegir |\n| --- | --- |\n| Dopamina | Completar una tarea pequeña antes de mediodía · ejercicio que disfrutes 20-30 min · aprender algo nuevo 15 min. |\n| Serotonina | Luz solar 10-30 min antes de las 10am · caminar al aire libre · escribir 3 gratitudes específicas · dormir 7-9 horas. |\n| Oxitocina | Dar o recibir un abrazo de 20+ segundos · videollamada con un ser querido · un acto de bondad anónimo. |\n| Endorfinas | Ejercicio cardiovascular 20-30 min · reírte genuinamente · una ducha fría de 30 segundos · bailar tu canción favorita. |\n\n? Mirá tu perfil de la actividad anterior: ¿qué neurotransmisores necesitan más atención? Esos van a ser tu foco esta semana.\n? Elegí al menos una actividad por neurotransmisor para cada día (mínimo 4 actividades diarias) y anotá tu plan para la semana.\n? ¿En qué momento del día vas a hacer cada una?\n? Al cierre de la semana: ¿cómo cambió tu energía? ¿tu ánimo? ¿qué actividades tuvieron más impacto, y cuáles te gustaría convertir en hábito permanente?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "0db6eb4e-58f5-4a15-88f7-003681eeeb4b",
+              "pregunta": "Según la lección, ¿de qué es realmente 'la molécula' la dopamina, más que del placer en sí?",
+              "opciones": [
+                "De la motivación y la anticipación",
+                "Del sueño profundo",
+                "Del dolor físico",
+                "De la memoria a largo plazo"
+              ],
+              "respuesta_correcta": "De la motivación y la anticipación",
+              "orden": 0
+            },
+            {
+              "id": "202964ff-1203-4656-a2bd-058d4b98268e",
+              "pregunta": "¿Qué neurotransmisor se conoce como 'la hormona del vínculo', que facilita la conexión social y reduce el cortisol?",
+              "opciones": [
+                "Dopamina",
+                "Serotonina",
+                "Oxitocina",
+                "Endorfinas"
+              ],
+              "respuesta_correcta": "Oxitocina",
+              "orden": 1
+            },
+            {
+              "id": "f069527d-f885-4340-af12-80f5c57b10f5",
+              "pregunta": "¿Cuál de estos neurotransmisores regula el estado de ánimo, la ansiedad, el sueño y el apetito, según la lección?",
+              "opciones": [
+                "Dopamina",
+                "Serotonina",
+                "Oxitocina",
+                "Endorfinas"
+              ],
+              "respuesta_correcta": "Serotonina",
+              "orden": 2
+            },
+            {
+              "id": "61d9a5db-75d7-4c2b-b65a-1602ad1f6c24",
+              "pregunta": "Según la lección, ¿qué libera endorfinas de forma natural, además del ejercicio intenso?",
+              "opciones": [
+                "La risa genuina",
+                "Dormir 12 horas seguidas",
+                "El ayuno",
+                "Ver televisión"
+              ],
+              "respuesta_correcta": "La risa genuina",
+              "orden": 3
+            },
+            {
+              "id": "6b426135-6c2c-48f0-b9c1-bae06898d031",
+              "pregunta": "¿Qué tipo de actividad favorece específicamente la liberación de dopamina, según la lección?",
+              "opciones": [
+                "Lograr pequeñas victorias y hacer progreso hacia una meta",
+                "Un abrazo prolongado",
+                "La exposición a luz solar",
+                "El agua fría"
+              ],
+              "respuesta_correcta": "Lograr pequeñas victorias y hacer progreso hacia una meta",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "1cee65a3-098d-4a77-a006-77d505c5a37b",
+        "titulo": "Lección 5 · Memoria y Trauma",
+        "orden": 4,
+        "lecciones": [
+          {
+            "id": "8e73f3b7-87a2-4c9c-bc94-8f5aa4f7fa3f",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/leccion-5-memoria-y-trauma.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "79b7b8d0-397d-414a-95ed-9dd2c42a5592",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "52bec335-4f3d-4705-832f-451231727132",
+            "orden": 2,
+            "titulo": "Ejercicio · El hilo de mi historia y carta a mi sistema nervioso",
+            "url_recurso": "## El hilo de mi historia\n\n**Nota de seguridad emocional**: esta actividad implica reflexionar sobre momentos significativos de tu vida, algunos de ellos dolorosos. Hacela solo cuando te sientas emocionalmente estable y con tiempo para procesar lo que surja. Si te sentís abrumado/a, detenete, respirá y volvé cuando estés listo/a. Podés hacerla acompañado/a de alguien de confianza.\n\nEsta actividad te ayuda a ver tu vida como una narrativa coherente, en lugar de una colección de eventos desconectados. Al identificar patrones entre decisiones pasadas y comportamientos actuales, ganás el poder de elegir conscientemente nuevos patrones hacia adelante.\n\nPensá en tu línea de vida, desde tu nacimiento hasta hoy, y elegí 5 eventos significativos (con alto impacto emocional, positivos o negativos).\n\n? Anotá tus 5 eventos significativos, con la edad aproximada en la que ocurrieron y una breve descripción de cada uno.\n? Para cada uno, ¿qué creencia formaste sobre vos mismo/a, sobre los demás o sobre el mundo a partir de ese evento?\n? En base a esa creencia, ¿qué decisión tomaste sobre cómo protegerte o navegar el mundo?\n? ¿Esa decisión sigue activa hoy? ¿En qué áreas de tu vida podés ver ese patrón operando?\n? Desde tu sabiduría y tus recursos actuales, ¿qué nueva decisión consciente querés tomar para cada uno de esos patrones?\n\nEsta actividad puede generar emociones intensas. Es completamente normal, y de hecho es parte del proceso de integración: no es señal de estar \"retrocediendo\", sino evidencia de que estás procesando lo que antes estaba fragmentado. Ahora tenés recursos que no tenías cuando ocurrieron esos eventos.\n\n## Carta a mi sistema nervioso\n\nEsta actividad es profundamente sanadora. Vas a escribirle una carta a tu cuerpo y a tu sistema nervioso, reconociendo todas las formas en que trabajó incansablemente para mantenerte con vida y lo más a salvo posible, incluso cuando esas estrategias ya no son necesarias.\n\nAntes de empezar: buscá un lugar tranquilo donde no te interrumpan durante 20-30 minutos, apagá notificaciones, y tomate 5 respiraciones profundas. Escribí con honestidad, empezando con \"Querido cuerpo / Querido sistema nervioso...\", sin editar ni juzgar lo que salga.\n\nPreguntas guía — respondé las que resuenen:\n\n? Escribí tu carta: agradecé específicamente las formas en que tu cuerpo te protegió (incluso cuando esas estrategias te causaron dolor después), reconocé con compasión qué mecanismos de supervivencia ya cumplieron su propósito, y terminá con una declaración de cómo querés relacionarte con tu cuerpo de ahora en más.\n? ¿Qué situaciones difíciles atravesaste y cómo te ayudó tu cuerpo a sobrevivirlas?\n? ¿Qué respuestas automáticas desarrollaste que, aunque hoy duelen, en su momento te salvaron?\n? ¿Qué te gustaría perdonarle a tu cuerpo? ¿Qué te gustaría que tu cuerpo te perdonara a vos?\n? ¿Cómo será tu vida cuando tu cuerpo y tu mente trabajen como aliados y no como adversarios?\n\nUna vez terminada, leé tu carta en voz alta. Escuchar tus propias palabras tiene un efecto integrador poderoso. Guardala en un lugar especial.",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "682d3c07-b1f9-4d2e-a3b5-e4ac49c69202",
+              "pregunta": "¿Qué tipo de memoria explícita depende del hipocampo y guarda recuerdos de eventos específicos con contexto de tiempo y lugar?",
+              "opciones": [
+                "Memoria episódica",
+                "Memoria semántica",
+                "Memoria procedimental",
+                "Memoria de condicionamiento"
+              ],
+              "respuesta_correcta": "Memoria episódica",
+              "orden": 0
+            },
+            {
+              "id": "69321e52-2491-4a2b-8231-b9d3a6b69456",
+              "pregunta": "¿Cuál de estos tipos de memoria implícita guarda habilidades motoras y secuencias automáticas, como atarte los cordones?",
+              "opciones": [
+                "Memoria episódica",
+                "Memoria semántica",
+                "Memoria procedimental",
+                "Memoria de condicionamiento"
+              ],
+              "respuesta_correcta": "Memoria procedimental",
+              "orden": 1
+            },
+            {
+              "id": "036dec94-8326-41e3-bd5b-2139faa9fd4f",
+              "pregunta": "Según la lección, ¿qué caracteriza al trauma 'de desarrollo', a diferencia del trauma 'de shock'?",
+              "opciones": [
+                "Es un evento único y puntual",
+                "Es prolongado en el tiempo",
+                "Nunca afecta el sistema nervioso",
+                "Solo ocurre en la adultez"
+              ],
+              "respuesta_correcta": "Es prolongado en el tiempo",
+              "orden": 2
+            },
+            {
+              "id": "222fcd0a-b906-48bf-aae8-0e5c51563ae8",
+              "pregunta": "¿Cuál de estas herramientas de 'reprogramación neurológica' menciona la lección para trabajar con recuerdos difíciles?",
+              "opciones": [
+                "Reconsolidación de memoria",
+                "Supresión total del recuerdo",
+                "Amnesia inducida",
+                "Evitación permanente"
+              ],
+              "respuesta_correcta": "Reconsolidación de memoria",
+              "orden": 3
+            },
+            {
+              "id": "f89726c1-f3da-4975-ac7b-9e7dcdd24bed",
+              "pregunta": "¿Qué recomienda la lección si aparecen flashbacks intrusivos frecuentes o pesadillas recurrentes?",
+              "opciones": [
+                "Buscar apoyo profesional especializado",
+                "Ignorar la señal y seguir con las actividades del curso sin cambios",
+                "Aumentar la exposición a los recuerdos sin ningún acompañamiento",
+                "Evitar cualquier tipo de ayuda externa"
+              ],
+              "respuesta_correcta": "Buscar apoyo profesional especializado",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "694e8fd8-ba8f-4583-8f4d-f631946b6e41",
+        "titulo": "Lección 6 · Hábitos y Cambio",
+        "orden": 5,
+        "lecciones": [
+          {
+            "id": "eca95505-b59e-4f77-8ac5-762332369430",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/leccion-6-habitos-y-cambio.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "50507b07-61eb-4298-8a1e-0dacf2667539",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "b7388e1d-dc69-4041-b1e1-0c1837318cb9",
+            "orden": 2,
+            "titulo": "Ejercicio · Mi plan de 66 días y reflexión final",
+            "url_recurso": "## Arqueología de mis hábitos\n\nAntes de cambiar tus hábitos, necesitás comprenderlos a fondo. Esta actividad te convierte en detective de tu propio comportamiento, para desenterrar las señales, rutinas y recompensas que gobiernan tus acciones automáticas.\n\nComo referencia, así se ve un hábito ya mapeado: revisar el celular al despertar (señal: suena la alarma en la mesita de luz) tiene como recompensa real evitar la incomodidad de enfrentar el día; un sustituto posible sería dejar el celular en otra habitación y reemplazar esos minutos por respiración, gratitud e intención del día.\n\n? Listá 5 hábitos que te suman valor y 5 que te restan. Sé honesto/a.\n? Para cada hábito que te resta, identificá la señal: ¿qué lo dispara? (hora, lugar, emoción, persona, acción previa)\n? Para cada uno, identificá la recompensa real — no la respuesta obvia, sino la recompensa emocional o psicológica de fondo.\n? Para los hábitos que te restan, ¿qué te están costando en tiempo, energía o avance hacia tus metas?\n? Diseñá un hábito sustituto para al menos uno de ellos: que use la misma señal y dé una recompensa equivalente, pero con una rutina más adaptativa.\n? Elegí UN solo hábito que te resta para trabajar primero (no intentes cambiar los cinco a la vez: dominá uno, automatizalo, y recién ahí sumá el siguiente). ¿Cuál elegís, y por qué ese primero?\n\n## Proyecto integrador · Mi plan de 66 días\n\nEsta es la actividad culminante del curso. Acá vas a integrar todo lo que aprendiste sobre tu cerebro, tu sistema nervioso, tus neurotransmisores, tus memorias y tus hábitos, en un plan concreto de transformación. No es un ejercicio teórico: es tu hoja de ruta personal para los próximos 66 días de reprogramación neurológica intencional.\n\nAntes de empezar, dedicá unos minutos a repasar tus respuestas de las actividades anteriores de este curso. ¿Qué patrones emergen?\n\n? Elegí UN hábito nuevo para instalar — específico, medible y realista para practicar a diario durante 66 días — y contá por qué elegiste justo ese.\n? Definí el loop completo: ¿qué señal vas a usar? ¿cuál es la rutina exacta, paso por paso? ¿qué recompensa inmediata te vas a dar? ¿cuánto tiempo te va a tomar por día y a qué hora?\n? Diseñá tu ambiente de apoyo: identificá 3 cambios concretos en tu entorno físico o digital (uno para hacer más fácil el hábito nuevo, otro para hacer más difícil el opuesto, y una señal visual recordatoria).\n? ¿Cómo vas a armar tu hoja de seguimiento (calendario, app, cadena visible)? Lo importante es que sea satisfactorio de actualizar.\n? Anticipá 3 obstáculos posibles y cómo vas a manejar cada uno.\n? Escribí tu declaración de compromiso: por qué este hábito es importante para vos, cómo se alinea con la persona que querés ser, y tu compromiso de continuar incluso en los días difíciles.\n\n## Reflexión final del curso\n\nAntes de cerrar el curso, tomate un momento para responder estas preguntas de integración.\n\n? Impacto: ¿cuál fue el concepto o actividad de este curso que tuvo mayor impacto en vos? ¿Por qué?\n? Autoconocimiento: ¿qué descubriste sobre vos mismo/a que no sabías antes de empezar?\n? Patrón a soltar: ¿qué patrón antiguo estás listo/a para soltar? ¿Qué nuevo patrón estás instalando en su lugar?\n? Confianza en el cambio: en una escala de 1 a 10, ¿qué tan confiado/a te sentís hoy en tu capacidad de cambiar tu comportamiento conscientemente?\n? Compromiso: ¿qué compromiso específico hacés con vos mismo/a a partir de hoy?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "2eb590fe-3f13-4245-b09b-86b59649e73e",
+              "pregunta": "Según el 'loop del hábito' de esta lección, ¿cuáles son sus tres componentes?",
+              "opciones": [
+                "Señal, rutina y recompensa",
+                "Estímulo, respuesta y refuerzo negativo",
+                "Motivación, acción y resultado",
+                "Disparador, hábito y castigo"
+              ],
+              "respuesta_correcta": "Señal, rutina y recompensa",
+              "orden": 0
+            },
+            {
+              "id": "a730f25a-b46c-4e63-b4d4-235cf98860be",
+              "pregunta": "Según la fórmula neurológica del cambio de hábitos de la lección, ¿cuántos días dura en promedio el proceso completo, y no los 21 días del mito popular?",
+              "opciones": [
+                "30",
+                "45",
+                "66",
+                "90"
+              ],
+              "respuesta_correcta": "66",
+              "orden": 1
+            },
+            {
+              "id": "d0050d3c-abf2-45ad-a06c-efcfb698c940",
+              "pregunta": "En las tres fases del cambio de hábito, ¿qué caracteriza a la fase de 'Instalación' (días 1 a 21)?",
+              "opciones": [
+                "Alto esfuerzo consciente, muchas 'fallas', progreso invisible",
+                "El comportamiento fluye naturalmente y se siente raro no hacerlo",
+                "El hábito ya está completamente automatizado",
+                "No requiere ningún esfuerzo"
+              ],
+              "respuesta_correcta": "Alto esfuerzo consciente, muchas 'fallas', progreso invisible",
+              "orden": 2
+            },
+            {
+              "id": "22c66d88-dc40-4760-98fc-9e78cf10cadf",
+              "pregunta": "¿Dónde 'viven' los hábitos según la lección, la estructura cerebral que se menciona como su sede principal?",
+              "opciones": [
+                "Los ganglios basales",
+                "El cerebelo",
+                "El lóbulo occipital",
+                "El nervio vago"
+              ],
+              "respuesta_correcta": "Los ganglios basales",
+              "orden": 3
+            },
+            {
+              "id": "910b9c3a-2539-4a20-b488-e6a0e19c48ca",
+              "pregunta": "Según la lección, aunque un hábito ya se sienta automático, ¿qué se recomienda hacer?",
+              "opciones": [
+                "Seguir 10 días más allá del punto donde se siente automático, para asegurar la consolidación",
+                "Dejar de practicarlo inmediatamente",
+                "Cambiar de hábito cada semana",
+                "No es necesario ningún paso adicional"
+              ],
+              "respuesta_correcta": "Seguir 10 días más allá del punto donde se siente automático, para asegurar la consolidación",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "2355d5df-070a-45ba-87b2-261dfb2b9407",
+        "titulo": "Material expandido",
+        "orden": 6,
+        "lecciones": [
+          {
+            "id": "638ae8a2-024e-47e1-a7e6-c58f97668667",
+            "orden": 0,
+            "titulo": "Cómo reprogramar biológicamente tu cerebro",
+            "url_recurso": "r2key://Formaciones/Fundamentos Neurobiológicos del Comportamiento/audio/como-reprogramar-biologicamente-tu-cerebro.m4a",
+            "tipo_contenido": "drive_audio"
+          }
+        ],
+        "quiz": null
+      }
+    ]
+  },
+  {
+    "id": "60de92a8-ef0d-4670-bfb6-25c9073f74ce",
+    "titulo": "La Depresión Mayor",
+    "descripcion": "Herramientas con respaldo científico y lenguaje cercano para atravesar la depresión mayor, o para acompañar a quien la atraviesa.",
+    "modulos": [
+      {
+        "id": "914868db-0865-4dc6-8674-2d767ea7527a",
+        "titulo": "Lección 1 · El cerebro que apaga las luces",
+        "orden": 0,
+        "lecciones": [
+          {
+            "id": "0cb703a6-a984-44f4-ab2c-ce8879a39ad8",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/La Depresión Mayor/leccion-1-el-cerebro-que-apaga-las-luces.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "4b22b1a8-fb7f-4fa8-96d5-908bc816483c",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "3d4b05a5-0bb9-4317-bf3f-e46d1da5c584",
+            "orden": 2,
+            "titulo": "Ejercicio · El círculo, paso a paso",
+            "url_recurso": "Marcá con cuáles de estos pasos te identificás hoy —los tuyos, o los que ves en la persona que acompañás.\n\n- **Aparecen pensamientos negativos automáticos**, ante situaciones cotidianas, casi sin darte cuenta.\n- **El ánimo baja**, como respuesta directa a esos pensamientos.\n- **Bajan las ganas de hacer cosas**, la motivación para actuar disminuye.\n- **La actividad se reduce**, cada vez se hacen menos cosas.\n- **Se pierde contacto con lo que hace bien**, logros, placer, vínculos: todo eso se aleja.\n- **El ánimo empeora todavía más**, y el círculo vuelve a empezar.\n\n? ¿Con cuáles de estos pasos te identificás hoy —los tuyos, o los que ves en la persona que acompañás? Contá cuáles, y si querés, cómo se manifiestan en tu caso.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "447351ec-a959-42da-be4d-f17e1f19533b",
+              "pregunta": "Según la lección, ¿qué le pasa a la corteza prefrontal en la depresión?",
+              "opciones": [
+                "Se vuelve hiperactiva y toma el control total",
+                "Está menos activa, generando un pensamiento más rígido y pesimista",
+                "Aumenta su tamaño de forma permanente",
+                "No tiene ninguna relación con la depresión"
+              ],
+              "respuesta_correcta": "Está menos activa, generando un pensamiento más rígido y pesimista",
+              "orden": 0
+            },
+            {
+              "id": "1a446060-85c1-49e3-b3cf-97072d696fde",
+              "pregunta": "¿Qué estructura cerebral describe la lección como 'la alarma que solo detecta humo, nunca flores', por volverse hiperreactiva a lo negativo?",
+              "opciones": [
+                "La corteza prefrontal",
+                "La amígdala",
+                "El hipocampo",
+                "El estriado ventral"
+              ],
+              "respuesta_correcta": "La amígdala",
+              "orden": 1
+            },
+            {
+              "id": "598e31ed-2c57-4acf-879a-147c852a3ae5",
+              "pregunta": "¿Qué es la anhedonia, según lo que describe la lección sobre el estriado ventral hipoactivo?",
+              "opciones": [
+                "La incapacidad de anticipar o sentir placer",
+                "El exceso de energía y motivación",
+                "La pérdida total de la memoria",
+                "Un tipo de ansiedad social"
+              ],
+              "respuesta_correcta": "La incapacidad de anticipar o sentir placer",
+              "orden": 2
+            },
+            {
+              "id": "1568df4f-34c4-4916-a175-b06abb09be5a",
+              "pregunta": "Según la Tríada Cognitiva de Beck presentada en la lección, ¿cuáles son los tres vértices de pensamiento negativo que se retroalimentan en la depresión?",
+              "opciones": [
+                "Visión negativa de uno mismo, del mundo y del futuro",
+                "Visión negativa del pasado, el presente y el futuro",
+                "Miedo, tristeza y enojo",
+                "Ansiedad, culpa y vergüenza"
+              ],
+              "respuesta_correcta": "Visión negativa de uno mismo, del mundo y del futuro",
+              "orden": 3
+            },
+            {
+              "id": "c83cbc07-0273-4af1-8b63-d5b66833c82d",
+              "pregunta": "¿Qué neurotransmisor se asocia principalmente con la anhedonia y la falta de impulso, según la tabla de esta lección?",
+              "opciones": [
+                "Serotonina",
+                "Dopamina",
+                "Norepinefrina",
+                "GABA"
+              ],
+              "respuesta_correcta": "Dopamina",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "4b71555c-a7be-476b-bec2-ac7960454872",
+        "titulo": "Lección 2 · El mapa antes del camino",
+        "orden": 1,
+        "lecciones": [
+          {
+            "id": "5706e274-8c6c-48b8-af53-444d4faef545",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/La Depresión Mayor/leccion-2-el-mapa-antes-del-camino.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "ba6109c5-7258-4afa-8022-11efae835026",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "0246dea7-c8dc-4711-9239-e77d6e13b87b",
+            "orden": 2,
+            "titulo": "Ejercicio · Construí tu propio mapa",
+            "url_recurso": "Elegí una situación reciente que te generó mucho malestar —la tuya, o de la persona que acompañás, si ella quiere hacerlo con vos. No hay apuro: date el tiempo que necesites. Vas a ir armando tu mapa personal en 6 pasos.\n\n? Elegí la situación. Describila con tus propias palabras: ¿qué pasó, cuándo, con quién? ¿Por qué te importa entenderla ahora?\n? Armá una línea de tiempo. ¿Cuándo empezaste a sentirte así? ¿Hubo momentos parecidos antes? ¿Hay algún patrón, por ejemplo en ciertas épocas del año?\n? Anotá los pensamientos automáticos. Escribí al menos 5, con tus propias palabras, y calificá qué tan fuerte se siente cada uno (de 0 a 10).\n? Reconocé las distorsiones. Con la lista del capítulo 4, marcá cuáles de esos pensamientos encajan en algún patrón de distorsión.\n? Animate a ir más profundo. Con la técnica de \"la flecha descendente\" (capítulo 4), probá llegar a la creencia más de fondo detrás de esos pensamientos.\n? Dibujá tu mapa completo. Anotá los 5 niveles con tu información: va a ser una brújula útil para el resto del curso.\n\nSi te cuesta hacerlo solo/a, no hay ningún problema en pedir ayuda: compartirlo con un profesional, o incluso con alguien de mucha confianza, puede hacerlo más fácil.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "c762c425-4442-41cc-a72c-2b2ea8d461e8",
+              "pregunta": "¿Cuántas señales para reconocer una posible depresión mayor presenta la tabla principal de esta lección?",
+              "opciones": [
+                "5",
+                "7",
+                "9",
+                "12"
+              ],
+              "respuesta_correcta": "9",
+              "orden": 0
+            },
+            {
+              "id": "fe018b54-b7e9-469a-ad9d-c4999f949878",
+              "pregunta": "¿Cuál de estas NO aparece en la lección como una condición a diferenciar de la depresión mayor?",
+              "opciones": [
+                "Un duelo",
+                "Trastorno bipolar",
+                "Una causa médica de base",
+                "Un resfrío común"
+              ],
+              "respuesta_correcta": "Un resfrío común",
+              "orden": 1
+            },
+            {
+              "id": "58c86257-bb32-4e33-a7cf-d2a894fc5f8d",
+              "pregunta": "En el 'mapa propio' de la lección, que va de la situación a las creencias más profundas, ¿qué ocupa el nivel más profundo (nivel 5)?",
+              "opciones": [
+                "La situación que dispara el malestar",
+                "Los pensamientos automáticos",
+                "Las distorsiones cognitivas",
+                "Las creencias más profundas sobre uno mismo, el mundo y el futuro"
+              ],
+              "respuesta_correcta": "Las creencias más profundas sobre uno mismo, el mundo y el futuro",
+              "orden": 2
+            },
+            {
+              "id": "cad18b99-3acd-4093-af31-d383314fd89d",
+              "pregunta": "¿A quién se atribuye la frase sobre que la formulación clínica 'no es un ejercicio burocrático', citada en esta lección?",
+              "opciones": [
+                "Aaron T. Beck",
+                "Judith Beck",
+                "Martin Seligman",
+                "Zindel Segal"
+              ],
+              "respuesta_correcta": "Judith Beck",
+              "orden": 3
+            },
+            {
+              "id": "74aac672-44db-4fc0-9aab-5ff2184d69e7",
+              "pregunta": "Según la lección, ¿qué son las 'creencias intermedias' dentro del mapa de 5 niveles?",
+              "opciones": [
+                "Las reglas no escritas que guían la vida, como 'si no soy perfecto/a, soy un fracaso'",
+                "El evento concreto que activa el malestar",
+                "Los patrones de pensamiento distorsionado",
+                "Los pensamientos automáticos inmediatos"
+              ],
+              "respuesta_correcta": "Las reglas no escritas que guían la vida, como 'si no soy perfecto/a, soy un fracaso'",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "b581212b-d895-42e0-b33c-10f994357c6a",
+        "titulo": "Lección 3 · El primer paso que lo cambia todo",
+        "orden": 2,
+        "lecciones": [
+          {
+            "id": "6951d501-6d64-409f-9446-0afc15afbaa1",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/La Depresión Mayor/leccion-3-el-primer-paso-que-lo-cambia-todo.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "67c12401-5d7e-4cea-920b-9634a30cdb79",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "d5aa219e-59c9-4111-83f3-94400b28499e",
+            "orden": 2,
+            "titulo": "Ejercicio · Escalera y plan de activación",
+            "url_recurso": "## Los 4 pasos de la escalera\n\nPodés hacerlo pensando en vos mismo/a, o proponérselo, con cariño, a la persona que acompañás —nunca armarlo por ella sin que participe.\n\n? Inventario de lo que hacías antes: antes de sentirte así, ¿qué hacías en un día normal? Anotá todo lo que se te ocurra —trabajo o estudio, hobbies, ejercicio, encuentros con otros, cuidado personal, tareas de la casa.\n? Clasificá por dificultad: de esa lista, para cada actividad, ¿qué tan difícil sería hacerla hoy? Calificá cada una de 0 a 10.\n? Clasificá por lo que te devuelve: para cada actividad, ¿cuánto logro sentirías si la hicieras? ¿Cuánto placer? Sumá los dos puntajes.\n? Armá la escalera: ordená tus actividades en 10 escalones de dificultad creciente. El primer escalón tiene que sentirse casi trivial (2-3 sobre 10). Escribí acá tu escalera completa.\n\n## Tu plan de activación de 3 semanas\n\nSi estás atravesando esto vos, armá el plan para tu propia vida. Si estás acompañando a alguien, proponé hacerlo junto a esa persona —nunca lo armes sin ella: la activación funciona porque se elige, no porque se impone.\n\n? Inventario de actividades: listá 20 actividades de antes, organizadas en 4 categorías —logro, placer, vínculos y cuidado personal.\n? Evaluación de hoy: para cada actividad de tu inventario, calificá de 0 a 10 qué tan difícil sería hoy, cuánto placer anticipás, y cuánto tiene que ver con lo que te importa (esto último es clave si el placer casi no aparece).\n? Armá tu escalera de 12 actividades: los primeros 3 escalones con dificultad menor a 4/10, mezclando logro y placer, con al menos 2 actividades que impliquen a otras personas.\n? Planificá la semana con horarios reales: nada de \"caminar\" en general —mejor \"caminar 15 minutos el martes a las 7 AM, antes de desayunar\". ¿Qué podría interponerse? ¿Cuál es tu plan B? Empezá con 3 o 4 actividades por semana, no más.\n? Registrá y revisá: día a día, anotá qué se cumplió y qué no, y por qué. ¿Mejoró el ánimo con alguna actividad en particular? Usá esta información para ajustar la semana siguiente.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "bae61bec-98bc-490d-82d8-b5dc5cab25bd",
+              "pregunta": "Según el principio central de esta lección, ¿qué relación hay entre la depresión y la inactividad?",
+              "opciones": [
+                "La depresión reduce la actividad, y la inactividad elimina las cosas buenas de la vida, alimentando la depresión",
+                "La inactividad no tiene ninguna relación con la depresión",
+                "Más actividad siempre empeora el ánimo en la depresión",
+                "La depresión aumenta la actividad de forma descontrolada"
+              ],
+              "respuesta_correcta": "La depresión reduce la actividad, y la inactividad elimina las cosas buenas de la vida, alimentando la depresión",
+              "orden": 0
+            },
+            {
+              "id": "5c4aae83-3645-4b5c-8b51-8449aa271064",
+              "pregunta": "¿Cuál de los tres principios de esta lección afirma que 'las ganas no aparecen antes de actuar en la depresión: aparecen después'?",
+              "opciones": [
+                "La acción va antes que las ganas",
+                "Logro y placer",
+                "Ir de a poco, sin apuro",
+                "Ninguno de los anteriores"
+              ],
+              "respuesta_correcta": "La acción va antes que las ganas",
+              "orden": 1
+            },
+            {
+              "id": "050bf937-02ad-46b1-8f11-81cec3ed2eb7",
+              "pregunta": "En el Registro de actividades y estado de ánimo (Herramienta 1), ¿qué dos aspectos se califican de cada actividad, además del ánimo?",
+              "opciones": [
+                "Logro y placer",
+                "Costo y beneficio",
+                "Duración e intensidad",
+                "Dificultad y urgencia"
+              ],
+              "respuesta_correcta": "Logro y placer",
+              "orden": 2
+            },
+            {
+              "id": "a3d585e5-e020-42c4-8040-7cec3d45a5f3",
+              "pregunta": "Según la 'regla de oro' de la escalera de activación de esta lección, ¿qué hay que hacer si una actividad genera una dificultad mayor a 7/10?",
+              "opciones": [
+                "Agregar un escalón intermedio antes de intentarla",
+                "Evitarla para siempre",
+                "Hacerla igual sin ningún ajuste",
+                "Duplicar la dificultad para acelerar el progreso"
+              ],
+              "respuesta_correcta": "Agregar un escalón intermedio antes de intentarla",
+              "orden": 3
+            },
+            {
+              "id": "862f3fd9-63eb-4a7f-ac32-d0b3d133cdec",
+              "pregunta": "¿Qué significa 'activarte desde tus valores', la Herramienta 3 de esta lección?",
+              "opciones": [
+                "Transformar la activación de una obligación en algo con sentido, conectado a lo que te importa",
+                "Hacer actividades solo cuando aparece el placer espontáneamente",
+                "Evitar cualquier actividad hasta sentir ganas genuinas",
+                "Reemplazar por completo el registro de actividades"
+              ],
+              "respuesta_correcta": "Transformar la activación de una obligación en algo con sentido, conectado a lo que te importa",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "606a986e-1c86-4313-8842-8a95c9be7ca0",
+        "titulo": "Lección 4 · Cambiando el diálogo interno",
+        "orden": 3,
+        "lecciones": [
+          {
+            "id": "dcc10968-9838-4369-8784-465df04b55c7",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/La Depresión Mayor/leccion-4-cambiando-el-dialogo-interno.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "31c3972c-6475-439d-a942-f0f9a05d3c5f",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "bdf5d6c0-4620-4f61-ad5a-65be579a7486",
+            "orden": 2,
+            "titulo": "Ejercicio · Pensamientos, esperanza y seguridad",
+            "url_recurso": "## Cinco formas de trabajar la desesperanza\n\nPodés usarlas para vos mismo/a, o para sostener a alguien que acompañás.\n\n? Validar sin reforzar: recordá que cuando la mente está deprimida, cuesta imaginar un futuro positivo —eso es un síntoma, no la realidad objetiva. ¿Podés reconocer ese síntoma actuando en vos ahora mismo? Escribilo con tus palabras.\n? Mirar hacia atrás: ¿hubo momentos en el pasado en que algo parecía imposible y después cambió? Usá tu propia historia como evidencia: contá cuáles.\n? Ponerle un número: del 0 al 100, ¿qué probabilidad le das a que algo mejore, aunque sea un poco, en los próximos 3 meses? Cualquier número mayor a 0 ya es una apertura.\n? Buscar evidencia acumulada: aunque la sensación diga que nada cambió, mirá hacia atrás. ¿Hay algo, por mínimo que sea, que hoy podés hacer que hace un mes no podías?\n? Pedir prestada la esperanza: muchísimas personas con una desesperanza tan profunda como la que sentís ahora se recuperaron por completo. No hace falta creerlo todavía. ¿Qué podés hacer hoy, aunque sea chico, mientras \"pedís prestada\" esa esperanza?\n\n## Tu primer registro de pensamientos completo\n\nNo hace falta entender el concepto a la perfección: hace falta practicarlo, aunque sea imperfecto la primera vez.\n\n? Elegí el pensamiento: el pensamiento automático que más se repite, o el que más te perturba —el tuyo, o el que más escuchás en la persona que acompañás. Tiene que ser algo específico, en primera persona, con su emoción asociada.\n? Analizá las distorsiones: de la lista de las 12 distorsiones más frecuentes, ¿cuáles sostienen ese pensamiento? Puede haber más de una.\n? Completá tu registro de 7 columnas para ese pensamiento: 1) situación —qué pasó, cuándo, dónde, con quién—, 2) emoción y su intensidad de 0 a 100%, 3) el pensamiento automático textual, entre comillas, 4) evidencia a favor, 5) evidencia en contra, 6) un pensamiento alternativo más equilibrado, y 7) el resultado —la emoción recalificada y qué harías distinto. Sé honesto/a y balanceado/a: no fuerces la evidencia, se nota y le resta credibilidad al ejercicio.\n? Armá el pensamiento alternativo: escribí 3 versiones distintas. Elegí la que te resulte más creíble —no necesariamente la más \"positiva\".\n\nSi te cuesta hacerlo solo/a, compartirlo con un profesional o con alguien de confianza puede ayudar mucho. No hay una única forma correcta de hacerlo: lo que importa es practicarlo seguido.\n\n## Tu plan de seguridad\n\nVale la pena tenerlo escrito —a mano o en el celular— antes de necesitarlo, no después.\n\n? Mis señales: ¿qué indica que estás entrando en una zona de riesgo? Anotalo con tus propias palabras.\n? Qué podés hacer vos: ¿qué cosas concretas te ayudan a distraerte o a calmarte, aunque sea un rato?\n? A quién podés llamar: anotá 2 o 3 personas de confianza, con sus números a mano.\n? Ayuda profesional: anotá un profesional de referencia, y al menos una línea de crisis (podés usar las líneas de ayuda que están en el material de esta lección).\n? Tu compromiso simple: completá la frase \"Si llego a este punto, antes de actuar, llamo a...\".\n\nEsto no es un tema menor, y estas líneas no reemplazan una evaluación profesional. Pero saber qué hacer, y tener los contactos a mano antes de necesitarlos, puede ser la diferencia más importante de todo este curso.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "2efcb5b2-364c-4431-8f13-ecd5f8d6cc14",
+              "pregunta": "¿Cuántas distorsiones cognitivas frecuentes en la depresión presenta esta lección?",
+              "opciones": [
+                "8",
+                "10",
+                "12",
+                "15"
+              ],
+              "respuesta_correcta": "12",
+              "orden": 0
+            },
+            {
+              "id": "7cd8e8ec-921e-4580-b736-2632a0ba9698",
+              "pregunta": "¿Cómo se llama la distorsión cognitiva en la que alguien recibe 9 comentarios positivos y solo puede pensar en el único negativo, según el ejemplo de la lección?",
+              "opciones": [
+                "Todo o nada",
+                "Catastrofizar",
+                "Filtro mental",
+                "Restarle valor a lo positivo"
+              ],
+              "respuesta_correcta": "Filtro mental",
+              "orden": 1
+            },
+            {
+              "id": "6b9ac5dc-b77b-4bb0-b049-00d5fafe5e8e",
+              "pregunta": "En el registro de 7 columnas presentado en esta lección, ¿qué se anota en la columna 5, 'Evidencia en contra'?",
+              "opciones": [
+                "Datos reales que contradicen o matizan el pensamiento automático — donde ocurre el cambio real",
+                "La intensidad de la emoción de 0 a 100%",
+                "El hecho concreto de forma objetiva",
+                "Una idea más realista que toma en cuenta toda la evidencia"
+              ],
+              "respuesta_correcta": "Datos reales que contradicen o matizan el pensamiento automático — donde ocurre el cambio real",
+              "orden": 2
+            },
+            {
+              "id": "93d75770-fa50-439b-802d-7b855718b841",
+              "pregunta": "Según la advertencia importante al inicio de la lección, ¿qué no conviene hacer antes de validar lo que se siente?",
+              "opciones": [
+                "Cuestionar un pensamiento",
+                "Registrar la situación",
+                "Identificar la emoción",
+                "Pedir ayuda"
+              ],
+              "respuesta_correcta": "Cuestionar un pensamiento",
+              "orden": 3
+            },
+            {
+              "id": "aea1d1d9-e7e5-470e-850c-e9b5a36f8e7c",
+              "pregunta": "¿Cuál es, según la lección, 'el síntoma más peligroso' dentro de la depresión?",
+              "opciones": [
+                "La desesperanza",
+                "El cansancio",
+                "La irritabilidad",
+                "El insomnio"
+              ],
+              "respuesta_correcta": "La desesperanza",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "b8accf20-3d24-4d4d-b7fb-d2bf9622ade7",
+        "titulo": "Lección 5 · Más allá de lo cognitivo",
+        "orden": 4,
+        "lecciones": [
+          {
+            "id": "53dbd09d-da9e-4d8d-bde9-33617ba321d6",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/La Depresión Mayor/leccion-5-mas-alla-de-lo-cognitivo.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "e1a52ca3-54a7-4516-a113-564fea01bf73",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "e05298f3-acce-4d68-8f5d-a96d70b448c7",
+            "orden": 2,
+            "titulo": "Ejercicio · Respiración, autocompasión y menú semanal",
+            "url_recurso": "## Espacio de respiración de 3 minutos\n\nUn ejercicio central, breve, para practicar hasta 3 veces al día.\n\n**Minuto 1 — Reconocer qué hay.** ¿Qué pensamientos, emociones y sensaciones notás ahora mismo? Sin cambiarlos, solo notarlos.\n\n**Minuto 2 — Anclarte en la respiración.** Llevá la atención a la respiración, como un punto fijo al que volver.\n\n**Minuto 3 — Expandir la conciencia.** Ampliá la atención al cuerpo entero, tal como está en este momento.\n\n? Después de hacer este ejercicio, ¿qué notaste? Podés anotar lo que pensaste, sentiste o percibiste en tu cuerpo durante los 3 minutos.\n\n## Cuatro pasos para trabajar la autocompasión\n\n? Notar la autocrítica: ¿le hablarías a tu mejor amigo/a de la forma en que te hablás a vos mismo/a? Notá esa voz autocrítica —suele venir de algún lado (a menudo, de la infancia)— y escribí qué te dice habitualmente.\n? El ejercicio del amigo/a compasivo/a: imaginá a alguien que te ofrece compasión incondicional. ¿Cómo te mira? ¿Qué te diría sobre lo que estás pasando? Escribí esas palabras.\n? Una carta de autocompasión: escribite una carta sobre lo que estás atravesando ahora, con la misma amabilidad que usarías con alguien querido —reconocimiento del sufrimiento, validación sin juicio, recordar que esto es parte de ser humano, y algunas palabras de aliento.\n? Una frase para el día a día: elegí una frase para repetirte ante la autocrítica (por ejemplo \"esto es un momento de sufrimiento\", \"el sufrimiento es parte de la experiencia humana\", \"que pueda ser amable conmigo en este momento\"), o escribí la tuya propia.\n\n## Armá tu propio menú semanal\n\nElegí, de este capítulo, lo que más resuene con tu situación.\n\n? Probá el espacio de respiración una vez al día durante una semana, en el mismo horario si podés. ¿Cómo te fue?\n? Durante 7 días, ante el pensamiento que más se repite, probá decir \"gracias, mente, por el pensamiento de que [pensamiento]\", y volvé la atención a lo que estabas haciendo. Contá cómo te fue.\n? Date entre 10 y 15 minutos para escribir (o retomar) tu carta de autocompasión. Si podés, leela en voz alta y notá qué emoción aparece.\n? Armá tu combinación semanal: una herramienta de las que ya viste (activación conductual o registro de pensamientos), una de este capítulo, y una actividad conectada con tus valores. Escribí cuál elegiste de cada categoría.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "b4b7b551-e1fe-4087-a41c-1646265c117d",
+              "pregunta": "Según la habilidad de mindfulness 'Observar con distancia' de esta lección, ¿cómo describe la relación entre vos y tus pensamientos?",
+              "opciones": [
+                "Los pensamientos son nubes que cruzan el cielo; vos sos el cielo, no la nube",
+                "Los pensamientos siempre son verdades objetivas sobre vos",
+                "No hay ninguna distancia posible entre vos y tus pensamientos",
+                "Los pensamientos deben eliminarse por completo"
+              ],
+              "respuesta_correcta": "Los pensamientos son nubes que cruzan el cielo; vos sos el cielo, no la nube",
+              "orden": 0
+            },
+            {
+              "id": "4154be3b-9078-4936-9a9e-715ee78a467f",
+              "pregunta": "¿Qué distingue la lección entre el 'modo hacer' y el 'modo ser'?",
+              "opciones": [
+                "Darle vueltas analizando por qué te sentís así, versus estar presente sin analizar",
+                "Trabajar versus descansar",
+                "Pensar versus no pensar en absoluto",
+                "Hacer ejercicio versus quedarse quieto"
+              ],
+              "respuesta_correcta": "Darle vueltas analizando por qué te sentís así, versus estar presente sin analizar",
+              "orden": 1
+            },
+            {
+              "id": "c2e60e53-32ef-48d1-af23-641f086159bc",
+              "pregunta": "¿Cuántos pasos propone la lección para 'vivir una vida con sentido, incluso en los días oscuros'?",
+              "opciones": [
+                "3",
+                "4",
+                "5",
+                "6"
+              ],
+              "respuesta_correcta": "5",
+              "orden": 2
+            },
+            {
+              "id": "3f1372fd-f806-4235-a617-4fb5b9528f78",
+              "pregunta": "Dentro de ese proceso de 5 pasos, ¿qué corresponde al paso 4?",
+              "opciones": [
+                "Reconocer lo que no funcionó",
+                "Tomar distancia del pensamiento",
+                "Identificar tus valores",
+                "Actuar según esos valores"
+              ],
+              "respuesta_correcta": "Identificar tus valores",
+              "orden": 3
+            },
+            {
+              "id": "e0672e35-63b7-46e5-8410-7b97fbca29e7",
+              "pregunta": "¿A qué se refiere la lección cuando presenta la autocompasión como 'el antídoto a la autocrítica'?",
+              "opciones": [
+                "A tratarte con la misma calidez con la que tratarías a alguien que querés, en vez de juzgarte con dureza",
+                "A ignorar por completo tus errores",
+                "A justificar cualquier comportamiento sin reflexión",
+                "A depender de la aprobación externa para sentirte bien"
+              ],
+              "respuesta_correcta": "A tratarte con la misma calidez con la que tratarías a alguien que querés, en vez de juzgarte con dureza",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "f65eeff2-9123-43d0-a7d5-e7b8fc5879f8",
+        "titulo": "Lección 6 · Sosteniendo lo logrado",
+        "orden": 5,
+        "lecciones": [
+          {
+            "id": "0438d5a0-3fd1-475e-b680-28f2d74869f8",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/La Depresión Mayor/leccion-6-sosteniendo-lo-logrado.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "404529e6-0e88-4b1d-9ced-204c587d6484",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "9072a7b1-20ee-4fef-a052-0b293b64578a",
+            "orden": 2,
+            "titulo": "Ejercicio · Cierre, plan de prevención y autoevaluación",
+            "url_recurso": "## Cinco momentos para tu propio cierre\n\nDale el tiempo que necesites a cada uno. No hace falta hacerlos todos el mismo día.\n\n? Revisá tus logros: comparé cómo estabas al empezar este curso con cómo estás ahora, con tus propias palabras (o con tus notas, si las fuiste llevando).\n? Hacé un mapa de las herramientas que ya tenés: activación conductual, registro de pensamientos, distorsiones, mindfulness, autocompasión. Marcá cuáles ya usaste, y cuáles querés seguir practicando.\n? Escribí una carta a tu yo futuro: pensá en un momento en el que ese yo futuro esté notando señales tempranas de una bajada. ¿Qué le dirías? ¿Qué le recordarías?\n? Armá tu plan de mantenimiento: una rutina realista —actividades preventivas semanales, un poco de mindfulness, revisar el semáforo una vez al mes, contactos de apoyo actualizados. Escribilo, no alcanza con pensarlo.\n? Reconocete el camino recorrido: lo que lograste no fue por una varita mágica, fue tu compromiso y tu valentía de mirar de frente pensamientos difíciles (y si acompañaste a alguien, también cuenta tu paciencia y presencia). Escribí, con tus palabras, qué es lo que más valorás de tu propio proceso.\n\nSeguimiento: marcate en el calendario revisar este plan al mes, a los 3 meses y a los 6 meses. Si notás una bajada parcial, volvé a las herramientas de los capítulos 3 y 4 con más frecuencia por un tiempo. Si la bajada es más fuerte y afecta tu día a día, no dudes en retomar el acompañamiento profesional: no es un retroceso, es cuidarte.\n\n## Tu plan de prevención de recaídas\n\nProbablemente el ejercicio más importante de todo el curso, porque protege directamente lo que ya lograste.\n\n? Historia de episodios: anotá los episodios de depresión que atravesaste (vos, o la persona que acompañás) —cuándo fueron, qué los disparó, cuáles fueron las primeras señales, qué ayudó a salir. Buscá patrones que se repitan.\n? Tu mapa personal de señales: armá tu semáforo con señales específicas, no genéricas (mal: \"me siento mal\"; bien: \"empiezo a despertarme a las 3 AM sin poder volver a dormir\"). Anotá al menos 3 señales por zona —verde, amarilla y roja.\n? Un plan de acción por zona: para cada zona, anotá acciones concretas, personas de contacto y recursos disponibles.\n? Tu red de apoyo: con nombres y números —2 personas de apoyo emocional, 1 profesional de referencia, 1 línea de crisis, y 1 persona \"de confianza\" para los momentos más difíciles.\n? Carta a tu yo futuro: escribile una carta con reconocimiento de las señales, recordatorio de lo que funcionó, validación de lo que costó, palabras de aliento, y el compromiso de pedir ayuda si hace falta.\n\nUn plan útil es un plan accesible: un plan de prevención guardado en un cajón no sirve de mucho. Ponelo en un formato a mano —foto en el celular, copia en la billetera, copia pegada en algún lugar de la casa. Revisalo cada 6 meses, aunque todo esté bien.\n\n## Para pensar\n\nSituaciones habituales que pueden aparecer en el camino. No hay una única respuesta correcta: son para pensarlas con calma, y quizás volver a ellas más de una vez.\n\n? \"Hice todo lo que dice este curso y sigo igual.\" Si en algún momento sentís esto, ¿qué le dirías a vos mismo/a? (Una pista: no es fracaso, es información. Puede que haga falta ajustar el ritmo, ir más despacio, o sumar acompañamiento profesional — no rendirte.)\n? Un familiar duda del proceso: si estás acompañando a alguien y otro familiar te cuestiona (\"yo creo que está peor, no mejor\"), ¿cómo podés sostener tu rol sin generar más conflicto ni romper la confianza de la persona que acompañás?\n? \"Ya me siento mejor, no necesito seguir.\" Si la persona que acompañás —o vos mismo/a— siente esto muy pronto, ¿cómo distinguís entre una mejora real y las ganas de dejar de mirar hacia adentro justo cuando se pone difícil?\n? Aparece la idea de que \"no vale la pena seguir\": ¿tenés claro, ahora mismo, a quién llamarías? Si no, es un buen momento para repasar la sección de señales de riesgo y completar tu plan de seguridad.\n\n## Autoevaluación\n\nUn check-in con vos mismo/a, no un examen. Para cada área, calificate del 1 al 5: 1 = la conozco pero casi no la usé · 3 = la uso de vez en cuando · 5 = ya es parte de mi rutina.\n\n? Entender qué me pasa (o le pasa a quien acompaño): ¿comprendés la neurobiología en términos simples, y reconocés que esto no es \"flojera\" ni \"carácter\"? Tu nivel del 1 al 5, y por qué.\n? Reconocer señales: ¿podés notar tus propios patrones (o los de la persona que acompañás), y sabés cuándo hace falta ayuda profesional? Tu nivel del 1 al 5, y por qué.\n? Activarme: ¿podés usar la activación conductual incluso sin ganas? Tu nivel del 1 al 5, y por qué.\n? Pensar distinto: ¿identificás distorsiones y usás el registro de pensamientos con cierta soltura? Tu nivel del 1 al 5, y por qué.\n? Mindfulness y autocompasión: ¿incorporaste alguna herramienta del capítulo 5 a tu rutina? Tu nivel del 1 al 5, y por qué.\n? Señales de riesgo: ¿sabés qué hacer si aparecen pensamientos de hacerte daño, en vos o en alguien que acompañás? Tu nivel del 1 al 5, y por qué.\n? Sostener lo logrado: ¿tenés un plan de prevención de recaídas armado y accesible? Tu nivel del 1 al 5, y por qué.\n\nNo hay un puntaje que apruebe o desapruebe nada: esto es solo para que veas, con claridad, todo lo que ya tenés incorporado, y qué te gustaría seguir reforzando. Podés volver a hacer esta autoevaluación en unos meses y comparar.\n",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "d8bc8007-d8fb-44e1-af42-498aa05250e3",
+              "pregunta": "En el sistema de alerta temprana de semáforo presentado en la lección, ¿qué corresponde a la zona 'Amarillo · Alerta'?",
+              "opciones": [
+                "Actividades habituales, buen dormir, energía normal",
+                "Más autocrítica y pesimismo, cancelar planes, cambios en el sueño o el apetito",
+                "Ánimo muy bajo y sostenido, pensamientos de hacerte daño",
+                "Ninguna señal en particular"
+              ],
+              "respuesta_correcta": "Más autocrítica y pesimismo, cancelar planes, cambios en el sueño o el apetito",
+              "orden": 0
+            },
+            {
+              "id": "7aca8dbd-6b49-4ffb-bea9-cfa8751ebab7",
+              "pregunta": "Según el plan de la zona 'Rojo · Crisis' de esta lección, ¿qué se recomienda hacer?",
+              "opciones": [
+                "Consulta profesional urgente y activar el plan de seguridad si hay riesgo",
+                "Esperar a que pase solo, sin avisar a nadie",
+                "Aumentar la actividad física de forma intensa",
+                "Retomar el registro de pensamientos únicamente"
+              ],
+              "respuesta_correcta": "Consulta profesional urgente y activar el plan de seguridad si hay riesgo",
+              "orden": 1
+            },
+            {
+              "id": "8be48aa2-9a88-4205-80eb-17c68fe7342b",
+              "pregunta": "Según la lección, ¿cada cuánto conviene revisar el plan de prevención de recaídas?",
+              "opciones": [
+                "Al mes, a los 3 meses y a los 6 meses",
+                "Una sola vez, al terminar el curso",
+                "Todos los días",
+                "Nunca hace falta revisarlo"
+              ],
+              "respuesta_correcta": "Al mes, a los 3 meses y a los 6 meses",
+              "orden": 2
+            },
+            {
+              "id": "0acc3379-bb2f-419b-9a6f-030586174fd7",
+              "pregunta": "¿Cuál de estos es un error frecuente que señala la lección en el cierre del curso?",
+              "opciones": [
+                "Querer cambiar un pensamiento antes de validar lo que se siente",
+                "Pedir ayuda profesional cuando hace falta",
+                "Registrar las actividades diarias",
+                "Practicar mindfulness con regularidad"
+              ],
+              "respuesta_correcta": "Querer cambiar un pensamiento antes de validar lo que se siente",
+              "orden": 3
+            },
+            {
+              "id": "dbced5b6-a522-4019-96cd-e453ecf46d2f",
+              "pregunta": "Según la lección, ¿qué línea de ayuda se menciona para Argentina en caso de necesitar apoyo inmediato?",
+              "opciones": [
+                "Línea 135",
+                "Línea 911",
+                "Línea 107",
+                "Línea 144"
+              ],
+              "respuesta_correcta": "Línea 135",
+              "orden": 4
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ce105f1e-570e-4261-a1bc-e6a3e83bb597",
+    "titulo": "Técnicas de Regulación Emocional",
+    "descripcion": "Herramientas prácticas y basadas en evidencia para comprender, tolerar y modular las emociones.",
+    "modulos": [
+      {
+        "id": "66f3da1a-8652-4265-8b0c-1ea9ff075c4d",
+        "titulo": "Resumen ejecutivo (presentación)",
+        "orden": -1,
+        "lecciones": [
+          {
+            "id": "d6df147d-6d6d-40d8-b14b-2a54e02272cc",
+            "orden": 0,
+            "titulo": "Presentación resumen del curso",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/presentacion-resumen-ejecutivo.pdf",
+            "tipo_contenido": "drive_pdf"
+          }
+        ],
+        "quiz": null
+      },
+      {
+        "id": "147e6adf-78cb-4a2a-8c3c-e8651730ea80",
+        "titulo": "Lección 1 · Las emociones: tu sistema de información más antiguo",
+        "orden": 0,
+        "lecciones": [
+          {
+            "id": "6cf15250-bc1a-4600-bc5a-daa31e285130",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/leccion-1-las-emociones-tu-sistema-de-informacion-mas-antiguo.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "7306214c-460e-47bc-ad0b-258c6c14e3ad",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "b47eccab-570b-4b93-93f7-a112793dd687",
+            "orden": 2,
+            "titulo": "Ejercicio · Diario de emociones básicas",
+            "url_recurso": "## Actividad · Diario de emociones básicas\n\nDurante 5 días, vas a convertirte en observador/a de tu propio mundo emocional. No esperes al final del día para registrar: la memoria emocional es poco confiable, así que anotá apenas puedas después de notar la emoción.\n\n**Monitoreo diario (5 días seguidos).**\n\n? Cada vez que notes una emoción con intensidad de 4/10 o mayor, detenete y registrala en el momento.\n\n**Registrá cada episodio completo.**\n\n? ¿Qué emoción básica es? ¿Qué intensidad tiene (0-10)? ¿Qué la disparó? ¿Dónde la sentís en el cuerpo? ¿Qué impulso te da? ¿Cuál es su mensaje?\n\n**Buscá patrones (día 6).**\n\n? Revisá tus registros: ¿qué emoción sentiste más seguido? ¿Cuál fue la más intensa en promedio? ¿Qué situaciones o personas la disparan más? ¿Hay emociones que casi no aparecen?\n\n**Reflexioná en profundidad.**\n\n? ¿Qué aprendiste sobre tu propio perfil emocional? ¿Qué te sorprendió? ¿Cambia algo tu relación con tus emociones al observarlas con esta atención?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "2ec6640e-2e5c-412d-951f-78d4a0738240",
+              "pregunta": "Según la lección, ¿cuánto dura típicamente una emoción, a diferencia de un sentimiento o un estado de ánimo?",
+              "opciones": [
+                "Segundos a minutos",
+                "Minutos a horas",
+                "Horas a días",
+                "Días a semanas"
+              ],
+              "respuesta_correcta": "Segundos a minutos",
+              "orden": 0
+            },
+            {
+              "id": "503de9da-a802-4a74-ad55-af6eabfde687",
+              "pregunta": "¿A qué neurocientífico se atribuye la frase 'No somos máquinas pensantes que sienten, somos máquinas que sienten y a veces piensan'?",
+              "opciones": [
+                "Antonio Damasio",
+                "Joseph LeDoux",
+                "Aaron Beck",
+                "Stephen Porges"
+              ],
+              "respuesta_correcta": "Antonio Damasio",
+              "orden": 1
+            },
+            {
+              "id": "c1e29f3b-3657-42c9-b4a3-e0cfb3fe20fc",
+              "pregunta": "Según el mapa corporal de las emociones de la lección, ¿qué señal corporal se asocia típicamente con el enojo?",
+              "opciones": [
+                "Pesadez y presión en la garganta",
+                "Calor facial y mandíbula tensa",
+                "Náusea y rechazo visceral",
+                "Pausa respiratoria y apertura"
+              ],
+              "respuesta_correcta": "Calor facial y mandíbula tensa",
+              "orden": 2
+            },
+            {
+              "id": "03f36091-e673-4bad-85ac-1dd8c2427ba3",
+              "pregunta": "¿Cuál es el mensaje que transmite el asco, según la tabla de las 6 emociones básicas de la lección?",
+              "opciones": [
+                "'Hay peligro, preparate'",
+                "'Mis límites fueron violados'",
+                "'Alejate de esto'",
+                "'Evaluá lo inesperado'"
+              ],
+              "respuesta_correcta": "'Alejate de esto'",
+              "orden": 3
+            },
+            {
+              "id": "6e62ab60-e9c3-46e4-9d56-ce9d6cc1fc49",
+              "pregunta": "Según la lección, ¿cuál de las siguientes NO es una de las señales que indican que una emoción se volvió un problema?",
+              "opciones": [
+                "Intensidad desproporcionada",
+                "Duración excesiva",
+                "Ser una emoción negativa como la tristeza o el miedo",
+                "Interferencia en la vida diaria"
+              ],
+              "respuesta_correcta": "Ser una emoción negativa como la tristeza o el miedo",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "4ae8e539-2196-4aad-ab66-8df2b640b6cd",
+        "titulo": "Lección 2 · La regulación emocional: ciencia de modular lo que sentís",
+        "orden": 1,
+        "lecciones": [
+          {
+            "id": "4b3b41ff-7eff-4eda-aa25-dc78a4ae2761",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/leccion-2-la-regulacion-emocional-ciencia-de-modular-lo-que-sentis.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "42a0edb5-6ea4-455a-9f33-383bfeba66ca",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "c72ab9ef-be04-4a83-945d-ec7ec9f09e88",
+            "orden": 2,
+            "titulo": "Ejercicio · Ventana de tolerancia e inventario de estrategias",
+            "url_recurso": "## Actividad · Tu ventana de tolerancia personal\n\nCada persona tiene una ventana única, formada por su temperamento, su historia y sus prácticas de regulación. Esta actividad te ayuda a mapear la tuya y a reconocer cuándo salís de ella.\n\n**Dibujá tu ventana.**\n\n? Un diagrama simple con tres zonas: hiperactivación (arriba), ventana óptima (centro), hipoactivación (abajo).\n\n**Mapeá tu zona de hiperactivación.**\n\n? Anotá 5 señales corporales, 3 pensamientos típicos, 2 comportamientos automáticos, y 1 situación que suele dispararla.\n\n**Mapeá tu zona de hipoactivación.**\n\n? Repetí el mismo mapeo: 5 señales corporales, 3 pensamientos típicos, 2 comportamientos automáticos, 1 situación disparadora.\n\n**Describí tu ventana de tolerancia.**\n\n? ¿Cómo sabés que estás en tu ventana? ¿Qué sentís en el cuerpo? ¿Qué pensamientos predominan? ¿Cómo te relacionás con otros en ese estado?\n\n**Estimá cuánto tiempo pasás en cada zona.**\n\n? Una estimación honesta de qué porcentaje de un día típico pasás en cada una de las tres zonas.\n\n**Anotá tus estrategias de retorno.**\n\n? Para cada zona, ¿qué necesitás específicamente para volver a tu ventana?\n\n## Actividad · Tu inventario de estrategias actuales\n\nAntes de aprender técnicas nuevas, vale la pena hacer un inventario honesto de lo que ya usás. Muchas personas usan estrategias que no ayudan sin darse cuenta, o tienen un repertorio muy limitado.\n\n**Hacé una lista completa y honesta.**\n\n? Todas las estrategias que usás hoy para lidiar con emociones intensas. Sin juzgarte, solo observando.\n\n**Clasificá cada una.**\n\n? ¿Es más \"desde la mente\" o \"desde el cuerpo\"? ¿Te ayuda, es neutral, o te complica más? Efectividad a corto y a largo plazo (1-10), y su costo (emocional, físico, social).\n\n**Notá cuáles usás más seguido.**\n\n? ¿Tus estrategias \"por defecto\" son las que más te ayudan, o las que menos?\n\n**Decidí: mantener, ajustar o reemplazar.**\n\n? Para cada estrategia, elegí conscientemente qué hacer con ella de acá en adelante.\n\n**Si hay estrategias que no ayudan, entendé su función.**\n\n? ¿Qué te da esa estrategia a corto plazo que la vuelve tan atractiva? Entender la función es el primer paso para reemplazarla.\n\n**Proponé alternativas más sanas.**\n\n? Para cada estrategia que no ayuda, pensá en una alternativa que cumpla la misma función, de una forma que te haga menos daño.\n\n**Elegí tus 3 primeras.**\n\n? ¿Cuáles 3 estrategias te comprometés a empezar a usar de forma más consistente?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "76950f04-eaee-4fb1-966c-e298811537b2",
+              "pregunta": "Según la lección, ¿cuál es la diferencia principal entre 'regular' y 'reprimir' una emoción?",
+              "opciones": [
+                "Son exactamente lo mismo, solo cambia el nombre",
+                "Regular reconoce y modula la emoción; reprimir la empuja hacia abajo sin procesarla",
+                "Reprimir es más saludable a largo plazo que regular",
+                "Regular solo aplica a emociones positivas"
+              ],
+              "respuesta_correcta": "Regular reconoce y modula la emoción; reprimir la empuja hacia abajo sin procesarla",
+              "orden": 0
+            },
+            {
+              "id": "ff0e21b9-3626-4d59-8a15-25ca05606c62",
+              "pregunta": "¿Cuál es la 'zona óptima' dentro del modelo de la ventana de tolerancia presentado en la lección?",
+              "opciones": [
+                "Hiperactivación",
+                "Hipoactivación",
+                "La ventana de tolerancia misma: calma alerta y pensamiento flexible",
+                "El colapso"
+              ],
+              "respuesta_correcta": "La ventana de tolerancia misma: calma alerta y pensamiento flexible",
+              "orden": 1
+            },
+            {
+              "id": "bb31dcab-5f79-45e7-983d-d32c1153d0f8",
+              "pregunta": "En hiperactivación (por encima de la ventana de tolerancia), ¿qué necesitás según la lección?",
+              "opciones": [
+                "Estrategias corporales para bajar la activación antes de intentar pensar con claridad",
+                "Estrategias que suben la energía antes de procesar lo que sentís",
+                "Ignorar la sensación hasta que pase sola",
+                "Buscar más estímulos intensos"
+              ],
+              "respuesta_correcta": "Estrategias corporales para bajar la activación antes de intentar pensar con claridad",
+              "orden": 2
+            },
+            {
+              "id": "af711228-e5c1-4c64-8f9c-e687feee21a4",
+              "pregunta": "Según la lección, las estrategias 'desde la mente' (mente → cuerpo) funcionan mejor cuando...",
+              "opciones": [
+                "Estás dentro de tu ventana de tolerancia",
+                "Estás en pánico extremo",
+                "Estás en estado de colapso total",
+                "Siempre funcionan igual sin importar tu nivel de activación"
+              ],
+              "respuesta_correcta": "Estás dentro de tu ventana de tolerancia",
+              "orden": 3
+            },
+            {
+              "id": "7d403b97-54cb-4306-8000-fb377e16de92",
+              "pregunta": "¿Qué factor menciona la lección como algo que estrecha la ventana de tolerancia con el tiempo?",
+              "opciones": [
+                "El ejercicio físico regular",
+                "El estrés sostenido y las experiencias difíciles del pasado",
+                "Dormir bien",
+                "La meditación"
+              ],
+              "respuesta_correcta": "El estrés sostenido y las experiencias difíciles del pasado",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "1fb1e7af-5f82-416a-95ef-c7c385ca9561",
+        "titulo": "Lección 3 · Tu cuerpo es tu primer recurso de regulación",
+        "orden": 2,
+        "lecciones": [
+          {
+            "id": "b296620c-3ace-4716-ac56-9d9efad89ebe",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/leccion-3-tu-cuerpo-es-tu-primer-recurso-de-regulacion.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "05ae7424-8591-429b-bdd9-c2c542aba476",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "a936ae8f-40d7-4023-bef8-e35f513aa23a",
+            "orden": 2,
+            "titulo": "Ejercicio · Laboratorio somático y protocolo de rescate",
+            "url_recurso": "## Actividad · Tu laboratorio somático personal\n\nEsta actividad va a cambiar tu relación con estas técnicas: en vez de solo leer sobre ellas, las vas a experimentar durante 7 días, como quien investiga su propio sistema nervioso.\n\n**Día 1 — laboratorio de respiración.**\n\n? Probá las 5 técnicas de respiración. Para cada una: activación antes (0-10), 5 minutos de práctica, activación después (0-10), y qué tan fácil te resultó.\n\n**Día 2 — laboratorio de movimiento.**\n\n? Probá 3 técnicas de movimiento según tu nivel de energía. Registrá activación antes/después, tiempo dedicado y efectos.\n\n**Día 3 — laboratorio de temperatura.**\n\n? A la mañana, probá con frío; a la noche, con calor. Compará los efectos de cada uno.\n\n**Día 4 — exploración sensorial.**\n\n? Dedicale 5 minutos a cada uno de los 5 sentidos, con atención completa. Anotá cuál te resultó más accesible.\n\n**Día 5 — práctica de posturas.**\n\n? 2 minutos en cada una de las 4 posturas. Observá cómo cambia tu estado con cada una.\n\n**Día 6 — aplicación en una situación real.**\n\n? Elegí tu técnica favorita y usala ante una emoción real e intensa (4/10 o más). Registrá el proceso completo.\n\n**Día 7 — integración.**\n\n? Revisá los registros de la semana. Armá tu \"kit de emergencia somático\" con tus 3 técnicas más efectivas.\n\n## Actividad · Tu protocolo de rescate en 5 minutos\n\nNo siempre tenés 30 minutos para regular una emoción. A veces tenés 5, antes de una reunión importante o una conversación difícil. Diseñá acá tu secuencia personal de regulación exprés.\n\n**Minuto 1 — respiración.**\n\n? Elegí tu técnica de respiración de rescate y anotá los pasos exactos que vas a seguir.\n\n**Minuto 2 — movimiento.**\n\n? Elegí entre tapping bilateral, caminar rápido con atención en los pasos, o sacudir suavemente el cuerpo.\n\n**Minuto 3 — sensorial.**\n\n? Elegí una técnica portátil: agua fría, un aroma, un auto-abrazo con presión.\n\n**Minuto 4 — postura.**\n\n? Elegí la postura más apropiada para tu patrón más frecuente: mucha activación, poca activación, o disociación.\n\n**Minuto 5 — check-in.**\n\n? Un escaneo corporal rápido: notá qué cambió, calificá tu activación, y decidí si necesitás más tiempo.\n\n**Un compromiso simple.** Me comprometo a usar este protocolo la próxima vez que sienta una desregulación de 6/10 o mayor, antes de actuar por impulso o de evitar la situación. Guardalo donde lo puedas encontrar rápido — en el celular, en tu billetera, o donde te resulte más accesible.",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "0991f889-7cd8-418e-894b-73999c642e6a",
+              "pregunta": "Según la lección, ¿por qué las técnicas corporales pueden regular una emoción sin necesidad de pensar en ella?",
+              "opciones": [
+                "Porque el cuerpo habla directamente al cerebro, sin necesidad de pasar por el pensamiento consciente",
+                "Porque el pensamiento siempre es más lento que cualquier técnica corporal",
+                "Porque las emociones no tienen ningún componente físico",
+                "Porque el cerebro ignora las señales del cuerpo"
+              ],
+              "respuesta_correcta": "Porque el cuerpo habla directamente al cerebro, sin necesidad de pasar por el pensamiento consciente",
+              "orden": 0
+            },
+            {
+              "id": "8cffe011-8c7d-4e82-92eb-9caec63e09e7",
+              "pregunta": "¿Cuál de estas es una de las técnicas de respiración presentadas en la lección?",
+              "opciones": [
+                "Respiración 4-7-8",
+                "Respiración de 10 segundos",
+                "Hiperventilación controlada",
+                "Respiración invertida"
+              ],
+              "respuesta_correcta": "Respiración 4-7-8",
+              "orden": 1
+            },
+            {
+              "id": "e08c487d-660f-4c5f-bd67-416d0c44242a",
+              "pregunta": "¿Cuáles son los 5 sentidos que la lección propone usar como recurso de regulación corporal?",
+              "opciones": [
+                "Tacto, olfato, gusto, oído y vista",
+                "Solo el tacto y la vista",
+                "Intuición, equilibrio, propiocepción, tacto y gusto",
+                "Vista, oído y tacto únicamente"
+              ],
+              "respuesta_correcta": "Tacto, olfato, gusto, oído y vista",
+              "orden": 2
+            },
+            {
+              "id": "dead9d8c-53f5-45a7-8f8a-324bdf51cfe1",
+              "pregunta": "Según la lección, ¿qué tipo de postura corporal conviene adoptar para sostener un estado de calma y seguridad?",
+              "opciones": [
+                "Encogida y contenida",
+                "Expansiva y erguida",
+                "Cualquier postura da igual",
+                "Siempre acostado/a"
+              ],
+              "respuesta_correcta": "Expansiva y erguida",
+              "orden": 3
+            },
+            {
+              "id": "968731d7-dfeb-4859-811c-5bf35005a1d5",
+              "pregunta": "¿Cómo describe la lección a las técnicas corporales, en su recordatorio final?",
+              "opciones": [
+                "Como herramientas, no curas mágicas, que requieren práctica regular",
+                "Como una cura definitiva para cualquier problema emocional",
+                "Como algo que reemplaza el acompañamiento profesional en todos los casos",
+                "Como técnicas que solo sirven una vez"
+              ],
+              "respuesta_correcta": "Como herramientas, no curas mágicas, que requieren práctica regular",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "d24a858b-8f6a-4f2e-a33a-820010fa3a20",
+        "titulo": "Lección 4 · La mente como moduladora de las emociones",
+        "orden": 3,
+        "lecciones": [
+          {
+            "id": "29016796-71a9-4dcd-97ef-4a8d1c256ab6",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/leccion-4-la-mente-como-moduladora-de-las-emociones.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "f69b0a8c-61cc-4e7e-9172-5aab8a4f2109",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "8a7904f8-991d-4d18-946f-a255f51de083",
+            "orden": 2,
+            "titulo": "Ejercicio · Tu protocolo cognitivo de regulación",
+            "url_recurso": "## Actividad · Tu protocolo cognitivo de regulación\n\nYa conocés las 5 técnicas principales de este capítulo. Ahora es momento de probarlas en tu vida real, para descubrir cuáles resuenan más con vos y en qué contextos funcionan mejor.\n\n**Practicá durante 5 días.**\n\n? Cuando sientas una emoción intensa (6/10 o más), elegí conscientemente una técnica: reevaluar, tomar distancia, RAIN, autocompasión o aceptación radical.\n\n**Aplicala siguiendo el protocolo completo.**\n\n? No improvises: usá los pasos específicos de cada técnica.\n\n**Registrá la experiencia completa.**\n\n? Emoción e intensidad inicial, técnica elegida, pasos seguidos, intensidad final, tiempo que te tomó, qué funcionó y qué te costó más.\n\n**Compará al final (día 6).**\n\n? ¿Qué técnica te resultó más efectiva en promedio? ¿Para qué tipo de emociones funciona mejor cada una?\n\n**Diseñá tu protocolo personal.**\n\n? Para ansiedad, tristeza, enojo y vergüenza: ¿qué técnica vas a usar para cada una? ¿Cuál es tu técnica \"ancla\"?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "8afc7e2c-0e0f-4ac7-9707-68ae2e6f5609",
+              "pregunta": "Según la lección, ¿en qué orden conviene usar las técnicas mentales respecto de las corporales?",
+              "opciones": [
+                "Las técnicas mentales funcionan mejor DESPUÉS de haber usado alguna técnica corporal",
+                "Siempre hay que empezar por las técnicas mentales",
+                "El orden no importa en absoluto",
+                "Las técnicas corporales reemplazan por completo a las mentales"
+              ],
+              "respuesta_correcta": "Las técnicas mentales funcionan mejor DESPUÉS de haber usado alguna técnica corporal",
+              "orden": 0
+            },
+            {
+              "id": "cce72450-03a8-4177-91b4-9fd6d31a8e27",
+              "pregunta": "¿A quién se atribuye el protocolo RAIN presentado en esta lección?",
+              "opciones": [
+                "Tara Brach",
+                "Kristin Neff",
+                "Marsha Linehan",
+                "Jon Kabat-Zinn"
+              ],
+              "respuesta_correcta": "Tara Brach",
+              "orden": 1
+            },
+            {
+              "id": "19538134-ca2a-45ef-bbed-da15f8c4c875",
+              "pregunta": "Según la lección, ¿qué NO es la aceptación radical?",
+              "opciones": [
+                "Resignación pasiva ('no hay nada que hacer, me rindo')",
+                "Dejar de pelear contra realidades que no podés cambiar",
+                "Reconocer la realidad tal como es",
+                "Una habilidad que se puede practicar"
+              ],
+              "respuesta_correcta": "Resignación pasiva ('no hay nada que hacer, me rindo')",
+              "orden": 2
+            },
+            {
+              "id": "1fb25c20-d6c6-47a5-83ec-2b0a8a3927dc",
+              "pregunta": "¿Cuáles son los tres componentes de la autocompasión presentados en la Técnica 4 de esta lección?",
+              "opciones": [
+                "Reconocer sin exagerar ni minimizar, recordar que es parte de ser humano, y ser amable con vos mismo/a",
+                "Ignorar, minimizar y avanzar rápido",
+                "Analizar, criticar y corregir",
+                "Comparar, juzgar y aprender"
+              ],
+              "respuesta_correcta": "Reconocer sin exagerar ni minimizar, recordar que es parte de ser humano, y ser amable con vos mismo/a",
+              "orden": 3
+            },
+            {
+              "id": "51d3de9d-c796-4241-99da-ebd21b4d8756",
+              "pregunta": "¿Cuál de estos es un error común al intentar regularte, según la lección?",
+              "opciones": [
+                "Intentar reevaluar la situación en pleno pánico",
+                "Usar varias técnicas distintas según el contexto",
+                "Pedir ayuda cuando hace falta",
+                "Practicar las técnicas todos los días"
+              ],
+              "respuesta_correcta": "Intentar reevaluar la situación en pleno pánico",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "78392d88-9167-4f9b-ac1d-8a049355cdc3",
+        "titulo": "Lección 5 · Tolerancia al malestar: el músculo que nunca te enseñaron a ejercitar",
+        "orden": 4,
+        "lecciones": [
+          {
+            "id": "1286c907-a48f-46e9-be32-b7fe089afee9",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/leccion-5-tolerancia-al-malestar-el-musculo-que-nunca-te-ensenaron-a-ejercitar.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "66df57a3-b8ed-4d9b-a4a6-ea6105d2d823",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "84ed29ab-aa69-4091-bfa6-d19d14ff9531",
+            "orden": 2,
+            "titulo": "Ejercicio · Jerarquía de exposición y diario de olas",
+            "url_recurso": "## Actividad · Tu jerarquía de exposición emocional\n\nEsta actividad te guía en la construcción de tu jerarquía personal, y en tus primeros experimentos de exposición gradual.\n\n**Elegí tu emoción objetivo.**\n\n? ¿Cuál es la que más evitás, o la que más te desregula? Por ejemplo: tristeza, ansiedad social, vergüenza, enojo, vulnerabilidad.\n\n**Armá tu jerarquía de 10 situaciones.**\n\n? Listá 10 situaciones específicas que disparan esta emoción, ordenadas de menor a mayor malestar esperado (0-10).\n\n**Diseñá tus primeros 3 experimentos.**\n\n? Para los 3 ítems más leves: ¿cuándo te vas a exponer? ¿Cómo exactamente? ¿Qué técnicas de tolerancia vas a usar (sin escaparte)? ¿Cómo lo vas a celebrar después?\n\n**Hacé tu primera exposición.**\n\n? Empezá con el ítem más leve (3-4/10). Contá cómo te fue.\n\n**Registrá la experiencia completa.**\n\n? Nivel esperado y real, cómo cambió la intensidad cada 2 minutos, técnicas usadas, si tuviste impulso de escapar, y qué aprendiste.\n\n**Repetí hasta habituarte.**\n\n? Repetí el mismo ítem hasta que baje a 3/10 o menos (generalmente entre 3 y 5 veces). ¿Cuántas repeticiones te tomó?\n\n**Avanzá al siguiente.**\n\n? Una vez que te habituaste, ¿a qué siguiente ítem de la jerarquía vas a subir?\n\n## Actividad · Tu diario de olas (2 semanas)\n\nDurante las próximas 2 semanas, vas a practicar surfear impulsos intensos sin actuarlos. Cada día, identificá al menos un momento así: comer por emoción, revisar el celular de forma compulsiva, mandar un mensaje reactivo, evitar una tarea incómoda, o cualquier impulso que solés actuar en automático.\n\n**Nombrá el impulso y la emoción de fondo.**\n\n? \"Impulso de ___. Emoción debajo: ___ (intensidad 0-10)\".\n\n**Describí las sensaciones corporales.**\n\n? ¿Dónde lo sentís? ¿Cómo se manifiesta físicamente?\n\n**Decidí: ¿surfear la ola, o actuar el impulso?**\n\n? Sé honesto/a — a veces vas a actuar el impulso, y está bien registrarlo también. ¿Qué elegiste?\n\n**Si surfeás, registrá tu curva de intensidad.**\n\n? Cada minuto, durante 15 minutos, usando el protocolo de 5 pasos. Anotá cómo fue cambiando.\n\n**Anotá los tiempos.**\n\n? ¿En qué minuto llegó al pico? ¿En qué minuto empezó a bajar? ¿Pudiste tolerarlo?",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "302c2bdc-af09-469a-9d34-c03153290e7f",
+              "pregunta": "¿A qué corriente terapéutica pertenecen las 'habilidades de tolerancia al malestar' presentadas en esta lección?",
+              "opciones": [
+                "Terapia Dialéctico-Conductual (DBT)",
+                "Terapia de Esquemas",
+                "Psicoanálisis",
+                "Terapia Racional Emotivo-Conductual (TREC)"
+              ],
+              "respuesta_correcta": "Terapia Dialéctico-Conductual (DBT)",
+              "orden": 0
+            },
+            {
+              "id": "024bf7b7-e668-47fb-be06-69277bc6684c",
+              "pregunta": "Según los 4 pilares de la tolerancia al malestar, ¿qué implica 'Aceptar la realidad sin aprobarla'?",
+              "opciones": [
+                "Dejar de pelear contra realidades que no podés cambiar, liberando energía para lo que sí podés cambiar",
+                "Estar de acuerdo con todo lo que pasó",
+                "Fingir que el problema no existe",
+                "Resignarte por completo y dejar de actuar"
+              ],
+              "respuesta_correcta": "Dejar de pelear contra realidades que no podés cambiar, liberando energía para lo que sí podés cambiar",
+              "orden": 1
+            },
+            {
+              "id": "b9fe6514-61ac-4eb5-8519-14edafc53c29",
+              "pregunta": "¿Para qué están pensadas las técnicas de distracción estratégica en crisis, según la nota importante de la lección?",
+              "opciones": [
+                "Para usarlas todos los días como estrategia principal",
+                "Para crisis puntuales, no como estrategia diaria",
+                "Para reemplazar el procesamiento emocional por completo",
+                "Solo para emociones positivas"
+              ],
+              "respuesta_correcta": "Para crisis puntuales, no como estrategia diaria",
+              "orden": 2
+            },
+            {
+              "id": "1283a612-6aa8-4db1-b7ed-ed68281b5ded",
+              "pregunta": "¿Cuál es el propósito de 'armar tu jerarquía de exposición' en esta lección?",
+              "opciones": [
+                "Exponerte gradualmente a lo que venís evitando, para ampliar tu ventana de tolerancia",
+                "Evitar por completo situaciones difíciles",
+                "Medir tu nivel de ansiedad una sola vez",
+                "Reemplazar todas las demás técnicas de la lección"
+              ],
+              "respuesta_correcta": "Exponerte gradualmente a lo que venís evitando, para ampliar tu ventana de tolerancia",
+              "orden": 3
+            },
+            {
+              "id": "ab77cb47-4dd9-4c4f-ac9b-f56dfca98d15",
+              "pregunta": "¿Qué metáfora usa la lección para describir el protocolo de dejar pasar una emoción intensa sin escapar de ella?",
+              "opciones": [
+                "Surfear la ola emocional",
+                "Apagar el incendio",
+                "Cerrar la puerta",
+                "Congelar el momento"
+              ],
+              "respuesta_correcta": "Surfear la ola emocional",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "f75580ee-3ae5-4b21-a715-2be7767d6753",
+        "titulo": "Lección 6 · Tu sistema personal de navegación emocional",
+        "orden": 5,
+        "lecciones": [
+          {
+            "id": "9bec3258-22a9-43f7-9b04-40eb7af0be03",
+            "orden": 0,
+            "titulo": "Material de lectura (PDF)",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/leccion-6-tu-sistema-personal-de-navegacion-emocional.pdf",
+            "tipo_contenido": "drive_pdf"
+          },
+          {
+            "id": "b4398dff-aea7-48bb-bb5d-1bbc90ac9c52",
+            "orden": 1,
+            "titulo": "Quiz de comprensión",
+            "url_recurso": "",
+            "tipo_contenido": "quiz"
+          },
+          {
+            "id": "c324e70e-8d58-4de7-97a0-ac308be699a9",
+            "orden": 2,
+            "titulo": "Ejercicio · Tu sistema personal de regulación emocional",
+            "url_recurso": "## Actividad · Tu perfil de regulación emocional\n\nAntes de armar tu plan maestro, conviene conocer bien tu propio perfil emocional. Esta actividad junta lo que fuiste completando en las actividades anteriores.\n\n? Tus 3 emociones más frecuentes, con su intensidad promedio (0-10).\n? Tu ventana de tolerancia: su ancho aproximado, y el porcentaje del día que pasás en cada zona.\n? Tus 3 técnicas somáticas más efectivas, con su efectividad (0-10).\n? Tus 3 técnicas cognitivas más efectivas, con su efectividad (0-10).\n? Tus señales tempranas de desregulación: corporales, mentales y de comportamiento.\n? Tus disparadores más comunes: situaciones, personas, momentos del día.\n? Tus 3 mayores fortalezas en regulación emocional: lo que ya hacés bien, aunque no lo hayas notado hasta ahora.\n? Tus 3 áreas de crecimiento: lo que te gustaría seguir desarrollando.\n\n## Actividad · Mi rutina de prevención\n\nEl primer nivel de tu sistema es la prevención diaria: prácticas breves que mantienen tu sistema nervioso regulado y amplían tu ventana de tolerancia con el tiempo.\n\n**Rutina de la mañana (10 min).**\n\n? ¿Qué técnica vas a usar como parte de tu rutina matutina?\n\n**Check-in emocional.**\n\n? ¿Cada cuántas horas vas a hacer una pausa para notar cómo estás? ¿Con qué técnica de mantenimiento?\n\n**Rutina de la noche (10 min).**\n\n? ¿Qué técnica vas a usar antes de dormir?\n\n## Actividad · Mi protocolo de intervención\n\nPara desregulación leve o moderada (4-7/10), armá tu protocolo en 3 líneas de acción.\n\n**Primera línea — técnica somática (5 min).**\n\n? ¿Cuál vas a probar primero?\n\n**Segunda línea — técnica cognitiva (5 min).**\n\n? ¿Cuál sumás si la primera no alcanza?\n\n**Tercera línea — combinación (10 min).**\n\n? Si las anteriores no bastan, ¿qué combinación vas a usar?\n\n## Actividad · Mi protocolo de crisis\n\nPara momentos de desregulación severa (8-10/10), tu protocolo de crisis en 5 pasos.\n\n**Paso 1 — intervención rápida (5 min).**\n\n? ¿Qué técnica de la lección 5 vas a usar primero?\n\n**Paso 2 — técnica somática intensa (10 min).**\n\n? ¿Cuál, de la lección 3?\n\n**Paso 3 — surfear la ola si aplica.**\n\n? Si aparece un impulso destructivo, ¿cómo vas a surfear la ola sin actuarlo?\n\n**Paso 4 — persona de apoyo.**\n\n? ¿A quién vas a llamar?\n\n**Paso 5 — técnica de seguridad.**\n\n? ¿Qué vas a hacer para mantenerte a salvo mientras pasa el pico?\n\n## Actividad · Mis recursos de respaldo\n\n**5 personas a quienes podés llamar en una crisis.**\n\n? Nombre y teléfono de cada una.\n\n**5 lugares donde te sentís seguro/a.**\n\n? Espacios físicos a los que podés ir o imaginar.\n\n**Objetos de consuelo, y dónde encontrarlos.**\n\n? Anotá un objeto físico que te ayude a calmarte, y dónde vas a encontrarlo o guardarlo.\n\n**3 frases para recordarte en una crisis.**\n\n? Palabras que te ayuden a sostenerte en el momento más difícil.\n\n## Actividad · Para sostener la práctica\n\nEstas son las 4 claves para que tu sistema se sostenga en el tiempo. Para cada una, anotá cómo la vas a poner en práctica vos.\n\n**Tomate 48 horas para integrar.**\n\n? No corras al siguiente contenido: dale tiempo a tu sistema nervioso para asentar lo que acabás de aprender. ¿Qué vas a hacer estos dos días para dejar que esto se asiente?\n\n**Practicá tu sistema en la vida real.**\n\n? Usá tus protocolos en situaciones cotidianas. ¿En qué situación concreta de esta semana lo vas a probar?\n\n**Ajustalo cuando haga falta.**\n\n? Tu plan maestro no está grabado en piedra: es un documento vivo. ¿Cada cuánto te comprometés a revisarlo?\n\n**Mantené la práctica activa.**\n\n? Las habilidades que trabajaste en este curso valen la pena sostenerlas en el tiempo, no solo mientras dura la novedad. ¿Qué vas a hacer para que esto no quede en el olvido en unos meses?\n\n## Actividad · Autoevaluación\n\nNo es un examen ni una nota: es una forma de ver con claridad qué tanto incorporaste, y hacia dónde te gustaría seguir creciendo. Calificá cada dimensión del 0 al 10.\n\n? Reconocimiento emocional — ¿qué tan bien identificás lo que sentís, mientras lo sentís? (0-10)\n? Comprensión de su función — ¿qué tan bien entendés el mensaje detrás de tus emociones? (0-10)\n? Regulación corporal — ¿qué tan cómodo/a te sentís usando las técnicas del capítulo 3? (0-10)\n? Regulación cognitiva — ¿qué tan cómodo/a te sentís usando las técnicas del capítulo 4? (0-10)\n? Tolerancia al malestar — ¿qué tan bien podés sostener una emoción incómoda sin escapar de ella? (0-10)\n? Expresión asertiva — ¿qué tan bien podés comunicar lo que sentís, sin agredir ni reprimirte? (0-10)\n? Autocompasión emocional — ¿qué tan amable sos con vos mismo/a cuando algo te cuesta? (0-10)\n? Flexibilidad emocional — ¿qué tan bien elegís tu estrategia según el momento, en lugar de usar siempre la misma? (0-10)",
+            "tipo_contenido": "ejercicio"
+          }
+        ],
+        "quiz": {
+          "titulo": "Quiz de comprensión",
+          "preguntas": [
+            {
+              "id": "c41ebbbf-b728-4c9f-88e1-768e96085a66",
+              "pregunta": "En el ciclo completo de regulación consciente de 8 pasos, ¿cuál es el primer paso?",
+              "opciones": [
+                "Identificación",
+                "Detección temprana",
+                "Validación",
+                "Intervención"
+              ],
+              "respuesta_correcta": "Detección temprana",
+              "orden": 0
+            },
+            {
+              "id": "c85f15aa-0f4e-40c4-907e-e49b9b0d4c92",
+              "pregunta": "Según el ciclo de 8 pasos, ¿qué herramienta corresponde al paso 'Validación'?",
+              "opciones": [
+                "Recordar la función adaptativa de cada emoción",
+                "Calificar la intensidad antes y después con una escala de 0 a 10",
+                "Cambiar de estrategia si la primera no funcionó",
+                "Aprender algo para la próxima vez"
+              ],
+              "respuesta_correcta": "Recordar la función adaptativa de cada emoción",
+              "orden": 1
+            },
+            {
+              "id": "7e4f6e8a-b4a1-4652-900f-4835b2146877",
+              "pregunta": "¿A quién se atribuye la frase de cierre del curso: 'Entre estímulo y respuesta hay un espacio. En ese espacio está nuestro poder de elegir'?",
+              "opciones": [
+                "Viktor Frankl",
+                "Antonio Damasio",
+                "Tara Brach",
+                "Marsha Linehan"
+              ],
+              "respuesta_correcta": "Viktor Frankl",
+              "orden": 2
+            },
+            {
+              "id": "eda1b59e-9c03-4197-8460-602f70cfef48",
+              "pregunta": "Según la lección, ¿en qué situación conviene priorizar buscar ayuda profesional, además de usar las herramientas del curso?",
+              "opciones": [
+                "Cuando hay desregulación severa frecuente (8-10/10) varias veces por semana",
+                "Cuando sentís cualquier emoción, sin excepción",
+                "Nunca, estas herramientas siempre son suficientes",
+                "Solo si el problema dura menos de una semana"
+              ],
+              "respuesta_correcta": "Cuando hay desregulación severa frecuente (8-10/10) varias veces por semana",
+              "orden": 3
+            },
+            {
+              "id": "9bd5cf69-6109-4ab2-a148-c910e9d72c6b",
+              "pregunta": "Según el plan maestro de regulación emocional de la lección, el Nivel 3 corresponde a...",
+              "opciones": [
+                "Prevención diaria",
+                "Desregulación leve o moderada (4-7/10)",
+                "Protocolo de crisis (8-10/10)",
+                "Ninguno de los anteriores"
+              ],
+              "respuesta_correcta": "Protocolo de crisis (8-10/10)",
+              "orden": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": "40a62622-fafb-4096-8ef0-643eb9afe0ff",
+        "titulo": "Material expandido",
+        "orden": 6,
+        "lecciones": [
+          {
+            "id": "90537840-51fb-4973-b170-a3f008c80514",
+            "orden": 0,
+            "titulo": "Por qué sentimos antes de pensar",
+            "url_recurso": "r2key://Formaciones/Técnicas de Regulación Emocional/audio/por-que-sentimos-antes-de-pensar.m4a",
+            "tipo_contenido": "drive_audio"
+          }
+        ],
+        "quiz": null
+      }
+    ]
+  }
+]
