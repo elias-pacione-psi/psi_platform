@@ -831,6 +831,47 @@ async function notificarAccesosNuevos(
   if (resultado.errores.length > 0) console.error('[notificarAccesosNuevos] Errores:', resultado.errores)
 }
 
+// Libros y Documentos completos de la comisión (tabla puente cohortes_recursos →
+// biblioteca_recursos), espejo de guardarProgramasDeCohorte. A diferencia de los
+// programas, el acceso del inscripto NO se materializa en recursos_asignados: la policy
+// biblioteca_select lo deriva de la inscripción (ver el snippet 2026-09-02), así que dar
+// de baja a alguien lo revoca solo y "Gestionar accesos" de Biblioteca — que borra y
+// reinserta recursos_asignados — nunca pisa lo que sale por comisión.
+async function guardarRecursosDeCohorte(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  cohorteId: string,
+  recursoIds: string[],
+): Promise<{ error: string } | { ok: true }> {
+  // Mismo motivo que en guardarProgramasDeCohorte: los ids van interpolados crudos en el
+  // filtro `in` de PostgREST.
+  if (!recursoIds.every((id) => RE_UUID.test(id))) return { error: 'Recurso inválido' }
+
+  // Con la lista vacía no hay filtro `not in` posible: se borra todo lo de la comisión.
+  if (recursoIds.length === 0) {
+    const { error } = await supabaseAdmin.from('cohortes_recursos').delete().eq('cohorte_id', cohorteId)
+    if (error) return { error: error.message }
+    return { ok: true }
+  }
+
+  const { error: errorBorrado } = await supabaseAdmin
+    .from('cohortes_recursos')
+    .delete()
+    .eq('cohorte_id', cohorteId)
+    .not('recurso_id', 'in', `(${recursoIds.join(',')})`)
+  if (errorBorrado) return { error: errorBorrado.message }
+
+  const { error } = await supabaseAdmin
+    .from('cohortes_recursos')
+    .upsert(
+      recursoIds.map((recurso_id) => ({ cohorte_id: cohorteId, recurso_id })),
+      { onConflict: 'cohorte_id,recurso_id' },
+    )
+  if (error) return { error: error.message }
+
+  return { ok: true }
+}
+
 export async function guardarCohorte(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -839,6 +880,7 @@ export async function guardarCohorte(formData: FormData) {
   const id = formData.get('id') as string | null
   const nombre = (formData.get('nombre') as string)?.trim()
   const programaIds = (formData.getAll('programas') as string[]).filter(Boolean)
+  const recursoIds = (formData.getAll('recursos') as string[]).filter(Boolean)
   const fecha_inicio = (formData.get('fecha_inicio') as string) || null
   const fecha_fin = (formData.get('fecha_fin') as string) || null
 
@@ -850,7 +892,11 @@ export async function guardarCohorte(formData: FormData) {
   const dias_semana = dias.length > 0 ? [...new Set(dias)].sort() : null
 
   if (!nombre) return { error: 'El nombre es obligatorio' }
-  if (programaIds.length === 0) return { error: 'Elegí al menos un programa' }
+  // Una formación puede ser también solo libros/documentos (sin programas), pero tiene
+  // que tener algo que cursar.
+  if (programaIds.length === 0 && recursoIds.length === 0) {
+    return { error: 'Elegí al menos un programa, o un libro/documento' }
+  }
   if (fecha_inicio && fecha_fin && fecha_fin < fecha_inicio) {
     return { error: 'La fecha de fin no puede ser anterior a la de inicio' }
   }
@@ -876,10 +922,14 @@ export async function guardarCohorte(formData: FormData) {
   const guardados = await guardarProgramasDeCohorte(supabaseAdmin, cohorteId as string, programaIds)
   if ('error' in guardados) return { error: guardados.error }
 
+  const guardadosRecursos = await guardarRecursosDeCohorte(supabaseAdmin, cohorteId as string, recursoIds)
+  if ('error' in guardadosRecursos) return { error: guardadosRecursos.error }
+
   const nuevos = await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId as string)
 
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/alumno/programas')
+  revalidatePath('/alumno/materiales')
 
   if (nuevos.length > 0) {
     await notificarAccesosNuevos(nuevos, { nombreCohorte: nombre, fechaInicio: fecha_inicio, fechaFin: fecha_fin })
@@ -920,6 +970,7 @@ export async function inscribirAlumnosEnCohorte(cohorteId: string, alumnoIds: st
 
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/alumno/programas')
+  revalidatePath('/alumno/materiales')
 
   if (nuevos.length > 0) {
     const { data: cohorte } = await supabaseAdmin
@@ -968,8 +1019,11 @@ export async function quitarAlumnoDeCohorte(cohorteId: string, alumnoId: string)
     }
   }
 
+  // Los recursos adjuntos no se tocan acá: su acceso se deriva de la inscripción
+  // (biblioteca_select), así que borrar la fila de cohortes_alumnos alcanza.
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/alumno/programas')
+  revalidatePath('/alumno/materiales')
   return { success: true }
 }
 

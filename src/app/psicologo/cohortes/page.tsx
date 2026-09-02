@@ -14,7 +14,7 @@ export default async function CohortesPage() {
 
   const ahora = new Date().toISOString()
 
-  const [{ data: cohortes, error: errorCohortes }, { data: programas }, { data: alumnos }, { data: clases }] = await Promise.all([
+  const [{ data: cohortes, error: errorCohortes }, { data: programas }, { data: alumnos }, { data: clases }, { data: recursos }] = await Promise.all([
     // `programas` NO se embebe directo: desde que existe cohortes_programas hay dos
     // caminos entre cohortes y programas (el FK viejo cohortes.programa_id y la tabla
     // puente), y PostgREST rechaza el embed por ambiguo — "more than one relationship
@@ -24,6 +24,7 @@ export default async function CohortesPage() {
       .select(`
         id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, created_at,
         cohortes_programas(programa_id, programas(id, titulo)),
+        cohortes_recursos(recurso_id, biblioteca_recursos(id, titulo, tipo_medio, tipo_contenido)),
         cohortes_alumnos(alumno_id, alumnos(id, nombre, email))
       `)
       .order('created_at', { ascending: false }),
@@ -31,6 +32,10 @@ export default async function CohortesPage() {
     supabase.from('alumnos').select('id, nombre, email').eq('estado', 'activo').eq('rol', 'alumno').order('nombre', { ascending: true }),
     // Para saber si una formación ya tiene clases agendadas y cuántas quedan por delante.
     supabase.from('agenda_sesiones').select('cohorte_id, fecha_hora').not('cohorte_id', 'is', null),
+    // Para el selector de "Libros y Documentos" del formulario: todo lo que hay en la
+    // Biblioteca (el psicólogo ve todo por RLS). Lo adjunto a cada comisión viene por el
+    // embed de cohortes_recursos de arriba.
+    supabase.from('biblioteca_recursos').select('id, titulo, tipo_medio, tipo_contenido').order('titulo', { ascending: true }),
   ])
 
   // Sin esto el error se comía en silencio: `cohortes` venía null, la página mostraba
@@ -61,6 +66,10 @@ export default async function CohortesPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     programas: (c.cohortes_programas ?? []).map((cp: any) => cp.programas).filter(Boolean),
     programaIds: (c.cohortes_programas ?? []).map((cp: { programa_id: string }) => cp.programa_id),
+    // Libros y Documentos adjuntos a la formación (aparte de los programas).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recursos: (c.cohortes_recursos ?? []).map((cr: any) => cr.biblioteca_recursos).filter(Boolean),
+    recursoIds: (c.cohortes_recursos ?? []).map((cr: { recurso_id: string }) => cr.recurso_id),
     clases: clasesPorCohorte[c.id] ?? { total: 0, futuras: 0 },
   }))
 
@@ -73,7 +82,12 @@ export default async function CohortesPage() {
           con un horario cargado, además podés generarles las clases en la agenda.
         </p>
       </div>
-      <CohortesClient cohortes={cohortesConDatos} programas={programas || []} alumnos={alumnos || []} />
+      <CohortesClient
+        cohortes={cohortesConDatos}
+        programas={programas || []}
+        alumnos={alumnos || []}
+        recursos={recursos || []}
+      />
     </div>
   )
 }
