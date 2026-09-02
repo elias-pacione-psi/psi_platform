@@ -11,14 +11,26 @@ import {
   guardarCohorte, eliminarCohorte, inscribirAlumnosEnCohorte, quitarAlumnoDeCohorte,
   generarClasesDeCohorte, borrarClasesFuturasDeCohorte,
 } from '../actions'
-import { Loader2, Plus, Settings2, Trash2, GraduationCap, Users, UserMinus, CalendarClock, CalendarPlus, TriangleAlert } from 'lucide-react'
+import { Loader2, Plus, Settings2, Trash2, GraduationCap, Users, UserMinus, CalendarClock, CalendarPlus, TriangleAlert, BookOpen, FileText, FileAudio, FileVideo, FileImage } from 'lucide-react'
 import { toast } from 'sonner'
 import { DIAS_SEMANA, etiquetaHorario, fechasDeClases, horarioCompleto } from '@/utils/horario-cohorte'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Cohorte = any
 
-export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Cohorte[], programas: { id: string, titulo: string }[], alumnos: Cohorte[] }) {
+type RecursoBiblioteca = { id: string, titulo: string, tipo_medio: string | null, tipo_contenido: string }
+
+export function CohortesClient({
+  cohortes,
+  programas,
+  alumnos,
+  recursos,
+}: {
+  cohortes: Cohorte[],
+  programas: { id: string, titulo: string }[],
+  alumnos: Cohorte[],
+  recursos: RecursoBiblioteca[],
+}) {
   const [isPending, startTransition] = useTransition()
   const [openForm, setOpenForm] = useState(false)
   const [selected, setSelected] = useState<Cohorte>(null)
@@ -35,6 +47,9 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
   // Campos controlados del formulario: hacen falta para la vista previa de clases, que
   // tiene que recalcularse mientras se editan los días y las horas.
   const [programasElegidos, setProgramasElegidos] = useState<string[]>([])
+  // Libros y Documentos completos de la formación (aparte de los programas).
+  const [recursosElegidos, setRecursosElegidos] = useState<string[]>([])
+  const [busquedaRecursos, setBusquedaRecursos] = useState('')
   const [dias, setDias] = useState<number[]>([])
   const [fechaInicio, setFechaInicio] = useState('')
   const [fechaFin, setFechaFin] = useState('')
@@ -45,6 +60,8 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
     setSelected(c)
     setErrorMsg(null)
     setProgramasElegidos(c?.programaIds ?? [])
+    setRecursosElegidos(c?.recursoIds ?? [])
+    setBusquedaRecursos('')
     setDias(c?.dias_semana ?? [])
     setFechaInicio(c?.fecha_inicio ?? '')
     setFechaFin(c?.fecha_fin ?? '')
@@ -56,6 +73,7 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
   function handleSubmit(formData: FormData) {
     setErrorMsg(null)
     programasElegidos.forEach((p) => formData.append('programas', p))
+    recursosElegidos.forEach((r) => formData.append('recursos', r))
     dias.forEach((d) => formData.append('dias_semana', String(d)))
     startTransition(async () => {
       const result = await guardarCohorte(formData)
@@ -128,6 +146,20 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
   const togglePrograma = (id: string) =>
     setProgramasElegidos(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id])
 
+  const toggleRecurso = (id: string) =>
+    setRecursosElegidos(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id])
+
+  // Ícono chico por formato para la lista y los chips (reuso el mapeo mental de la
+  // Biblioteca: pdf → texto, audio, video, resto → imagen/enlace).
+  function iconoRecurso(tipoMedio: string | null, tipoContenido: string) {
+    const t = tipoMedio ?? tipoContenido
+    if (t.includes('video')) return <FileVideo className="w-3.5 h-3.5 text-marca shrink-0" />
+    if (t.includes('audio')) return <FileAudio className="w-3.5 h-3.5 text-marca shrink-0" />
+    if (t.includes('imagen')) return <FileImage className="w-3.5 h-3.5 text-marca shrink-0" />
+    if (t.includes('pdf')) return <FileText className="w-3.5 h-3.5 text-marca shrink-0" />
+    return <BookOpen className="w-3.5 h-3.5 text-marca shrink-0" />
+  }
+
   // Misma función que usa el servidor para generar: el número de la vista previa no puede
   // salir de otro cálculo, o diría una cosa y se agendaría otra.
   const horarioForm = {
@@ -138,6 +170,11 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
     hora_fin: horaFin || null,
   }
   const clasesPreview = horarioCompleto(horarioForm) ? fechasDeClases(horarioForm).length : 0
+
+  // Lista de "Libros y Documentos" del formulario, filtrada por la búsqueda.
+  const recursosFiltrados = recursos.filter((r) =>
+    r.titulo?.toLowerCase().includes(busquedaRecursos.toLowerCase())
+  )
 
   return (
     <div className="space-y-4">
@@ -175,6 +212,15 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
                           </span>
                         ))}
                     </div>
+                    {c.recursos?.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {c.recursos.map((r: { id: string, titulo: string }) => (
+                          <span key={r.id} className="text-xs bg-crema border border-tinta/10 text-tinta rounded-full px-2 py-0.5 inline-flex items-center gap-1">
+                            <BookOpen className="w-3 h-3 text-marca" /> {r.titulo}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     {(c.fecha_inicio || c.fecha_fin) && (
                       <p className="text-xs text-muted-foreground mt-2">
                         {c.fecha_inicio || '—'} → {c.fecha_fin || '—'}
@@ -295,6 +341,56 @@ export function CohortesClient({ cohortes, programas, alumnos }: { cohortes: Coh
                 ))}
                 {programas.length === 0 && <p className="text-sm text-center text-muted-foreground py-3">No hay programas creados todavía.</p>}
               </div>
+            </div>
+
+            {/* Libros y Documentos completos de la formación: material de Biblioteca
+                (libros, PDFs, audios...) que los inscriptos ven en su Biblioteca, aparte
+                de los programas. Va entre Programas y las fechas de la formación. */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <Label className="font-bold text-tinta">Libros y Documentos</Label>
+                {recursosElegidos.length > 0 && (
+                  <span className="text-xs text-muted-foreground font-sans">
+                    {recursosElegidos.length === 1 ? '1 elegido' : `${recursosElegidos.length} elegidos`}
+                  </span>
+                )}
+              </div>
+              <Input
+                placeholder="Buscar libro o documento..."
+                value={busquedaRecursos}
+                onChange={(e) => setBusquedaRecursos(e.target.value)}
+                className="bg-card border-border h-9"
+              />
+              <div className="space-y-2 border border-border bg-card rounded-lg p-2 max-h-[180px] overflow-y-auto">
+                {recursos.length === 0 ? (
+                  <p className="text-sm text-center text-muted-foreground py-3">
+                    Todavía no hay material en la Biblioteca. Subilo a la carpeta
+                    <span className="font-mono"> Biblioteca R2</span> desde Archivos o cargalo desde Biblioteca.
+                  </p>
+                ) : recursosFiltrados.length === 0 ? (
+                  <p className="text-sm text-center text-muted-foreground py-3">Ningún resultado para “{busquedaRecursos}”.</p>
+                ) : recursosFiltrados.map((r) => (
+                  <div key={r.id} className="flex items-center space-x-3 bg-muted p-2.5 rounded-lg border border-border">
+                    <Checkbox
+                      id={`recurso-${r.id}`}
+                      checked={recursosElegidos.includes(r.id)}
+                      onCheckedChange={() => toggleRecurso(r.id)}
+                      disabled={isPending}
+                    />
+                    <label
+                      className="text-sm font-medium text-tinta cursor-pointer flex-1 flex items-center gap-2 min-w-0"
+                      onClick={() => !isPending && toggleRecurso(r.id)}
+                    >
+                      {iconoRecurso(r.tipo_medio, r.tipo_contenido)}
+                      <span className="truncate">{r.titulo}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Material completo (libros, PDFs, audios…), aparte de los programas: los
+                inscriptos lo ven en su Biblioteca mientras dure la inscripción.
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

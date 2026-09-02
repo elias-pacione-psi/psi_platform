@@ -3,10 +3,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LayoutList, FolderHeart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { JoinMeetButton } from './JoinMeetButton'
+import { RecomendacionCursos } from '@/components/RecomendacionCursos'
 import { fechaLarga, hora } from '@/utils/fecha-ar'
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+// Contador de la tarjeta "Tu material": lo asignado a mano (recursos_asignados) más lo
+// que le llega por las comisiones en las que está (Libros y Documentos de la formación,
+// tabla puente cohortes_recursos), sin duplicar los que llegan por ambos caminos. Misma
+// lógica que la página de Biblioteca; acá solo hace falta el número.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function contarMaterialesDeAlumno(supabase: any, uid: string): Promise<number> {
+  const [{ data: directos }, { data: inscripciones }] = await Promise.all([
+    supabase.from('recursos_asignados').select('recurso_id').eq('alumno_id', uid),
+    supabase.from('cohortes_alumnos').select('cohorte_id').eq('alumno_id', uid),
+  ])
+
+  const ids = new Set<string>((directos ?? []).map((r: { recurso_id: string }) => r.recurso_id))
+
+  const idsCohortes = (inscripciones ?? []).map((i: { cohorte_id: string }) => i.cohorte_id)
+  if (idsCohortes.length > 0) {
+    // Si la tabla puente todavía no existe (migración sin correr), el contador queda con
+    // lo asignado a mano, como siempre.
+    const { data: puente, error } = await supabase
+      .from('cohortes_recursos')
+      .select('recurso_id')
+      .in('cohorte_id', idsCohortes)
+    if (!error) for (const p of puente ?? []) ids.add(p.recurso_id)
+  }
+
+  return ids.size
+}
 
 export default async function AlumnoHomePage() {
   const supabase = await createClient()
@@ -16,7 +44,7 @@ export default async function AlumnoHomePage() {
   const { data: perfil } = await supabase.from('alumnos').select('rol, nombre, link_videollamada').eq('id', user?.id).single()
   const esPsicologo = perfil?.rol === 'psicologo'
 
-  const [{ data: proximaSesion }, { count: countProg }, { count: countRec }] = await Promise.all([
+  const [{ data: proximaSesion }, { count: countProg }, countRec] = await Promise.all([
     supabase
       .from('agenda_sesiones')
       .select('fecha_hora, duracion_minutos, tipo, lugar, enlace, cohortes(nombre)')
@@ -28,8 +56,8 @@ export default async function AlumnoHomePage() {
       ? supabase.from('programas').select('*', { count: 'exact', head: true })
       : supabase.from('programas_asignados').select('*', { count: 'exact', head: true }).eq('alumno_id', user?.id),
     esPsicologo
-      ? supabase.from('biblioteca_recursos').select('*', { count: 'exact', head: true })
-      : supabase.from('recursos_asignados').select('*', { count: 'exact', head: true }).eq('alumno_id', user?.id),
+      ? supabase.from('biblioteca_recursos').select('*', { count: 'exact', head: true }).then((r: { count: number | null }) => r.count ?? 0)
+      : contarMaterialesDeAlumno(supabase, user?.id ?? ''),
   ])
 
   const alumno = perfil
@@ -105,6 +133,19 @@ export default async function AlumnoHomePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Cuenta recién creada desde la compra de un ebook: no tiene ningún programa
+          asignado todavía, así que las dos tarjetas de arriba son dos ceros y la pantalla
+          es un callejón sin salida. Ahí es donde la recomendación de cursos tiene sentido
+          — con material asignado, en cambio, lo que corresponde es que siga con lo suyo,
+          no que le ofrezcan otra cosa. */}
+      {!esPsicologo && cantidadProgramas === 0 && (
+        <Card className="border-none shadow-md">
+          <CardContent className="pt-6">
+            <RecomendacionCursos />
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

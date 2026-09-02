@@ -3,7 +3,12 @@ import type { NextConfig } from "next";
 // Cabeceras de seguridad. La CSP es la segunda línea de defensa detrás de la validación
 // de dominios en las server actions: aunque se cuele una URL hostil en un material,
 // el navegador no la deja embeber ni deja que la página mande datos a otro host.
-// 'unsafe-inline'/'unsafe-eval' en script-src siguen siendo necesarios para el runtime de Next.
+// 'unsafe-eval' sólo en dev: React lo usa ahí para reconstruir stack traces del servidor
+// en el navegador, pero ni React ni Next lo necesitan en producción (doc oficial, ver
+// node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md). 'unsafe-inline'
+// sigue en los dos ambientes: sacarlo pide nonce-CSP, y en este Next eso obliga a
+// renderizado dinámico en toda la app (se pierde SSG/ISR/cache de CDN en la landing y
+// las páginas de servicios) — migración aparte, no un toggle de una línea.
 const esDev = process.env.NODE_ENV === 'development'
 const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 
@@ -16,7 +21,7 @@ const r2Host = r2AccountId ? `https://${r2AccountId}.r2.cloudflarestorage.com` :
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  `script-src 'self' 'unsafe-inline'${esDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",

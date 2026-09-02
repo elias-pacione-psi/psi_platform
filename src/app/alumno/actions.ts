@@ -159,11 +159,6 @@ export async function marcarLeccionCompletada(leccionId: string, programaId: str
   return { success: true }
 }
 
-// Sin un tope, el propio feedback era el exploit: el primer envío (con cualquier cosa)
-// devolvía `solucion` con la respuesta correcta de cada pregunta, y alcanzaba con reenviar
-// con ésas para aprobar. El umbral del 70% sólo significa algo si los intentos son finitos.
-const MAXIMO_INTENTOS_QUIZ = 3
-
 export async function responderQuiz(leccionId: string, programaId: string, respuestas: Record<string, string>) {
   const auth = await requireUser()
   if ('error' in auth) return { error: auth.error }
@@ -186,31 +181,22 @@ export async function responderQuiz(leccionId: string, programaId: string, respu
   if (!resultado) return { error: 'No se pudieron cargar las preguntas' }
 
   // Contar y registrar van juntos, en una sola transacción serializada por (alumno,
-  // lección). Antes eran dos queries —count, chequeo, insert— y eso es una race:
-  // disparando envíos en paralelo con 2 intentos usados, los dos leían "2", los dos
-  // pasaban el tope y quedaban 4+. Como cada respuesta trae qué preguntas se acertaron,
-  // más intentos de los permitidos es directamente más información para adivinar.
+  // lección): sin eso, dos envíos en paralelo podían leer el mismo "todavía no aprobó" y
+  // los dos insertar. Intentos libres — no hay tope que hacer valer acá.
   //
   // Con service-role: quiz_intentos no tiene policy de insert (ver schema.sql), así que
   // un resultado sólo puede entrar por acá, ya corregido en el servidor — nunca con un
   // puntaje/aprobado que el alumno mande directo a la API. La función además está
   // revocada para authenticated, así que tampoco se la puede llamar por /rest/v1/rpc.
   const supabaseAdmin = createAdminClient()
-  const { data: registro, error: errIntento } = await supabaseAdmin.rpc('registrar_intento_quiz', {
+  const { error: errIntento } = await supabaseAdmin.rpc('registrar_intento_quiz', {
     p_alumno_id: user.id,
     p_leccion_id: leccionId,
     p_puntaje: resultado.puntaje,
     p_total: resultado.total,
     p_aprobado: resultado.aprobado,
-    p_maximo: MAXIMO_INTENTOS_QUIZ,
   })
   if (errIntento) return { error: errIntento.message }
-
-  if (registro?.error === 'sin_intentos') {
-    return { error: `Ya usaste tus ${MAXIMO_INTENTOS_QUIZ} intentos. Escribile a tu instructor.` }
-  }
-
-  const yaUsados = Math.max(0, (registro?.usados ?? 1) - 1)
 
   // Si aprobó, marca la lección como completada
   if (resultado.aprobado) {
@@ -222,19 +208,15 @@ export async function responderQuiz(leccionId: string, programaId: string, respu
   revalidatePath(`/alumno/programas/${programaId}`)
   revalidatePath(`/alumno/programas/${programaId}/leccion/${leccionId}`)
 
-  // La respuesta correcta se revela sólo cuando ya no sirve para reintentar: o aprobó, o
-  // se le acabaron los intentos. Mientras queden, el feedback dice qué estuvo mal pero no
-  // cuál era la buena — si no, el primer envío es la clave de respuestas del segundo.
-  const intentosRestantes = Math.max(0, MAXIMO_INTENTOS_QUIZ - (yaUsados + 1))
-  const revelarSolucion = resultado.aprobado || intentosRestantes === 0
-
+  // La respuesta correcta se revela sólo cuando aprobó. Con intentos libres nunca se
+  // "agotan", así que mientras no apruebe el feedback dice qué estuvo mal pero no cuál
+  // era la buena — si no, el primer envío es la clave de respuestas del segundo.
   return {
     success: true,
     puntaje: resultado.puntaje,
     total: resultado.total,
     aprobado: resultado.aprobado,
-    intentosRestantes,
-    solucion: revelarSolucion
+    solucion: resultado.aprobado
       ? resultado.solucion
       : Object.fromEntries(
           Object.entries(resultado.solucion).map(([id, s]) => [id, { acertada: s.acertada }]),

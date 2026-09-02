@@ -32,7 +32,7 @@ export default async function EbooksAdminPage({ searchParams }: Props) {
     supabase.from('ebooks').select('*').order('created_at', { ascending: false }),
     supabase
       .from('ordenes')
-      .select('id, email_comprador, precio_cobrado, moneda, estado, created_at, pagada_at, ebook_id, ebooks(titulo)')
+      .select('id, email_comprador, precio_cobrado, moneda, estado, created_at, pagada_at, ebook_id, proveedor, ebooks(titulo)')
       .order('created_at', { ascending: false }),
   ])
 
@@ -72,6 +72,7 @@ export default async function EbooksAdminPage({ searchParams }: Props) {
     precioCentavos: o.precio_cobrado,
     estado: o.estado as 'pendiente' | 'pagada' | 'fallida' | 'reembolsada',
     fecha: o.created_at,
+    proveedor: o.proveedor ?? 'mercadopago',
   }))
 
   const pagadas = filas.filter((f) => f.estado === 'pagada')

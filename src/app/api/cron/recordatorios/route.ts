@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { enviarMailBatch, type OpcionesEmail } from '@/utils/email/resend'
@@ -14,7 +15,17 @@ export const maxDuration = 60
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
-  if (!secret || authHeader !== `Bearer ${secret}`) {
+
+  // timingSafeEqual en vez de !==: mismo motivo que la firma del webhook de Mercado Pago
+  // (utils/mercadopago.ts) — con !== el tiempo de comparación varía con la posición del
+  // primer byte distinto, y eso es una fuga que en teoría permite reconstruir el secreto.
+  const esperado = Buffer.from(`Bearer ${secret ?? ''}`)
+  const recibido = Buffer.from(authHeader ?? '')
+  const autorizado = Boolean(secret)
+    && recibido.length === esperado.length
+    && crypto.timingSafeEqual(esperado, recibido)
+
+  if (!autorizado) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
@@ -137,7 +148,11 @@ export async function GET(req: NextRequest) {
       .in('alumno_id', [...alumnoIdsEnJuego])
 
     const yaNotificadosSet = new Set((yaNotificados ?? []).map((r: { alumno_id: string }) => r.alumno_id))
-    mailsAEnviar = mails.filter((m) => !yaNotificadosSet.has(m.alumnoId))
+    // alumnoId pasó a ser nullable (lo necesita 'ebook_entregado', que se manda a
+    // compradores sin cuenta). Acá siempre viene con valor —el recordatorio nace de un
+    // alumno de una cohorte— pero un mail sin alumno no se puede deduplicar por alumno,
+    // así que la guarda lo deja pasar en vez de descartarlo.
+    mailsAEnviar = mails.filter((m) => !m.alumnoId || !yaNotificadosSet.has(m.alumnoId))
   }
 
   const resultado = mailsAEnviar.length > 0
