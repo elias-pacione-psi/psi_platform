@@ -139,6 +139,22 @@ create table if not exists public.recursos_asignados (
   primary key (alumno_id, recurso_id)
 );
 
+-- Libros y Documentos completos adjuntos a una comisión (aparte de sus programas).
+-- Tabla puente, espejo de cohortes_programas: el recurso vive en biblioteca_recursos y
+-- el acceso del inscripto se DERIVA de la inscripción (policy biblioteca_select), no se
+-- materializa en recursos_asignados — así el "Gestionar accesos" de Biblioteca (que
+-- borra y reinserta esa tabla) nunca pisa lo que sale por comisión, y dar de baja a
+-- alguien revoca el acceso solo. Ver snippets/2026-09-02-cohortes-recursos-libros.sql.
+create table if not exists public.cohortes_recursos (
+  cohorte_id uuid not null references public.cohortes(id) on delete cascade,
+  recurso_id uuid not null references public.biblioteca_recursos(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (cohorte_id, recurso_id)
+);
+
+create index if not exists idx_cohortes_recursos_recurso
+  on public.cohortes_recursos (recurso_id);
+
 -- Progreso educativo: qué lecciones completó cada alumno (booleano, sin datos clínicos)
 create table if not exists public.progreso_lecciones (
   alumno_id uuid not null references public.alumnos(id) on delete cascade,
@@ -253,6 +269,25 @@ as $$
   select exists (
     select 1 from public.alumnos
     where id = auth.uid() and rol = 'psicologo'
+  );
+$$;
+
+-- cambiarEstadoAlumno() bloquea el acceso en requireUser() (todas las server actions) y
+-- con el ban de Auth (invalida el refresh token), pero NO el access token ya emitido: con
+-- jwt_expiry = 3600 quedaba hasta una hora de lectura directa contra la Data API/Storage
+-- para quien ya estuviera suspendido o eliminado, porque ninguna policy de acá abajo
+-- miraba `estado`. Se usa en la policy de storage de `entregas` (la más sensible: archivos
+-- de alumnos), no en las de tablas — ahí el guard de las actions ya alcanza hoy.
+create or replace function public.usuario_activo()
+returns boolean
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.alumnos
+    where id = auth.uid() and estado = 'activo'
   );
 $$;
 
@@ -399,6 +434,7 @@ alter table public.cohortes_programas enable row level security;
 alter table public.programas_asignados enable row level security;
 alter table public.biblioteca_recursos enable row level security;
 alter table public.recursos_asignados enable row level security;
+alter table public.cohortes_recursos enable row level security;
 alter table public.progreso_lecciones enable row level security;
 alter table public.quiz_preguntas enable row level security;
 alter table public.quiz_intentos enable row level security;
@@ -523,7 +559,29 @@ create policy "recursos_asignados_write" on public.recursos_asignados
   using (public.es_psicologo())
   with check (public.es_psicologo());
 
--- biblioteca: el alumno solo ve recursos que le fueron asignados
+-- Libros y Documentos por comisión: el inscripto ve qué tiene su formación (la vista de
+-- Biblioteca lo necesita para resolver el acceso); el psicólogo gestiona todo.
+drop policy if exists "cohortes_recursos_select" on public.cohortes_recursos;
+create policy "cohortes_recursos_select" on public.cohortes_recursos
+  for select to authenticated
+  using (
+    public.es_psicologo()
+    or exists (
+      select 1 from public.cohortes_alumnos ca
+      where ca.cohorte_id = cohortes_recursos.cohorte_id
+        and ca.alumno_id = auth.uid()
+    )
+  );
+
+drop policy if exists "cohortes_recursos_all_psicologo" on public.cohortes_recursos;
+create policy "cohortes_recursos_all_psicologo" on public.cohortes_recursos
+  for all to authenticated
+  using (public.es_psicologo())
+  with check (public.es_psicologo());
+
+-- biblioteca: el alumno ve los recursos que le fueron asignados a mano (recursos_asignados)
+-- y los adjuntos a las comisiones en las que está inscripto (cohortes_recursos): acceso
+-- derivado de la inscripción, no materializado.
 drop policy if exists "biblioteca_select" on public.biblioteca_recursos;
 create policy "biblioteca_select" on public.biblioteca_recursos
   for select to authenticated
@@ -532,6 +590,13 @@ create policy "biblioteca_select" on public.biblioteca_recursos
     or exists (
       select 1 from public.recursos_asignados ra
       where ra.recurso_id = biblioteca_recursos.id and ra.alumno_id = auth.uid()
+    )
+    or exists (
+      select 1
+      from public.cohortes_recursos cr
+      join public.cohortes_alumnos ca on ca.cohorte_id = cr.cohorte_id
+      where cr.recurso_id = biblioteca_recursos.id
+        and ca.alumno_id = auth.uid()
     )
   );
 
@@ -765,13 +830,16 @@ create policy "materiales_delete_psicologo" on storage.objects
   for delete to authenticated
   using (bucket_id = 'materiales' and public.es_psicologo());
 
--- entregas: el alumno solo su carpeta (primer segmento del path = su uid); psicólogo todo
+-- entregas: el alumno solo su carpeta (primer segmento del path = su uid) y sólo si sigue
+-- activo — ver el comentario de usuario_activo() más arriba; psicólogo todo, sin esa
+-- condición (lee entregas de cualquiera, incluido alguien que acaba de suspender).
 drop policy if exists "entregas_select" on storage.objects;
 create policy "entregas_select" on storage.objects
   for select to authenticated
   using (
     bucket_id = 'entregas'
-    and (public.es_psicologo() or (storage.foldername(name))[1] = auth.uid()::text)
+    and (public.es_psicologo()
+         or ((storage.foldername(name))[1] = auth.uid()::text and public.usuario_activo()))
   );
 
 drop policy if exists "entregas_insert_propio" on storage.objects;

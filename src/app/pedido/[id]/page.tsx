@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, CheckCircle2, Clock, CreditCard, TriangleAlert } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Clock, CreditCard, Lock, TriangleAlert } from 'lucide-react'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { createClient } from '@/utils/supabase/server'
 import { BrandMark } from '@/components/BrandMark'
 import { RecomendacionCursos } from '@/components/RecomendacionCursos'
 import { DescargarBoton } from './DescargarBoton'
@@ -37,6 +38,17 @@ export default async function PedidoPage({ params }: Props) {
     .maybeSingle()
 
   if (!orden) notFound()
+
+  // Hardening auditoría 2026-08-29 (A-01): esta compra ya tiene cuenta asociada, así
+  // que la descarga exige ser su dueño (la action re-valida igual — esto es sólo para
+  // no ofrecerle el botón a quien va a recibir un rechazo). Quien compró y no inició
+  // sesión entra por /login y vuelve a este link, o directamente desde Mis compras.
+  let esDueno = !orden.alumno_id
+  if (orden.alumno_id) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    esDueno = user?.id === orden.alumno_id
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ebook = orden.ebooks as any
@@ -81,7 +93,28 @@ export default async function PedidoPage({ params }: Props) {
               <CheckCircle2 className="w-12 h-12 text-marca mx-auto mb-4" />
               <h1 className="text-2xl font-heading font-semibold text-tinta mb-2">¡Listo, {ebook?.titulo}!</h1>
               <p className="text-muted-foreground mb-6">Tu pago se acreditó. Ya podés descargar tu ebook.</p>
-              <DescargarBoton ordenId={orden.id} />
+              {esDueno ? (
+                <DescargarBoton ordenId={orden.id} />
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-start gap-2 text-left bg-muted rounded-xl p-4 border border-border">
+                    <Lock className="w-4 h-4 mt-0.5 shrink-0 text-tinta/60" />
+                    <p className="text-sm text-muted-foreground">
+                      Esta compra está asociada a una cuenta: iniciá sesión con ella para descargarla.
+                    </p>
+                  </div>
+                  <Link
+                    href="/login"
+                    className="inline-block w-full bg-marca hover:bg-marca/90 text-crema font-bold px-8 py-3 rounded-xl transition-colors text-center"
+                  >
+                    Iniciar sesión
+                  </Link>
+                  <p className="text-xs text-muted-foreground">
+                    Después de entrar, volvé a este enlace o buscá el ebook en{' '}
+                    <Link href="/alumno/compras" className="text-marca underline underline-offset-2">Mis compras</Link>.
+                  </p>
+                </div>
+              )}
 
               {/* Orden de la pantalla, a propósito: primero la descarga (es lo que la
                   persona pagó), después la cuenta, y recién al final la recomendación de

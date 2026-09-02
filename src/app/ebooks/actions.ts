@@ -49,11 +49,34 @@ async function crearOrdenPendiente(
   return orden
 }
 
+const LIMITE_COMPRAS_PENDIENTES_POR_HORA = 3
+
+// Sin esto, cualquiera sin sesión puede llamar iniciarCompraEbook/Manual en loop: cada
+// vuelta inserta una orden 'pendiente' con service-role y, en el camino automático, gasta
+// cuota real de la API de Mercado Pago. Mismo criterio que el tope de crearSolicitud en
+// app/actions.ts, pero solo por email —un tope global acá penalizaría un pico real de
+// ventas, no abuso— y mirando 'pendiente': una vez pagada o fallida deja de contar.
+async function demasiadasComprasPendientes(email: string): Promise<boolean> {
+  const supabaseAdmin = createAdminClient()
+  const desde = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  const { count } = await supabaseAdmin
+    .from('ordenes')
+    .select('*', { count: 'exact', head: true })
+    .eq('email_comprador', email)
+    .eq('estado', 'pendiente')
+    .gte('created_at', desde)
+  return (count ?? 0) >= LIMITE_COMPRAS_PENDIENTES_POR_HORA
+}
+
 // Endpoint público (lo llama cualquiera desde /ebooks/[slug], sin sesión): valida y
 // acota todo, igual que crearSolicitud en app/actions.ts.
 export async function iniciarCompraEbook(ebookId: string, emailCrudo: string) {
   const email = normalizarEmail(emailCrudo)
   if (!email) return { error: 'Ingresá un email válido' }
+
+  if (await demasiadasComprasPendientes(email)) {
+    return { error: 'Ya tenés una compra en curso con ese email. Terminala o esperá un rato.' }
+  }
 
   if (!mercadoPagoConfigurado()) {
     return { error: 'Todavía no está disponible el pago online para este ebook.' }
@@ -109,6 +132,10 @@ export async function iniciarCompraEbookManual(ebookId: string, emailCrudo: stri
   const email = normalizarEmail(emailCrudo)
   if (!email) return { error: 'Ingresá un email válido' }
 
+  if (await demasiadasComprasPendientes(email)) {
+    return { error: 'Ya tenés una compra en curso con ese email. Terminala o esperá un rato.' }
+  }
+
   const supabase = await createClient()
   const { data: ebook } = await supabase
     .from('ebooks')
@@ -148,12 +175,25 @@ export async function descargarEbookDeOrden(ordenId: string) {
   const supabaseAdmin = createAdminClient()
   const { data: orden } = await supabaseAdmin
     .from('ordenes')
-    .select('estado, ebooks(titulo, archivo_key)')
+    .select('estado, alumno_id, ebooks(titulo, archivo_key)')
     .eq('id', ordenId)
     .maybeSingle()
 
   if (!orden) return { error: 'No se encontró esa orden.' }
   if (orden.estado !== 'pagada') return { error: 'Esta orden todavía no tiene un pago confirmado.' }
+
+  // Mientras nadie se la vincula, el ordenId ES el único acceso que existe (recién
+  // salido del checkout, sin cuenta todavía) y tiene que seguir bastando. Pero apenas
+  // hay alumno_id (fase 5: se creó una cuenta), dejarlo bastar solo a él convertiría la
+  // compra en una capability URL que nunca vence ni se puede revocar — tiene que ser esa
+  // persona la que pida la descarga.
+  if (orden.alumno_id) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user || user.id !== orden.alumno_id) {
+      return { error: 'Esta compra está asociada a una cuenta. Iniciá sesión para descargarla.' }
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ebook = orden.ebooks as any

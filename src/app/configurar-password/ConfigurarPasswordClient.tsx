@@ -7,17 +7,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Eye, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
+import { cambiarPassword } from './actions'
 import { toast } from 'sonner'
 
-// OJO — hoy esta validación es MÁS ESTRICTA que el servidor, no un espejo de él.
-// Verificado contra producción el 2026-08-05: el endpoint acepta "abcdef" (6 caracteres,
-// sin mayúscula, número ni símbolo). supabase/config.toml declara 12 + complejidad, pero
-// ese archivo sólo configura el stack local; producción quedó en el default de Supabase.
-// Como updateUser() se llama desde el navegador, cualquiera puede saltear esta pantalla y
-// ponerse una contraseña de 6 caracteres. Mientras el dashboard no se alinee
-// (Authentication → Policies), esto es una recomendación y no un límite — ver la sección
-// 5 de supabase/snippets/2026-08-05-hardening-auditoria.sql.
+// Validación espejo de la que corre server-side en ./actions.ts (cambiarPassword) — la de
+// acá es para feedback inmediato, la real es la del servidor. Sigue pendiente alinear el
+// dashboard de producción (Authentication → Policies a 12+símbolos: supabase/config.toml
+// ya lo declara, pero ese archivo sólo configura el stack local) — ver la sección 5 de
+// supabase/snippets/2026-08-05-hardening-auditoria.sql.
 const MIN_LEN = 12
 const REQUISITOS: { regex: RegExp; label: string }[] = [
   { regex: /[a-z]/, label: 'una minúscula' },
@@ -57,13 +54,12 @@ export function ConfigurarPasswordClient() {
 
     setIsPending(true)
 
-    const supabase = createClient()
-    const { error } = await supabase.auth.updateUser({ password })
+    const { error } = await cambiarPassword(password)
 
     if (error) {
       // Si la política del servidor cambia y queda más estricta que esta validación,
       // mostramos el motivo real en vez de un genérico que deja al alumno sin saber qué hacer.
-      toast.error(error.message || 'No se pudo actualizar la contraseña. Inténtalo de nuevo.')
+      toast.error(error || 'No se pudo actualizar la contraseña. Inténtalo de nuevo.')
       setIsPending(false)
     } else {
       toast.success('¡Contraseña actualizada con éxito!')
