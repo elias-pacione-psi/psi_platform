@@ -13,21 +13,24 @@ import { agregarSesionUnica, generarSesionesRecurrentes } from '../actions'
 
 type Item = { id: string, nombre: string }
 
-export function AgendaAdminPanel({ alumnos, cohortes }: { alumnos: Item[], cohortes: Item[] }) {
+export function AgendaAdminPanel({ alumnos, pacientes = [], cohortes }: { alumnos: Item[], pacientes?: Item[], cohortes: Item[] }) {
   const [isPending, startTransition] = useTransition()
   // destino con formato "alumno:<id>" | "cohorte:<id>"
   const [destino, setDestino] = useState<string>('')
   const [tipo, setTipo] = useState<'virtual' | 'presencial'>('virtual')
 
-  // base-ui Select resuelve el label mostrado desde `items` (sin eso, muestra el value crudo)
+  // base-ui Select resuelve el label mostrado desde `items` (sin eso, muestra el value crudo).
+  // Alumnos y pacientes comparten el prefijo "alumno:" porque van a la misma columna
+  // (agenda_sesiones.alumno_id): el rol cambia cómo se agrupan acá, no dónde se guardan.
   const destinoItems = {
     ...Object.fromEntries(cohortes.map(c => [`cohorte:${c.id}`, `👥 ${c.nombre}`])),
     ...Object.fromEntries(alumnos.map(a => [`alumno:${a.id}`, a.nombre])),
+    ...Object.fromEntries(pacientes.map(p => [`alumno:${p.id}`, `🧍 ${p.nombre}`])),
   }
 
   // Agrega alumno_id|cohorte_id + tipo al formData según el destino elegido
   const aplicarDestino = (formData: FormData): boolean => {
-    if (!destino) { toast.error('Primero elegí un destino (alumno o formación).'); return false }
+    if (!destino) { toast.error('Primero elegí un destino (alumno, paciente o formación).'); return false }
     const [clase, id] = destino.split(':')
     formData.append(clase === 'cohorte' ? 'cohorte_id' : 'alumno_id', id)
     formData.append('tipo', tipo)
@@ -99,7 +102,7 @@ export function AgendaAdminPanel({ alumnos, cohortes }: { alumnos: Item[], cohor
           <Label className="font-bold text-tinta text-sm">1. Destino</Label>
           <Select value={destino} onValueChange={(v) => setDestino(v || '')} disabled={isPending} items={destinoItems}>
             <SelectTrigger className="bg-muted border-border">
-              <SelectValue placeholder="Alumno o formación..." />
+              <SelectValue placeholder="Alumno, paciente o formación..." />
             </SelectTrigger>
             <SelectContent>
               {cohortes.length > 0 && (
@@ -108,9 +111,19 @@ export function AgendaAdminPanel({ alumnos, cohortes }: { alumnos: Item[], cohor
                   {cohortes.map(c => <SelectItem key={c.id} value={`cohorte:${c.id}`}>👥 {c.nombre}</SelectItem>)}
                 </>
               )}
-              <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Alumnos</div>
-              {alumnos.map(a => <SelectItem key={a.id} value={`alumno:${a.id}`}>{a.nombre}</SelectItem>)}
-              {alumnos.length === 0 && cohortes.length === 0 && <SelectItem value="none" disabled>No hay destinos</SelectItem>}
+              {alumnos.length > 0 && (
+                <>
+                  <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Alumnos</div>
+                  {alumnos.map(a => <SelectItem key={a.id} value={`alumno:${a.id}`}>{a.nombre}</SelectItem>)}
+                </>
+              )}
+              {pacientes.length > 0 && (
+                <>
+                  <div className="px-2 py-1 text-xs font-bold text-tinta/50 uppercase">Pacientes</div>
+                  {pacientes.map(p => <SelectItem key={p.id} value={`alumno:${p.id}`}>🧍 {p.nombre}</SelectItem>)}
+                </>
+              )}
+              {alumnos.length === 0 && pacientes.length === 0 && cohortes.length === 0 && <SelectItem value="none" disabled>No hay destinos</SelectItem>}
             </SelectContent>
           </Select>
         </div>

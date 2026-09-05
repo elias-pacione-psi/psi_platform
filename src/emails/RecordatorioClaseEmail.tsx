@@ -14,6 +14,8 @@ const C = {
 interface RecordatorioClaseEmailProps {
   nombre: string
   contexto: string           // Formación o 'Sesión individual'
+  /** 'clase' para una formación, 'sesión' para un encuentro individual (alumno o paciente). */
+  sustantivo?: 'clase' | 'sesión'
   tipo: 'virtual' | 'presencial'
   fechaHora: string          // ISO string
   duracionMinutos?: number | null
@@ -33,6 +35,7 @@ const formatFechaCorta = (iso: string): string => fechaLarga(iso)
 export function RecordatorioClaseEmail({
   nombre,
   contexto,
+  sustantivo = 'clase',
   tipo,
   fechaHora,
   duracionMinutos,
@@ -43,18 +46,19 @@ export function RecordatorioClaseEmail({
   const hora = formatHora(fechaHora)
   const fecha = formatFechaCorta(fechaHora)
   const esVirtual = tipo === 'virtual'
+  const adjetivo = esVirtual ? 'virtual' : 'presencial'
 
   return (
-    <EmailLayout preview={`Recordatorio: mañana a las ${hora} tenés clase`}>
+    <EmailLayout preview={`Recordatorio: mañana a las ${hora} tenés ${sustantivo}`}>
       <Section style={iconWrapStyle}>
         <Text style={iconStyle}>🔔</Text>
       </Section>
 
-      <Heading style={titleStyle}>Recordatorio de clase</Heading>
+      <Heading style={titleStyle}>Recordatorio de {sustantivo}</Heading>
 
       <Text style={bodyTextStyle}>
         Hola <strong>{nombre}</strong>, este es tu recordatorio:
-        mañana tenés una {esVirtual ? 'clase virtual' : 'clase presencial'}.
+        mañana tenés una {sustantivo} {adjetivo}.
       </Text>
 
       {/* Bloque de urgencia — hora grande */}

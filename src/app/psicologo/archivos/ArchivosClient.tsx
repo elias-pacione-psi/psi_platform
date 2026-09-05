@@ -24,7 +24,7 @@ import {
   sincronizarBiblioteca,
 } from './actions'
 import {
-  esCarpetaFijaBibliotecaR2, esZonaBibliotecaR2, seccionBibliotecaR2,
+  esCarpetaFijaBibliotecaR2, esZonaBibliotecaR2,
   PREFIJO_BIBLIOTECA_R2,
 } from '@/utils/r2-marcador'
 import type { CarpetaR2, ListadoR2, ObjetoR2 } from '@/utils/r2'
@@ -137,7 +137,7 @@ export function ArchivosClient({
 
     const resumen = subidos === total ? 'Subida completa' : `${subidos} de ${total} subido(s)`
 
-    // Lo subido a Libros tiene que aparecer del otro lado sin un paso extra.
+    // Lo subido a Biblioteca R2 tiene que aparecer del otro lado sin un paso extra.
     if (esZonaBibliotecaR2(prefijo)) {
       const res = await sincronizarBiblioteca()
       if ('error' in res) toast.error(`${resumen}, pero no se pudo publicar en Biblioteca: ${res.error}`)
@@ -265,7 +265,6 @@ export function ArchivosClient({
   // La leyenda aparece en Inicio (donde se ve la carpeta) y adentro de ella, que es donde
   // hace falta saber qué pasa con lo que se sube.
   const enBiblioteca = esZonaBibliotecaR2(prefijo)
-  const seccionActual = seccionBibliotecaR2(prefijo)
   const mostrarLeyenda = prefijo === '' || enBiblioteca
 
   // "Seleccionar todo" no puede alcanzar las carpetas fijas: el borrado múltiple las
@@ -316,17 +315,18 @@ export function ArchivosClient({
           <Library className="w-5 h-5 text-marca shrink-0 mt-0.5" />
           <div className="space-y-2 text-tinta">
             <p className="font-bold">
-              La carpeta <span className="font-mono">Libros</span> está enlazada con la sección Biblioteca.
+              La carpeta <span className="font-mono">Biblioteca R2</span> está enlazada con la sección Biblioteca.
             </p>
             <p className="text-muted-foreground">
-              Lo que subas ahí aparece solo en <b>Biblioteca</b>, listo para asignar a tus alumnos —
-              no hace falta volver a cargarlo. Si borrás un archivo de la carpeta, también sale de
-              Biblioteca. La carpeta no se puede borrar ni renombrar.
+              Lo que subas ahí aparece solo en <b>Biblioteca</b>, listo para asignar a tus alumnos
+              y pacientes — no hace falta volver a cargarlo. Si borrás un archivo de la carpeta,
+              también sale de Biblioteca. La carpeta no se puede borrar ni renombrar.
             </p>
             <p className="text-muted-foreground">
-              Se publican los <b>PDF sueltos en la raíz</b> de la carpeta. Lo que pongas en una
-              subcarpeta (por ejemplo <span className="font-mono">portadas/</span> o{' '}
-              <span className="font-mono">fuente/</span>) queda guardado pero no se publica.
+              Se publican los <b>PDF, audios y videos</b> en cualquier carpeta de adentro (por
+              extensión). Las imágenes y los documentos de Office quedan guardados pero no se
+              publican — ahí viven por ejemplo las <span className="font-mono">portadas/</span> de
+              los ebooks.
             </p>
           </div>
         </div>

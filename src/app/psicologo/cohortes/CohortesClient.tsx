@@ -9,16 +9,29 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import {
   guardarCohorte, eliminarCohorte, inscribirAlumnosEnCohorte, quitarAlumnoDeCohorte,
-  generarClasesDeCohorte, borrarClasesFuturasDeCohorte,
+  generarClasesDeCohorte, borrarClasesFuturasDeCohorte, asegurarRecursoDeR2,
 } from '../actions'
-import { Loader2, Plus, Settings2, Trash2, GraduationCap, Users, UserMinus, CalendarClock, CalendarPlus, TriangleAlert, BookOpen, FileText, FileAudio, FileVideo, FileImage } from 'lucide-react'
+import {
+  Loader2, Plus, Settings2, Trash2, GraduationCap, Users, UserMinus, CalendarClock,
+  CalendarPlus, TriangleAlert, BookOpen, FileText, FileAudio, FileVideo, FileImage,
+  Folder, FolderOpen, ChevronRight, Check,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { DIAS_SEMANA, etiquetaHorario, fechasDeClases, horarioCompleto } from '@/utils/horario-cohorte'
+import { listarCarpeta } from '@/app/psicologo/archivos/actions'
+import { keyDeMarcadorR2, PREFIJO_ENTREGAS_R2 } from '@/utils/r2-marcador'
+import type { ListadoR2 } from '@/utils/r2'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Cohorte = any
 
-type RecursoBiblioteca = { id: string, titulo: string, tipo_medio: string | null, tipo_contenido: string }
+type RecursoBiblioteca = {
+  id: string
+  titulo: string
+  tipo_medio: string | null
+  tipo_contenido: string
+  url_recurso?: string
+}
 
 export function CohortesClient({
   cohortes,
@@ -47,9 +60,19 @@ export function CohortesClient({
   // Campos controlados del formulario: hacen falta para la vista previa de clases, que
   // tiene que recalcularse mientras se editan los días y las horas.
   const [programasElegidos, setProgramasElegidos] = useState<string[]>([])
-  // Libros y Documentos completos de la formación (aparte de los programas).
+  // Asignación de Libros y Material extra de cualquier parte del bucket / biblioteca
+  const [recursosDisponibles, setRecursosDisponibles] = useState<RecursoBiblioteca[]>(recursos)
   const [recursosElegidos, setRecursosElegidos] = useState<string[]>([])
   const [busquedaRecursos, setBusquedaRecursos] = useState('')
+
+  // Explorador del bucket R2 para adjuntar cualquier archivo de cualquier carpeta
+  const [openBucket, setOpenBucket] = useState(false)
+  const [bucketPrefijo, setBucketPrefijo] = useState('')
+  const [bucketListado, setBucketListado] = useState<ListadoR2 | null>(null)
+  const [bucketCargando, setBucketCargando] = useState(false)
+  const [bucketError, setBucketError] = useState<string | null>(null)
+  const [agregandoKey, setAgregandoKey] = useState<string | null>(null)
+
   const [dias, setDias] = useState<number[]>([])
   const [fechaInicio, setFechaInicio] = useState('')
   const [fechaFin, setFechaFin] = useState('')
@@ -62,6 +85,17 @@ export function CohortesClient({
     setProgramasElegidos(c?.programaIds ?? [])
     setRecursosElegidos(c?.recursoIds ?? [])
     setBusquedaRecursos('')
+    if (c?.recursos && Array.isArray(c.recursos)) {
+      setRecursosDisponibles((prev) => {
+        const nuevos = [...prev]
+        for (const r of c.recursos) {
+          if (!nuevos.some((item) => item.id === r.id)) {
+            nuevos.push(r)
+          }
+        }
+        return nuevos.sort((a, b) => a.titulo.localeCompare(b.titulo))
+      })
+    }
     setDias(c?.dias_semana ?? [])
     setFechaInicio(c?.fecha_inicio ?? '')
     setFechaFin(c?.fecha_fin ?? '')
@@ -150,14 +184,66 @@ export function CohortesClient({
     setRecursosElegidos(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id])
 
   // Ícono chico por formato para la lista y los chips (reuso el mapeo mental de la
-  // Biblioteca: pdf → texto, audio, video, resto → imagen/enlace).
+  // Biblioteca: pdf → texto, audio, video, resto → imagen/enlace/libro).
   function iconoRecurso(tipoMedio: string | null, tipoContenido: string) {
-    const t = tipoMedio ?? tipoContenido
-    if (t.includes('video')) return <FileVideo className="w-3.5 h-3.5 text-marca shrink-0" />
-    if (t.includes('audio')) return <FileAudio className="w-3.5 h-3.5 text-marca shrink-0" />
-    if (t.includes('imagen')) return <FileImage className="w-3.5 h-3.5 text-marca shrink-0" />
-    if (t.includes('pdf')) return <FileText className="w-3.5 h-3.5 text-marca shrink-0" />
+    const t = (tipoMedio ?? tipoContenido).toLowerCase()
+    if (t.includes('video') || t.endsWith('.mp4') || t.endsWith('.webm') || t.endsWith('.mov')) return <FileVideo className="w-3.5 h-3.5 text-marca shrink-0" />
+    if (t.includes('audio') || t.endsWith('.mp3') || t.endsWith('.m4a') || t.endsWith('.wav') || t.endsWith('.ogg')) return <FileAudio className="w-3.5 h-3.5 text-marca shrink-0" />
+    if (t.includes('imagen') || t.endsWith('.jpg') || t.endsWith('.jpeg') || t.endsWith('.png') || t.endsWith('.webp') || t.endsWith('.svg')) return <FileImage className="w-3.5 h-3.5 text-marca shrink-0" />
+    if (t.includes('pdf') || t.endsWith('.pdf')) return <FileText className="w-3.5 h-3.5 text-marca shrink-0" />
     return <BookOpen className="w-3.5 h-3.5 text-marca shrink-0" />
+  }
+
+  async function navegarBucket(prefijo: string) {
+    setBucketCargando(true)
+    setBucketError(null)
+    const res = await listarCarpeta(prefijo)
+    setBucketCargando(false)
+    if ('error' in res) {
+      setBucketError(res.error)
+      toast.error(res.error)
+      return
+    }
+    setBucketPrefijo(prefijo)
+    setBucketListado(res)
+  }
+
+  function abrirExploradorBucket() {
+    setOpenBucket(true)
+    navegarBucket('')
+  }
+
+  async function handleToggleArchivoBucket(archivoKey: string, nombre: string) {
+    const yaElegido = recursosDisponibles.find(
+      (r) =>
+        recursosElegidos.includes(r.id) &&
+        (keyDeMarcadorR2(r.url_recurso || '') === archivoKey ||
+          r.titulo.toLowerCase() === nombre.replace(/\.[^.]+$/, '').toLowerCase())
+    )
+
+    if (yaElegido) {
+      setRecursosElegidos((prev) => prev.filter((id) => id !== yaElegido.id))
+      toast.info(`"${yaElegido.titulo}" desmarcado`)
+      return
+    }
+
+    setAgregandoKey(archivoKey)
+    const res = await asegurarRecursoDeR2(archivoKey)
+    setAgregandoKey(null)
+
+    if ('error' in res) {
+      toast.error(res.error)
+      return
+    }
+
+    const { recurso } = res
+    setRecursosDisponibles((prev) => {
+      if (prev.some((r) => r.id === recurso.id)) return prev
+      return [...prev, recurso].sort((a, b) => a.titulo.localeCompare(b.titulo))
+    })
+
+    setRecursosElegidos((prev) => (prev.includes(recurso.id) ? prev : [...prev, recurso.id]))
+    toast.success(`"${recurso.titulo}" sumado a la formación`)
   }
 
   // Misma función que usa el servidor para generar: el número de la vista previa no puede
@@ -171,10 +257,12 @@ export function CohortesClient({
   }
   const clasesPreview = horarioCompleto(horarioForm) ? fechasDeClases(horarioForm).length : 0
 
-  // Lista de "Libros y Documentos" del formulario, filtrada por la búsqueda.
-  const recursosFiltrados = recursos.filter((r) =>
+  // Lista de "Asignación de Libros y Material extra" del formulario, filtrada por la búsqueda.
+  const recursosFiltrados = recursosDisponibles.filter((r) =>
     r.titulo?.toLowerCase().includes(busquedaRecursos.toLowerCase())
   )
+
+  const bucketTramos = bucketPrefijo.split('/').filter(Boolean)
 
   return (
     <div className="space-y-4">
@@ -343,32 +431,63 @@ export function CohortesClient({
               </div>
             </div>
 
-            {/* Libros y Documentos completos de la formación: material de Biblioteca
-                (libros, PDFs, audios...) que los inscriptos ven en su Biblioteca, aparte
-                de los programas. Va entre Programas y las fechas de la formación. */}
+            {/* Asignación de Libros y Material extra: material de Biblioteca o cualquier archivo del bucket R2 */}
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <Label className="font-bold text-tinta">Libros y Documentos</Label>
-                {recursosElegidos.length > 0 && (
-                  <span className="text-xs text-muted-foreground font-sans">
-                    {recursosElegidos.length === 1 ? '1 elegido' : `${recursosElegidos.length} elegidos`}
-                  </span>
-                )}
+                <Label className="font-bold text-tinta">Asignacion de Libros y Material extra</Label>
+                <div className="flex items-center gap-2">
+                  {recursosElegidos.length > 0 && (
+                    <span className="text-xs text-muted-foreground font-sans">
+                      {recursosElegidos.length === 1 ? '1 elegido' : `${recursosElegidos.length} elegidos`}
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={abrirExploradorBucket}
+                    className="h-7 text-xs px-2.5 font-sans border-marca/30 text-marca hover:bg-marca/10 flex items-center gap-1.5"
+                  >
+                    <FolderOpen className="w-3.5 h-3.5" />
+                    Elegir del bucket
+                  </Button>
+                </div>
               </div>
               <Input
-                placeholder="Buscar libro o documento..."
+                placeholder="Buscar libro o material extra..."
                 value={busquedaRecursos}
                 onChange={(e) => setBusquedaRecursos(e.target.value)}
                 className="bg-card border-border h-9"
               />
               <div className="space-y-2 border border-border bg-card rounded-lg p-2 max-h-[180px] overflow-y-auto">
-                {recursos.length === 0 ? (
-                  <p className="text-sm text-center text-muted-foreground py-3">
-                    Todavía no hay material en la Biblioteca. Subilo a la carpeta
-                    <span className="font-mono"> Biblioteca R2</span> desde Archivos o cargalo desde Biblioteca.
-                  </p>
+                {recursosDisponibles.length === 0 ? (
+                  <div className="text-center py-4 space-y-2">
+                    <p className="text-sm text-muted-foreground">Todavía no hay material disponible.</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={abrirExploradorBucket}
+                      className="text-xs text-marca border-marca/30"
+                    >
+                      <FolderOpen className="w-3.5 h-3.5 mr-1" />
+                      Explorar archivos del bucket
+                    </Button>
+                  </div>
                 ) : recursosFiltrados.length === 0 ? (
-                  <p className="text-sm text-center text-muted-foreground py-3">Ningún resultado para “{busquedaRecursos}”.</p>
+                  <div className="text-center py-4 space-y-2">
+                    <p className="text-sm text-muted-foreground">Ningún resultado para “{busquedaRecursos}”.</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={abrirExploradorBucket}
+                      className="text-xs text-marca border-marca/30"
+                    >
+                      <FolderOpen className="w-3.5 h-3.5 mr-1" />
+                      Buscar en el bucket
+                    </Button>
+                  </div>
                 ) : recursosFiltrados.map((r) => (
                   <div key={r.id} className="flex items-center space-x-3 bg-muted p-2.5 rounded-lg border border-border">
                     <Checkbox
@@ -388,7 +507,7 @@ export function CohortesClient({
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">
-                Material completo (libros, PDFs, audios…), aparte de los programas: los
+                Material extra (libros, PDFs, audios, guías…), de cualquier carpeta del bucket: los
                 inscriptos lo ven en su Biblioteca mientras dure la inscripción.
               </p>
             </div>
@@ -515,6 +634,157 @@ export function CohortesClient({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Explorador de archivos de cualquier parte del bucket R2 */}
+      <Dialog open={openBucket} onOpenChange={setOpenBucket}>
+        <DialogContent className="sm:max-w-[640px] max-h-[85vh] overflow-y-auto bg-crema">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl text-tinta flex items-center gap-2">
+              <FolderOpen className="w-5 h-5 text-marca" />
+              Elegir archivo del bucket (R2)
+            </DialogTitle>
+            <DialogDescription className="font-sans">
+              Navegá cualquier carpeta del bucket y seleccioná libros o material extra para adjuntar a esta formación.
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Breadcrumbs de navegación */}
+          <div className="flex items-center gap-1.5 flex-wrap text-sm font-sans bg-card border border-border rounded-lg p-2.5">
+            <button
+              type="button"
+              onClick={() => navegarBucket('')}
+              className="text-tinta hover:text-marca font-bold hover:underline"
+            >
+              Inicio
+            </button>
+            {bucketTramos.map((tramo, i) => {
+              const ruta = bucketTramos.slice(0, i + 1).join('/') + '/'
+              return (
+                <span key={i} className="flex items-center gap-1.5">
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                  <button
+                    type="button"
+                    onClick={() => navegarBucket(ruta)}
+                    className="text-tinta hover:text-marca hover:underline font-medium"
+                  >
+                    {tramo}
+                  </button>
+                </span>
+              )
+            })}
+          </div>
+
+          {bucketCargando ? (
+            <div className="py-12 flex flex-col items-center justify-center text-muted-foreground gap-2">
+              <Loader2 className="w-6 h-6 animate-spin text-marca" />
+              <span className="text-sm font-sans">Leyendo carpeta del bucket...</span>
+            </div>
+          ) : bucketError ? (
+            <div className="text-center py-8 space-y-2">
+              <p className="text-red-600 dark:text-red-400 text-sm font-sans">{bucketError}</p>
+              <Button size="sm" variant="outline" onClick={() => navegarBucket(bucketPrefijo)}>
+                Reintentar
+              </Button>
+            </div>
+          ) : !bucketListado || (bucketListado.carpetas.length === 0 && bucketListado.archivos.length === 0) ? (
+            <div className="text-center py-12 text-muted-foreground text-sm font-sans">
+              Carpeta vacía.
+            </div>
+          ) : (
+            <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
+              {/* Carpetas del bucket */}
+              {bucketListado.carpetas
+                .filter((c) => c.prefijo !== PREFIJO_ENTREGAS_R2)
+                .map((c) => (
+                  <button
+                    type="button"
+                    key={c.prefijo}
+                    onClick={() => navegarBucket(c.prefijo)}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-card border border-border hover:border-marca/40 hover:bg-marca/5 transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <Folder className="w-4 h-4 text-marca shrink-0" />
+                      <span className="text-sm font-medium text-tinta truncate font-sans">{c.nombre}</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                  </button>
+                ))}
+
+              {/* Archivos del bucket */}
+              {bucketListado.archivos.map((a) => {
+                const yaElegido = recursosDisponibles.some(
+                  (r) =>
+                    recursosElegidos.includes(r.id) &&
+                    (keyDeMarcadorR2(r.url_recurso || '') === a.key ||
+                      r.titulo.toLowerCase() === a.nombre.replace(/\.[^.]+$/, '').toLowerCase())
+                )
+                const estaCargando = agregandoKey === a.key
+                const tamanoMb = a.tamano ? `${(a.tamano / (1024 * 1024)).toFixed(1)} MB` : ''
+
+                return (
+                  <div
+                    key={a.key}
+                    className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-colors ${
+                      yaElegido
+                        ? 'bg-marca/10 border-marca/30'
+                        : 'bg-card border-border hover:border-marca/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+                      {iconoRecurso(null, a.nombre)}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-tinta truncate font-sans">{a.nombre}</p>
+                        {tamanoMb && <p className="text-xs text-muted-foreground font-mono">{tamanoMb}</p>}
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={yaElegido ? 'secondary' : 'outline'}
+                      disabled={estaCargando}
+                      onClick={() => handleToggleArchivoBucket(a.key, a.nombre)}
+                      className={`h-8 text-xs font-sans shrink-0 ${
+                        yaElegido
+                          ? 'bg-marca text-crema hover:bg-red-600 hover:text-white'
+                          : 'border-marca/40 text-marca hover:bg-marca hover:text-crema'
+                      }`}
+                    >
+                      {estaCargando ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : yaElegido ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 mr-1" />
+                          Elegido
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-3.5 h-3.5 mr-1" />
+                          Seleccionar
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between border-t border-border pt-3 mt-2">
+            <span className="text-xs text-muted-foreground font-sans">
+              {recursosElegidos.length === 1
+                ? '1 material seleccionado en total'
+                : `${recursosElegidos.length} materiales seleccionados en total`}
+            </span>
+            <Button
+              type="button"
+              onClick={() => setOpenBucket(false)}
+              className="bg-marca hover:bg-marca/90 text-crema h-8 text-xs px-4"
+            >
+              Listo
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

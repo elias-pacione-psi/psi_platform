@@ -136,7 +136,7 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
   // donde cae cada tipo de material, y verlos vacíos es la pista de que ahí se puede
   // subir algo. Antes esto era una lista plana y no se veía qué faltaba.
   const SECCIONES = [
-    { clave: 'pdf', titulo: 'Libros', vacio: 'Subí un PDF a la carpeta Libros desde Disco Duro y aparece acá solo.' },
+    { clave: 'pdf', titulo: 'Libros', vacio: 'Subí un PDF a la carpeta Biblioteca R2 desde Disco Duro y aparece acá solo.' },
     { clave: 'audio', titulo: 'Audios', vacio: 'Todavía no hay audios en la biblioteca.' },
     { clave: 'video', titulo: 'Videos', vacio: 'Todavía no hay videos en la biblioteca.' },
     { clave: 'otros', titulo: 'Otros recursos', vacio: 'Todavía no hay otros recursos.' },
@@ -173,7 +173,7 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
           <DialogHeader>
             <DialogTitle className="font-heading text-2xl text-tinta">Nuevo recurso</DialogTitle>
             <DialogDescription>
-              Después de crearlo, asignalo a los alumnos que corresponda con el botón de accesos.
+              Después de crearlo, asignalo a los alumnos o pacientes que corresponda con el botón de accesos.
             </DialogDescription>
           </DialogHeader>
 
@@ -311,7 +311,7 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
                         onClick={() => openAssignModal(rec)}
                         disabled={isPending}
                         className="h-8 px-2 text-marca hover:text-marca/90 hover:bg-marca/10"
-                        title="Asignar a alumnos"
+                        title="Asignar a alumnos y pacientes"
                       >
                         <Users className="h-4 w-4" />
                       </Button>
@@ -370,12 +370,17 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
                   >
                     <label className="text-sm font-medium leading-none text-tinta peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                       {alumno.nombre}
+                      {alumno.rol === 'paciente' && (
+                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-marca/10 text-marca align-middle">
+                          Paciente
+                        </span>
+                      )}
                     </label>
                     <p className="text-xs text-muted-foreground mt-1 truncate">{alumno.email}</p>
                   </div>
                 </div>
               ))}
-              {alumnos.length === 0 && <p className="text-sm text-center text-muted-foreground py-4">No hay alumnos activos disponibles.</p>}
+              {alumnos.length === 0 && <p className="text-sm text-center text-muted-foreground py-4">No hay alumnos ni pacientes activos disponibles.</p>}
             </div>
 
             <div className="pt-4 flex justify-end">

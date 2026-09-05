@@ -24,7 +24,7 @@ export default async function CohortesPage() {
       .select(`
         id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, created_at,
         cohortes_programas(programa_id, programas(id, titulo)),
-        cohortes_recursos(recurso_id, biblioteca_recursos(id, titulo, tipo_medio, tipo_contenido)),
+        cohortes_recursos(recurso_id, biblioteca_recursos(id, titulo, tipo_medio, tipo_contenido, url_recurso)),
         cohortes_alumnos(alumno_id, alumnos(id, nombre, email))
       `)
       .order('created_at', { ascending: false }),
@@ -32,10 +32,8 @@ export default async function CohortesPage() {
     supabase.from('alumnos').select('id, nombre, email').eq('estado', 'activo').eq('rol', 'alumno').order('nombre', { ascending: true }),
     // Para saber si una formación ya tiene clases agendadas y cuántas quedan por delante.
     supabase.from('agenda_sesiones').select('cohorte_id, fecha_hora').not('cohorte_id', 'is', null),
-    // Para el selector de "Libros y Documentos" del formulario: todo lo que hay en la
-    // Biblioteca (el psicólogo ve todo por RLS). Lo adjunto a cada comisión viene por el
-    // embed de cohortes_recursos de arriba.
-    supabase.from('biblioteca_recursos').select('id, titulo, tipo_medio, tipo_contenido').order('titulo', { ascending: true }),
+    // Para el selector de "Asignación de Libros y Material extra" del formulario:
+    supabase.from('biblioteca_recursos').select('id, titulo, tipo_medio, tipo_contenido, url_recurso').order('titulo', { ascending: true }),
   ])
 
   // Sin esto el error se comía en silencio: `cohortes` venía null, la página mostraba

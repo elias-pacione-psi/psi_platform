@@ -24,7 +24,10 @@ create table if not exists public.alumnos (
   nombre text not null,
   telefono text,
   link_videollamada text,
-  rol text not null default 'alumno' check (rol in ('alumno', 'psicologo')),
+  -- 'paciente' es un alumno sin cursos: cuenta + agenda + material puntual de
+  -- Biblioteca (ver snippets/2026-09-05-rol-paciente.sql). No lleva ningún campo
+  -- clínico — el rol dice a quién se le agenda una sesión, no qué le pasa.
+  rol text not null default 'alumno' check (rol in ('alumno', 'psicologo', 'paciente')),
   estado text not null default 'activo' check (estado in ('activo', 'suspendido', 'eliminado')),
   created_at timestamptz not null default now()
 );

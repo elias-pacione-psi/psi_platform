@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag, ChevronDown, MessageSquareHeart } from "lucide-react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag, ChevronDown, MessageSquareHeart, HeartHandshake } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -60,6 +60,28 @@ const itemsAlumno = [
   },
 ]
 
+// Lo que ve un paciente: cuenta + material + agenda, y nada de cursos. Reusa las mismas
+// páginas que el alumno (/alumno/materiales, /alumno/agenda) porque es literalmente la
+// misma vista — lo que cambia es qué tiene asignado, no cómo se muestra. Programas,
+// Tareas y Mis compras quedan afuera: para un paciente serían tres listas vacías.
+const itemsPaciente = [
+  {
+    title: "Inicio",
+    url: "/alumno",
+    icon: Home,
+  },
+  {
+    title: "Biblioteca",
+    url: "/alumno/materiales",
+    icon: Library,
+  },
+  {
+    title: "Mi agenda",
+    url: "/alumno/agenda",
+    icon: Calendar,
+  },
+]
+
 const itemsPsicologo = [
   {
     title: "Inicio",
@@ -70,6 +92,11 @@ const itemsPsicologo = [
     title: "Alumnos",
     url: "/psicologo/alumnos",
     icon: Users,
+  },
+  {
+    title: "Pacientes",
+    url: "/psicologo/pacientes",
+    icon: HeartHandshake,
   },
   {
     title: "Programas",
@@ -139,6 +166,8 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
   }
 
   const esPsicologo = userRole === 'psicologo'
+  // El paciente entra por las mismas rutas que el alumno; lo único distinto es el menú.
+  const itemsDelUsuario = userRole === 'paciente' ? itemsPaciente : itemsAlumno
 
   return (
     <Sidebar className="border-r-gray-200">
@@ -207,7 +236,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
             <SidebarGroupLabel className="text-tinta/70">Navegación</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {itemsAlumno.map((item) => {
+                {itemsDelUsuario.map((item) => {
                   const isActive = estaActivo(pathname, item.url, "/alumno")
                   return (
                     <SidebarMenuItem key={item.title}>

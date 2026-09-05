@@ -41,7 +41,7 @@ async function todasLasReferencias(): Promise<Fila[]> {
     filas.push({ url: l.url_recurso, etiqueta: `la lección "${l.titulo}"` })
   }
   for (const b of biblioteca.data ?? []) {
-    // Las filas espejadas desde la carpeta Libros/ NO cuentan como uso: existen solo
+    // Las filas espejadas desde la carpeta "Biblioteca R2/" NO cuentan como uso: existen solo
     // porque el archivo está en el bucket, y la sincronización las borra sola cuando el
     // archivo deja de estar. Si contaran, la fila que creó el propio espejo bloquearía
     // borrar el libro desde Disco Duro — un candado que el sistema se pone a sí mismo, y

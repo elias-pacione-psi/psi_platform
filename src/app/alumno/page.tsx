@@ -43,6 +43,10 @@ export default async function AlumnoHomePage() {
 
   const { data: perfil } = await supabase.from('alumnos').select('rol, nombre, link_videollamada').eq('id', user?.id).single()
   const esPsicologo = perfil?.rol === 'psicologo'
+  // Un paciente entra por las mismas rutas que un alumno pero no cursa nada: no se le
+  // muestran programas ni se le recomiendan cursos, y lo que tiene agendado es una
+  // sesión, no una clase.
+  const esPaciente = perfil?.rol === 'paciente'
 
   const [{ data: proximaSesion }, { count: countProg }, countRec] = await Promise.all([
     supabase
@@ -73,14 +77,18 @@ export default async function AlumnoHomePage() {
           Hola, {alumno?.nombre || 'Alumno'}
         </h1>
         <p className="text-lg font-sans text-tinta/70 mt-2">
-          Bienvenido a tu espacio de formación. Acá está el material de tus cursos.
+          {esPaciente
+            ? 'Acá están tus próximas sesiones y el material que te compartió tu psicólogo.'
+            : 'Bienvenido a tu espacio de formación. Acá está el material de tus cursos.'}
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300 ring-1 ring-marca/20">
           <CardHeader>
-            <CardTitle className="font-heading text-2xl text-tinta">Tu clase en vivo</CardTitle>
+            <CardTitle className="font-heading text-2xl text-tinta">
+              {esPaciente ? 'Tu próxima sesión' : 'Tu clase en vivo'}
+            </CardTitle>
             <CardDescription className="font-sans text-base">
               Únete a nuestra sesión de Google Meet programada.
             </CardDescription>
@@ -89,12 +97,14 @@ export default async function AlumnoHomePage() {
             {proximaSesion?.fecha_hora ? (
               <div className="mb-6 p-4 bg-crema rounded-xl border border-tinta/10 text-center">
                 <p className="font-sans font-medium text-tinta mb-1">
-                  Tu próxima clase es el <span className="font-bold">{fechaLarga(proximaSesion.fecha_hora)}</span> a las <span className="font-bold">{hora(proximaSesion.fecha_hora)}hs</span>
+                  Tu próxima {esPaciente ? 'sesión' : 'clase'} es el <span className="font-bold">{fechaLarga(proximaSesion.fecha_hora)}</span> a las <span className="font-bold">{hora(proximaSesion.fecha_hora)}hs</span>
                 </p>
               </div>
             ) : (
               <div className="mb-6 p-4 bg-crema rounded-xl border border-tinta/10 text-center">
-                <p className="text-tinta/70 font-sans text-sm">No hay clases en vivo agendadas por ahora.</p>
+                <p className="text-tinta/70 font-sans text-sm">
+                  {esPaciente ? 'No tenés sesiones agendadas por ahora.' : 'No hay clases en vivo agendadas por ahora.'}
+                </p>
               </div>
             )}
 
@@ -112,7 +122,7 @@ export default async function AlumnoHomePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Link href="/alumno/programas" className="flex items-center justify-between p-4 bg-crema rounded-xl border border-tinta/10 hover:border-marca/40 hover:shadow-sm transition-all group">
+            {!esPaciente && <Link href="/alumno/programas" className="flex items-center justify-between p-4 bg-crema rounded-xl border border-tinta/10 hover:border-marca/40 hover:shadow-sm transition-all group">
               <span className="flex items-center gap-3">
                 <LayoutList className="w-5 h-5 text-marca" />
                 <span className="font-sans font-semibold text-tinta">
@@ -120,7 +130,7 @@ export default async function AlumnoHomePage() {
                 </span>
               </span>
               <ArrowRight className="w-4 h-4 text-tinta/40 group-hover:text-marca transition-colors" />
-            </Link>
+            </Link>}
             <Link href="/alumno/materiales" className="flex items-center justify-between p-4 bg-crema rounded-xl border border-tinta/10 hover:border-marca/40 hover:shadow-sm transition-all group">
               <span className="flex items-center gap-3">
                 <FolderHeart className="w-5 h-5 text-marca" />
@@ -139,7 +149,7 @@ export default async function AlumnoHomePage() {
           es un callejón sin salida. Ahí es donde la recomendación de cursos tiene sentido
           — con material asignado, en cambio, lo que corresponde es que siga con lo suyo,
           no que le ofrezcan otra cosa. */}
-      {!esPsicologo && cantidadProgramas === 0 && (
+      {!esPsicologo && !esPaciente && cantidadProgramas === 0 && (
         <Card className="border-none shadow-md">
           <CardContent className="pt-6">
             <RecomendacionCursos />

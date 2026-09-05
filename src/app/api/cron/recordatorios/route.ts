@@ -96,6 +96,7 @@ export async function GET(req: NextRequest) {
         react: RecordatorioClaseEmail({
           nombre: s.alumnos.nombre,
           contexto: 'Sesión individual',
+          sustantivo: 'sesión',
           tipo,
           fechaHora,
           duracionMinutos: s.duracion_minutos,

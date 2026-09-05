@@ -16,12 +16,15 @@ export default async function AdminAgendaPage() {
   if (perfil?.rol !== 'psicologo') redirect('/alumno')
 
   const eventos = await obtenerEventosCalendario()
-  const [{ data: alumnos }, { data: cohortes }] = await Promise.all([
+  // Alumnos y pacientes en la misma query: para la agenda son lo mismo (una sesión
+  // individual con alguien que recibe el aviso por email), y se separan sólo para
+  // mostrarlos en dos grupos del selector.
+  const [{ data: personas }, { data: cohortes }] = await Promise.all([
     supabase
       .from('alumnos')
-      .select('id, nombre, email')
+      .select('id, nombre, email, rol')
       .eq('estado', 'activo')
-      .eq('rol', 'alumno')
+      .in('rol', ['alumno', 'paciente'])
       .order('nombre', { ascending: true }),
     supabase
       .from('cohortes')
@@ -29,18 +32,22 @@ export default async function AdminAgendaPage() {
       .order('created_at', { ascending: false }),
   ])
 
+  const alumnos = (personas ?? []).filter((p: { rol: string }) => p.rol === 'alumno')
+  const pacientes = (personas ?? []).filter((p: { rol: string }) => p.rol === 'paciente')
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
         <h1 className="text-3xl font-heading font-bold text-tinta">Agenda de sesiones</h1>
         <p className="text-muted-foreground mt-2 font-sans">
-          Agendá sesiones únicas o recurrentes y visualizá todo tu calendario.
+          Agendá sesiones únicas o recurrentes con alumnos, pacientes o una formación
+          entera. Cada persona recibe el aviso por email.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1">
-          <AgendaAdminPanel alumnos={alumnos || []} cohortes={cohortes || []} />
+          <AgendaAdminPanel alumnos={alumnos} pacientes={pacientes} cohortes={cohortes || []} />
         </div>
 
         <div className="lg:col-span-3 space-y-4">
