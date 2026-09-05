@@ -27,30 +27,41 @@ export function keyDeMarcadorR2(valor: string): string | null {
 export const PREFIJO_ENTREGAS_R2 = 'entregas/'
 
 // ---------------------------------------------------------------------------
-// Libros: la carpeta espejo de la sección Biblioteca
+// Biblioteca R2: la carpeta espejo de la sección Biblioteca
 // ---------------------------------------------------------------------------
-// Todo PDF que se sube acá aparece en Biblioteca solo por estar en el bucket — no hay
-// que volver a cargarlo a mano. La carpeta raíz es fija: no se borra ni se renombra
-// desde el gestor, porque el nombre ES la referencia que usa la sincronización.
+// Todo archivo publicable (pdf/audio/video) que está en esta carpeta —en cualquier
+// subcarpeta— aparece en Biblioteca solo por estar en el bucket, sin cargarlo a mano.
+// La carpeta raíz es fija: no se borra ni se renombra desde el gestor, porque el nombre
+// ES la referencia que usa la sincronización.
 //
-// Antes esto era "Biblioteca R2/" con cuatro subcarpetas de sección (Lecturas, Audios,
-// Videos, Otros), una por pestaña de /alumno/materiales. Se simplificó a solo libros
-// (2026-08-22): los audios eran material de curso duplicado acá, y las imágenes eran
-// portadas de ebook — ambas cosas ya viven donde corresponde (junto al curso y en
-// Libros/portadas/), así que la biblioteca dejó de ser un cajón mezclado.
-export const PREFIJO_BIBLIOTECA_R2 = 'Libros/'
+// Historia: primero fue "Biblioteca R2/" con cuatro subcarpetas de sección, después se
+// simplificó a "Libros/" con solo PDFs sueltos en la raíz (2026-08-22). Esa regla de
+// "solo la raíz" rompió la biblioteca cuando los PDFs se ordenaron en una subcarpeta
+// (la sincronización los dejó de ver y borró los recursos con sus asignaciones), y el
+// nombre no coincidía con la carpeta que el psicólogo veía en el bucket. Desde el
+// 2026-09-05 vuelve a ser "Biblioteca R2/", única carpeta espejo, y publica en cualquier
+// profundidad: organizar en subcarpetas ya no saca el material de la biblioteca. En esa
+// misma fecha se movió todo lo que había en "Libros/" acá adentro y se borró esa carpeta
+// del bucket, así que hay un solo lugar donde vive el material de biblioteca.
+export const PREFIJO_BIBLIOTECA_R2 = 'Biblioteca R2/'
 
-export const SECCION_LIBROS = {
-  pestana: 'Libros',
-  extensiones: ['pdf'],
-  tipoContenido: 'r2_pdf',
-} as const
+// Lo que se publica según su extensión, sin importar en qué subcarpeta esté. Las imágenes
+// y los documentos de Office quedan fuera a propósito: en esta carpeta suelen vivir como
+// insumos (portadas/ y fuente/ de los ebooks), no como material para el alumno.
+export const SECCIONES_BIBLIOTECA_R2 = [
+  { nombre: 'Libros', extensiones: ['pdf'], tipoContenido: 'r2_pdf' },
+  { nombre: 'Audios', extensiones: ['mp3', 'm4a', 'ogg', 'oga', 'wav'], tipoContenido: 'r2_audio' },
+  { nombre: 'Videos', extensiones: ['mp4', 'webm', 'mov'], tipoContenido: 'r2_video' },
+] as const
 
-// Subcarpetas de organización dentro de Libros/. NO publican nada por sí solas: al alumno
-// solo llegan los PDF sueltos en la raíz (ver seccionBibliotecaR2). Existen para que el
-// psicólogo tenga dónde dejar audios, videos y material suelto sin mezclarlo con los
-// libros, y se crean siempre para que se vean en Disco Duro aunque estén vacías.
-export const CARPETAS_ORGANIZACION_BIBLIOTECA = ['Audios', 'Videos', 'Otros'] as const
+// Subcarpetas de organización dentro de Biblioteca R2/. NO publican nada por sí solas:
+// publica lo que hay adentro, según su extensión (ver seccionBibliotecaR2). Existen para
+// que el psicólogo tenga el material ordenado desde el día uno, y se crean siempre para
+// que se vean en Disco Duro aunque estén vacías. "Libros" es donde vive lo que antes
+// estaba en la carpeta "Libros/" de la raíz del bucket (incluidos los PDF que se venden
+// como ebooks). "Herramientas de Terapia" es el material puntual que el psicólogo le
+// entrega a un paciente: libros de trabajo, guías, fichas.
+export const CARPETAS_ORGANIZACION_BIBLIOTECA = ['Libros', 'Audios', 'Videos', 'Herramientas de Terapia', 'Otros'] as const
 
 export function esZonaBibliotecaR2(ruta: string): boolean {
   return ruta.startsWith(PREFIJO_BIBLIOTECA_R2)
@@ -63,14 +74,13 @@ export function esCarpetaFijaBibliotecaR2(prefijo: string): boolean {
   return CARPETAS_ORGANIZACION_BIBLIOTECA.some((c) => prefijo === `${PREFIJO_BIBLIOTECA_R2}${c}/`)
 }
 
-// Un archivo se publica como libro si es un PDF que está SUELTO en la raíz de Libros/.
-// Lo que cuelga de una subcarpeta (portadas/, fuente/) queda fuera a propósito: son
-// insumos del ebook, no material para el alumno.
+// La sección en la que se publica un archivo de la carpeta espejo, o null si no se
+// publica (extensión sin sección, ej. png/docx). Vale cualquier profundidad: lo que
+// cuenta es la extensión, no dónde lo ordenó el psicólogo.
 export function seccionBibliotecaR2(key: string) {
-  if (!esZonaBibliotecaR2(key)) return null
-  const resto = key.slice(PREFIJO_BIBLIOTECA_R2.length)
-  if (!resto || resto.includes('/')) return null
-  return SECCION_LIBROS.extensiones.includes(extensionDe(resto) as 'pdf') ? SECCION_LIBROS : null
+  if (!esZonaBibliotecaR2(key) || key.endsWith('/')) return null
+  const extension = extensionDe(key)
+  return SECCIONES_BIBLIOTECA_R2.find((s) => (s.extensiones as readonly string[]).includes(extension)) ?? null
 }
 
 export function extensionDe(nombreArchivo: string): string {

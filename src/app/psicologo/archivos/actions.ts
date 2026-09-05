@@ -22,8 +22,6 @@ import {
   esCarpetaFijaBibliotecaR2,
   esZonaBibliotecaR2,
   extensionDe,
-  seccionBibliotecaR2,
-  PREFIJO_BIBLIOTECA_R2,
   PREFIJO_ENTREGAS_R2,
 } from '@/utils/r2-marcador'
 import { sincronizarBibliotecaR2 } from '@/utils/supabase/biblioteca-r2'
@@ -93,7 +91,7 @@ function esZonaDeEntregas(ruta: string): boolean {
   return ruta.startsWith(PREFIJO_ENTREGAS_R2)
 }
 
-// "Libros" es la referencia que usa la sincronización
+// "Biblioteca R2" es la referencia que usa la sincronización
 // con la sección Biblioteca: si se borran o se renombran, los recursos que colgaban de
 // ahí dejan de tener sección y desaparecen del lado del alumno. Adentro se sube y se
 // borra con normalidad; lo que está congelado es la estructura, no el contenido.
@@ -101,24 +99,6 @@ function errorSiCarpetaFijaBiblioteca(prefijo: string): string | null {
   return esCarpetaFijaBibliotecaR2(prefijo)
     ? 'Esta carpeta está enlazada con la sección Biblioteca: no se puede borrar ni renombrar.'
     : null
-}
-
-// Un archivo que no encaja en ninguna sección quedaría en el bucket sin aparecer nunca
-// del lado del alumno — mejor rechazarlo al subir que dejarlo invisible.
-function errorSubidaEnBiblioteca(prefijo: string, nombreArchivo: string): string | null {
-  if (!esZonaBibliotecaR2(prefijo)) return null
-
-  const seccion = seccionBibliotecaR2(`${prefijo}${nombreArchivo}`)
-  if (!seccion) {
-    return 'La Biblioteca publica solo PDFs sueltos en la raíz de Libros: lo que va en una subcarpeta no se publica.'
-  }
-
-  const extension = extensionDe(nombreArchivo)
-  if (!(seccion.extensiones as readonly string[]).includes(extension)) {
-    return `La Biblioteca acepta ${seccion.extensiones.join(', ')}. Un archivo .${extension} va en otra carpeta del bucket.`
-  }
-
-  return null
 }
 
 export async function listarCarpeta(prefijo: string): Promise<{ error: string } | ListadoR2> {
@@ -170,8 +150,9 @@ export async function pedirSubidaMaterial(
     return { error: `La extensión ".${extension}" no coincide con el tipo ${contentType}.` }
   }
 
-  const errorBiblioteca = errorSubidaEnBiblioteca(prefijo, nombre)
-  if (errorBiblioteca) return { error: errorBiblioteca }
+  // Dentro de la carpeta espejo de Biblioteca se acepta cualquier tipo permitido: la
+  // sincronización decide qué se publica (pdf/audio/video según extensión, a cualquier
+  // profundidad) y el resto queda guardado como insumo (ej. portadas/ de los ebooks).
 
   const key = `${prefijo}${nombre}`
   if (!keyValida(key)) return { error: 'Nombre de archivo o ruta inválida.' }
@@ -251,11 +232,9 @@ export async function crearCarpeta(prefijoPadre: string, nombre: string) {
   if (esZonaDeEntregas(prefijo)) {
     return { error: 'No se puede crear carpetas dentro de las entregas de alumnos.' }
   }
-  // Adentro de una sección sí (para ordenar por tema); al lado de las secciones no, porque
-  // no habría pestaña del lado del alumno donde mostrar lo que se guarde ahí.
-  if (prefijoPadre === PREFIJO_BIBLIOTECA_R2) {
-    return { error: 'Las secciones de Biblioteca son fijas. Creá la carpeta dentro de una de ellas.' }
-  }
+  // En la carpeta espejo de Biblioteca las subcarpetas libres sí se pueden crear: la
+  // sincronización publica a cualquier profundidad, así que ordenar por tema no esconde
+  // nada (las carpetas fijas de la estructura siguen sin poder borrarse/renombrarse).
 
   try {
     await crearCarpetaR2(prefijo)
@@ -316,7 +295,7 @@ export async function borrarCarpeta(prefijo: string) {
   }
 }
 
-// Vuelve a alinear la sección Biblioteca con lo que hay en la carpeta "Libros" del
+// Vuelve a alinear la sección Biblioteca con lo que hay en la carpeta "Biblioteca R2" del
 // bucket. La llaman las acciones que tocan esa zona y el cliente después de subir; la
 // sección Biblioteca también la corre al abrirse, para tomar lo que se haya subido desde
 // el panel de Cloudflare.
@@ -412,10 +391,9 @@ export async function renombrarArchivo(key: string, nuevoNombre: string) {
   if (!keyValida(keyNueva)) return { error: 'Nombre inválido.' }
   if (keyNueva === key) return { success: true, keyNueva }
 
-  // Cambiar la extensión acá puede sacar al archivo de su sección de biblioteca (y con
-  // eso, de la vista del alumno) sin que nadie lo note. Se valida igual que al subir.
-  const errorBiblioteca = errorSubidaEnBiblioteca(carpeta, limpio)
-  if (errorBiblioteca) return { error: errorBiblioteca }
+  // Dentro de la carpeta espejo de Biblioteca, cambiar la extensión puede sumar o sacar el
+  // archivo de la publicación — no se bloquea: la sincronización que corre abajo realinea
+  // los recursos con lo que quedó en el bucket.
 
   if (await existeEnR2(keyNueva)) {
     return { error: 'Ya existe un archivo con ese nombre en esta carpeta.' }

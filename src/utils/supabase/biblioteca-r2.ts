@@ -15,7 +15,7 @@ import {
 } from '@/utils/r2'
 import { tipoMedioPorTipoContenido } from '@/utils/taxonomia'
 
-// La carpeta "Libros" del bucket es un espejo de la sección Biblioteca: lo que hay
+// La carpeta "Biblioteca R2" del bucket es un espejo de la sección Biblioteca: lo que hay
 // adentro es lo que existe como recurso, y nada más. La sincronización es en un solo
 // sentido (bucket → tabla) a propósito: si fuera bidireccional habría dos lugares donde
 // crear lo mismo y ninguna forma de decidir cuál gana cuando difieren.
@@ -62,7 +62,7 @@ export async function asegurarCarpetasBibliotecaR2(): Promise<void> {
     )
   } catch (err) {
     // Best-effort: que falle crear una carpeta no debería tirar abajo la página entera.
-    console.error('No se pudo asegurar la carpeta Libros:', err)
+    console.error('No se pudo asegurar la carpeta Biblioteca R2:', err)
   }
 }
 
@@ -73,12 +73,14 @@ export async function sincronizarBibliotecaR2(
 
   let keys: string[]
   try {
-    keys = await listarKeysRecursivo(PREFIJO_BIBLIOTECA_R2, true)
+    // Recursivo (sin Delimiter): la biblioteca publica lo que hay en la carpeta espejo a
+    // cualquier profundidad, así organizar en subcarpetas no saca el material de la vista.
+    keys = await listarKeysRecursivo(PREFIJO_BIBLIOTECA_R2, false)
   } catch (err) {
     // Si el listado falla no se borra nada: sin la foto del bucket, "no está en R2" y "no
     // pude preguntar" son indistinguibles, y confundirlos vaciaría la biblioteca entera.
-    console.error('No se pudo listar la carpeta Libros:', err)
-    return { error: 'No se pudo leer la carpeta Libros del bucket.' }
+    console.error('No se pudo listar la carpeta Biblioteca R2:', err)
+    return { error: 'No se pudo leer la carpeta Biblioteca R2 del bucket.' }
   }
 
   const publicables = new Map<string, string>() // key → tipo_contenido
