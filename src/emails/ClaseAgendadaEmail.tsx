@@ -15,6 +15,12 @@ interface ClaseAgendadaEmailProps {
   nombre: string
   /** Nombre de la formación (si es grupal) o 'Sesión individual' */
   contexto: string
+  /**
+   * Cómo llamar al encuentro. Una formación dicta "clases"; una sesión individual —con un
+   * alumno o con un paciente— es una "sesión". Mismo criterio que ya usaba el asunto del
+   * recordatorio en api/cron/recordatorios.
+   */
+  sustantivo?: 'clase' | 'sesión'
   tipo: 'virtual' | 'presencial'
   /** Cuántas clases nuevas se agendaron de una — evita mandar un mail por fecha. */
   cantidad: number
@@ -38,6 +44,7 @@ const formatFechaHora = (iso: string) => ({
 export function ClaseAgendadaEmail({
   nombre,
   contexto,
+  sustantivo = 'clase',
   tipo,
   cantidad,
   primeraFechaHora,
@@ -49,23 +56,29 @@ export function ClaseAgendadaEmail({
   const { fecha, hora } = formatFechaHora(primeraFechaHora)
   const esVirtual = tipo === 'virtual'
   const esUnaSola = cantidad === 1
+  const esSesion = sustantivo === 'sesión'
+  const plural = esSesion ? 'sesiones' : 'clases'
+  const adjetivo = esVirtual ? 'virtual' : 'presencial'
+  const adjetivoPlural = esVirtual ? 'virtuales' : 'presenciales'
 
   return (
-    <EmailLayout preview={esUnaSola ? `Nueva clase: ${fecha} a las ${hora}` : `Se agendaron ${cantidad} clases nuevas`}>
+    <EmailLayout preview={esUnaSola ? `Nueva ${sustantivo}: ${fecha} a las ${hora}` : `Se agendaron ${cantidad} ${plural} nuevas`}>
       <Section style={iconWrapStyle}>
         <Text style={iconStyle}>{esVirtual ? '💻' : '🏫'}</Text>
       </Section>
 
       <Heading style={titleStyle}>
-        {esUnaSola ? 'Nueva clase agendada' : `Se agendaron ${cantidad} clases nuevas`}
+        {esUnaSola ? `Nueva ${sustantivo} agendada` : `Se agendaron ${cantidad} ${plural} nuevas`}
       </Heading>
 
       <Text style={bodyTextStyle}>
-        Hola <strong>{nombre}</strong>, se agendó{esUnaSola ? ' una nueva' : `n ${cantidad}`}{' '}
-        {esVirtual ? 'clase virtual' : 'clase presencial'}{esUnaSola ? '' : 's'} para vos:
+        Hola <strong>{nombre}</strong>, se agendó{esUnaSola ? '' : 'n'}{' '}
+        {esUnaSola
+          ? `una nueva ${sustantivo} ${adjetivo}`
+          : `${cantidad} nuevas ${plural} ${adjetivoPlural}`} para vos:
       </Text>
 
-      {/* Tarjeta de la clase */}
+      {/* Tarjeta del encuentro */}
       <Section style={claseCardStyle}>
         <Text style={contextoBadgeStyle}>{contexto}</Text>
         <Hr style={hrStyleInterno} />
@@ -116,7 +129,7 @@ export function ClaseAgendadaEmail({
       </Section>
 
       <Text style={hintStyle}>
-        Vas a recibir un recordatorio el día anterior a cada clase.
+        Vas a recibir un recordatorio el día anterior a cada {sustantivo}.
       </Text>
     </EmailLayout>
   )

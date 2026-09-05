@@ -12,13 +12,11 @@ import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomi
 import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 import { baseUrl } from '@/utils/site-url'
+import { invitarUsuario } from '@/utils/supabase/invitaciones'
 import { enviarMail, enviarMailBatch, type OpcionesEmail } from '@/utils/email/resend'
 import { AsignacionProgramaEmail } from '@/emails/AsignacionProgramaEmail'
 import { EntregaRevisadaEmail } from '@/emails/EntregaRevisadaEmail'
 import { ClaseAgendadaEmail } from '@/emails/ClaseAgendadaEmail'
-
-// Los invitados deben pasar por /configurar-password antes de entrar al portal
-const INVITE_REDIRECT = `${baseUrl()}/auth/confirm?next=/configurar-password`
 
 // Borra del backend que corresponda los archivos subidos (ignora URLs externas).
 // R2 se detecta por la marca r2key:// (extraerKeyDeR2), no por tipo_contenido: el mismo
@@ -129,46 +127,6 @@ const alumnoSchema = z.object({
     .optional().or(z.literal('')),
 })
 
-// Invita por email y deja el perfil creado con rol 'alumno'. Sale de crearAlumnoDirecto
-// para que aprobar una solicitud del formulario público haga exactamente lo mismo que
-// crear el alumno a mano: mismo invite, mismo redirect a /configurar-password, mismo rol
-// forzado (el rol NUNCA sale de la metadata del invite — ver handle_new_user en schema.sql).
-async function invitarComoAlumno(datos: {
-  nombre: string
-  email: string
-  telefono: string | null
-  link_videollamada: string | null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabaseAdmin: any
-}): Promise<{ id: string } | { error: string }> {
-  const { nombre, email, telefono, link_videollamada, supabaseAdmin } = datos
-
-  const { data: invited, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-    data: { nombre, telefono },
-    redirectTo: INVITE_REDIRECT,
-  })
-
-  if (inviteError) return { error: inviteError.message }
-  if (!invited?.user) return { error: 'No se pudo crear el usuario' }
-
-  const { error: perfilError } = await supabaseAdmin.from('alumnos').upsert({
-    id: invited.user.id,
-    email,
-    nombre,
-    telefono,
-    link_videollamada,
-    rol: 'alumno',
-    estado: 'activo',
-  }, { onConflict: 'id' })
-  if (perfilError) return { error: perfilError.message }
-
-  // El mail de bienvenida sale del Send Email Hook de Supabase Auth (ver
-  // supabase/functions/send-email), no de acá: inviteUserByEmail() ya dispara ese
-  // hook con el link de invitación real, con nuestra marca. Mandar un segundo mail
-  // desde acá duplicaría el aviso.
-  return { id: invited.user.id }
-}
-
 export async function crearAlumnoDirecto(formData: FormData) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -186,11 +144,12 @@ export async function crearAlumnoDirecto(formData: FormData) {
 
   const supabaseAdmin = createAdminClient()
 
-  const creado = await invitarComoAlumno({
+  const creado = await invitarUsuario({
     nombre,
     email,
     telefono: parsed.data.telefono || null,
     link_videollamada: parsed.data.link_videollamada || null,
+    rol: 'alumno',
     supabaseAdmin,
   })
   if ('error' in creado) return { error: creado.error }
@@ -242,11 +201,12 @@ export async function aprobarSolicitud(solicitudId: string) {
     .maybeSingle()
   if (yaExiste) return { error: 'Ya hay una cuenta con ese email. Revisá la pestaña Activos.' }
 
-  const creado = await invitarComoAlumno({
+  const creado = await invitarUsuario({
     nombre: parsed.data.nombre,
     email: parsed.data.email,
     telefono: parsed.data.telefono || null,
     link_videollamada: null,
+    rol: 'alumno',
     supabaseAdmin,
   })
   if ('error' in creado) return { error: creado.error }
@@ -350,7 +310,10 @@ export async function cambiarEstadoAlumno(id: string, nuevoEstado: 'activo' | 's
     if (unbanError) return { error: unbanError.message }
   }
 
+  // Sirve igual para un alumno que para un paciente (es la misma tabla y el mismo ban),
+  // así que se revalidan las dos listas: no se sabe desde cuál se llamó.
   revalidatePath('/psicologo/alumnos')
+  revalidatePath('/psicologo/pacientes')
   return { success: true }
 }
 
@@ -373,6 +336,7 @@ export async function eliminarUsuarioTotal(id: string) {
   if (authError) return { error: authError.message }
 
   revalidatePath('/psicologo/alumnos')
+  revalidatePath('/psicologo/pacientes')
   return { success: true }
 }
 
@@ -1190,9 +1154,12 @@ async function notificarClasesAgendadas(
   const primera = futuras.reduce((min, f) => (f < min ? f : min), futuras[0])
   const cantidad = futuras.length
   const urlAgenda = `${baseUrl()}/alumno/agenda`
-  const subject = cantidad === 1 ? 'Nueva clase agendada' : `Se agendaron ${cantidad} clases nuevas`
 
   if (destino.alumno_id) {
+    // Individual (alumno o paciente): se llama "sesión", no "clase" — una clase es algo
+    // que se dicta a una formación. Mismo criterio que el asunto del recordatorio diario.
+    const subject = cantidad === 1 ? 'Nueva sesión agendada' : `Se agendaron ${cantidad} sesiones nuevas`
+
     // Sesión individual — un solo destinatario. El enlace de la sesión, o el del
     // alumno como fallback (mismo criterio que armarSesion() en calendarActions.ts).
     const { data: alumno } = await supabaseAdmin
@@ -1211,6 +1178,7 @@ async function notificarClasesAgendadas(
       react: ClaseAgendadaEmail({
         nombre: alumno.nombre,
         contexto: 'Sesión individual',
+        sustantivo: 'sesión',
         tipo: destino.tipo,
         cantidad,
         primeraFechaHora: primera,
@@ -1241,14 +1209,18 @@ async function notificarClasesAgendadas(
     .filter((a): a is { id: string; nombre: string; email: string; estado: string } => a?.estado === 'activo')
   if (alumnosActivos.length === 0) return
 
+  // Grupal: acá sí son "clases" — es lo que la formación dicta.
+  const subjectCohorte = cantidad === 1 ? 'Nueva clase agendada' : `Se agendaron ${cantidad} clases nuevas`
+
   const mails: OpcionesEmail[] = alumnosActivos.map((a) => ({
     to: a.email,
-    subject,
+    subject: subjectCohorte,
     tipo: 'clase_agendada' as const,
     alumnoId: a.id,
     react: ClaseAgendadaEmail({
       nombre: a.nombre,
       contexto: cohorte.nombre,
+      sustantivo: 'clase',
       tipo: destino.tipo,
       cantidad,
       primeraFechaHora: primera,

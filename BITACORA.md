@@ -6,6 +6,70 @@ terminó (ver instrucción en `AGENTS.md`) — más reciente arriba. El objetivo
 que una sesión nueva pueda entender el estado y las decisiones tomadas sin
 tener que releer toda la conversación anterior.
 
+## 2026-09-05
+
+**Biblioteca rota: causa raíz y arreglo (venía a medias de una sesión de qwen).**
+
+- **Por qué dejó de andar**: la carpeta espejo era `Libros/` y la sincronización publicaba
+  *solo los PDF sueltos en la raíz* (`listarKeysRecursivo(prefijo, true)`, con Delimiter).
+  Cuando los 13 PDF se ordenaron dentro de `Libros/Libros Asigacion/`, el listado dejó de
+  verlos y la Biblioteca quedó vacía. **Daño colateral que nadie había notado**: los 7
+  ebooks apuntaban a `r2key://Libros/<archivo>.pdf` (raíz) y esos objetos ya no existían —
+  las portadas y los PDF de los ebooks *vendidos* estaban rotos.
+- **Lo que ya había hecho qwen** (sin terminar): renombró el prefijo a `Biblioteca R2/`,
+  pasó la sincronización a recursiva (publica a cualquier profundidad, por extensión),
+  agregó la carpeta fija "Herramientas de Terapia" y sacó las validaciones de subida que
+  ya no aplican. **Faltaba todo lo demás**: el bucket seguía con las dos carpetas, la base
+  seguía apuntando a `Libros/`, y quedaban copys/comentarios viejos.
+- **Bucket** (`plataforma-archivos-psi`): se movió todo a `Biblioteca R2/` — los 13 PDF a
+  `Biblioteca R2/Libros/`, `portadas/` y `fuente/` colgando de la raíz de la carpeta
+  espejo — y se borró `Libros/` entera. También se borró `Biblioteca R2/Lecturas/` (vacía,
+  era el concepto duplicado del esquema viejo de secciones). Método: copy → `rclone check`
+  (21/21 idénticos) → delete, nunca move a ciegas.
+- **Base**: 15 referencias reescritas (7 `ebooks.archivo_key`, 7 `ebooks.portada_key`,
+  1 `biblioteca_recursos.url_recurso`), validando contra el bucket que la key destino
+  existiera antes de escribir. Las 59 lecciones de `Formaciones/` no se tocaron.
+- **Carpetas fijas de `Biblioteca R2/` ahora**: Libros, Audios, Videos, Herramientas de
+  Terapia, Otros. Se publica por extensión (pdf/audio/video) a cualquier profundidad;
+  `portadas/` (png) y `fuente/` (docx) quedan guardadas sin publicar, como insumos.
+- Verificado con el módulo real (`seccionBibliotecaR2`) contra bucket + base: la próxima
+  sincronización **agrega 13, quita 0** y no toca las 2 filas cargadas a mano.
+
+**Módulo Pacientes nuevo.**
+
+- Decisión: **no es una tabla nueva**, es `alumnos.rol = 'paciente'`. Así se reusa tal cual
+  la invitación por email, el ban al suspender, `agenda_sesiones` y `recursos_asignados`.
+  Un paciente es "un alumno sin cursos": cuenta + agenda + material puntual. **Cero campos
+  clínicos** (Ley 25.326) — el rol dice a quién se le agenda una sesión, no qué le pasa.
+- `/psicologo/pacientes`: lista con Activos/Suspendidos/Historial, próxima sesión y
+  cantidad de material; crear/invitar; editar contacto; **"Entregar material"** (diálogo
+  con todo lo de Biblioteca, marca y guarda → cae en `recursos_asignados` y aparece en la
+  Biblioteca del paciente). Suspender/archivar/borrar reusan las actions de Alumnos.
+- El helper de invitación salió de `psicologo/actions.ts` a `utils/supabase/invitaciones.ts`
+  **a propósito**: exportarlo desde un archivo `'use server'` lo habría convertido en un
+  endpoint RPC que acepta el rol por parámetro desde el navegador.
+- Integrado en: sidebar del psicólogo, selector de destino de Agenda (grupo "Pacientes"),
+  y "Gestionar accesos" de Biblioteca (con chip "Paciente" para distinguir homónimos).
+  Del lado del paciente: menú reducido (Inicio / Biblioteca / Mi agenda) y `/alumno`
+  sin programas ni recomendación de cursos.
+- **Emails**: individual (alumno o paciente) ahora dice "sesión" y grupal dice "clase", que
+  es lo que ya hacía el asunto del recordatorio diario. De paso se arregló un plural roto
+  que generaba "2 clase virtuals".
+
+**Pendiente de Lucas (bloquea crear el primer paciente):** correr
+`supabase/snippets/2026-09-05-rol-paciente.sql` en el SQL Editor de Supabase (amplía el
+check de `alumnos.rol`). El conector MCP sigue apuntando a otra cuenta, así que no se pudo
+aplicar desde acá. Si no se corre, crear un paciente devuelve un error que dice exactamente
+eso; el resto de la app no se ve afectada.
+
+**No verificado en navegador**: el panel del psicólogo requiere login con contraseña, que
+Claude no hace. Se verificó en cambio: `lint`/`tsc`/`next build` limpios (los 35 errores de
+lint son los preexistentes de `scripts/curso-pastoral/*.js` y los 4 `any` de
+`alumnos/page.tsx`), el guard de `/psicologo/pacientes` redirige a `/login`, y las queries
+nuevas corridas contra la base real.
+
+---
+
 ## 2026-08-09
 
 **Botón y Sección "Psicología y Fe":**
