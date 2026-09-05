@@ -3,13 +3,25 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, CheckCircle2, Clock, CreditCard, Lock, TriangleAlert } from 'lucide-react'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { createClient } from '@/utils/supabase/server'
+import { obtenerPagoMP } from '@/utils/mercadopago'
+import { aplicarPagoAOrden } from '@/utils/supabase/ordenes'
 import { BrandMark } from '@/components/BrandMark'
 import { RecomendacionCursos } from '@/components/RecomendacionCursos'
 import { DescargarBoton } from './DescargarBoton'
 
 export const metadata = { title: 'Tu pedido | Elias Pacione' }
 
-type Props = { params: Promise<{ id: string }> }
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+const COLUMNAS_ORDEN = 'id, estado, email_comprador, alumno_id, proveedor, ebooks(titulo, slug, link_pago)'
+
+function primerValor(valor: string | string[] | undefined): string | null {
+  if (Array.isArray(valor)) return valor[0] ?? null
+  return valor ?? null
+}
 
 // El id de la orden funciona como capability URL: quien lo tiene, ve la página. Sirve para
 // confirmar la compra, pero no hay motivo para que además muestre el email completo de
@@ -27,17 +39,47 @@ function enmascararEmail(email: string): string {
 // El id de la orden (un uuid, imposible de adivinar) es lo único que hace falta para
 // consultar el estado: no hace falta login para ver "tu" pedido porque quien compró
 // puede no tener cuenta todavía (la cuenta es posterior y opcional, ver fase 5 del plan).
-export default async function PedidoPage({ params }: Props) {
+export default async function PedidoPage({ params, searchParams }: Props) {
   const { id } = await params
+  const query = await searchParams
   const supabaseAdmin = createAdminClient()
 
-  const { data: orden } = await supabaseAdmin
-    .from('ordenes')
-    .select('id, estado, email_comprador, alumno_id, proveedor, ebooks(titulo, slug, link_pago)')
-    .eq('id', id)
-    .maybeSingle()
+  const leerOrden = async () => {
+    const { data } = await supabaseAdmin
+      .from('ordenes')
+      .select(COLUMNAS_ORDEN)
+      .eq('id', id)
+      .maybeSingle()
+    return data
+  }
 
+  let orden = await leerOrden()
   if (!orden) notFound()
+
+  // LA VUELTA DEL CHECKOUT (arreglo del 2026-09-05). Mercado Pago redirige acá con
+  // ?payment_id=&collection_id=&status=&external_reference=… y hasta ahora la página los
+  // ignoraba por completo: se quedaba esperando el webhook y refrescando cada 5s. Si el
+  // webhook no llegaba —que era exactamente lo que pasaba— el pago quedaba 'pendiente'
+  // para siempre y la descarga nunca se habilitaba.
+  //
+  // El query string NO se cree: es solo el disparador. El id de pago se re-consulta
+  // contra la API de Mercado Pago y de ahí sale el status real, igual que hace el webhook
+  // ("Never trust query params alone — always verify server-side", checklist oficial de
+  // Checkout Pro). Los dos caminos terminan en aplicarPagoAOrden, que está condicionado a
+  // 'pendiente', así que el que llegue segundo no duplica ni el estado ni el mail.
+  if (orden.estado === 'pendiente') {
+    const idPago = primerValor(query.payment_id) ?? primerValor(query.collection_id)
+    if (idPago && /^\d+$/.test(idPago)) {
+      const pago = await obtenerPagoMP(idPago)
+      // El pago tiene que ser EL de esta orden. Sin este corte, pegarle a
+      // /pedido/<mi-orden>?payment_id=<pago-de-otro> dejaría que un pago ajeno confirme
+      // una orden propia — el back_url es una URL pública que arma cualquiera.
+      if (pago && pago.externalReference === orden.id) {
+        await aplicarPagoAOrden(pago)
+        orden = (await leerOrden()) ?? orden
+      }
+    }
+  }
 
   // Hardening auditoría 2026-08-29 (A-01): esta compra ya tiene cuenta asociada, así
   // que la descarga exige ser su dueño (la action re-valida igual — esto es sólo para
@@ -53,10 +95,14 @@ export default async function PedidoPage({ params }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ebook = orden.ebooks as any
 
-  // Orden creada desde un link de pago manual (ebooks.link_pago). Del pago no vuelve
-  // ninguna notificación, así que a diferencia del flujo automático esta orden NO se
-  // confirma sola: la habilita el psicólogo desde Ventas después de ver la plata en su
-  // cuenta. La página tiene que decir eso, no "esperá unos segundos".
+  // Orden creada desde un link de pago manual (ebooks.link_pago). El link es una URL
+  // estática del proveedor: no lleva external_reference y no redirige de vuelta acá, así
+  // que esta orden no se confirma con la vuelta del checkout como la automática. Puede
+  // llegar a confirmarse sola si el webhook está registrado a nivel aplicación en el
+  // panel de Mercado Pago (ahí aplicarPagoAOrden la reconoce por email + importe), pero
+  // eso no está garantizado: el camino que siempre funciona sigue siendo el psicólogo
+  // confirmándola desde Ventas. La página tiene que prometer eso, no "esperá unos
+  // segundos".
   const esManual = orden.proveedor === 'manual'
   const linkPago: string | null =
     typeof ebook?.link_pago === 'string' && ebook.link_pago.startsWith('https://')
