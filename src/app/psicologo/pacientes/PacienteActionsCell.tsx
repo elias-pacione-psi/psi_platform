@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, BookMarked } from 'lucide-react'
+import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, BookMarked, GraduationCap } from 'lucide-react'
 import { toast } from 'sonner'
-import { actualizarPaciente, entregarMaterialAPaciente } from './actions'
+import { actualizarPaciente, entregarMaterialAPaciente, cambiarVinculo } from './actions'
 import { cambiarEstadoAlumno, eliminarUsuarioTotal } from '../actions'
 import { LABEL_TIPO_MEDIO } from '@/utils/taxonomia-labels'
 import type { RecursoBiblioteca } from './PacientesClient'
@@ -74,6 +74,17 @@ export function PacienteActionsCell({
     })
   }
 
+  // Espejo del de Alumnos: suma o saca el lado de alumno sin tocar el de paciente.
+  const handleVinculoAlumno = () => {
+    startTransition(async () => {
+      const result = await cambiarVinculo(paciente.id, { esAlumno: !paciente.es_alumno, esPaciente: true })
+      if (result?.error) toast.error(result.error)
+      else toast.success(paciente.es_alumno
+        ? `${paciente.nombre} salió de la lista de alumnos (sigue siendo paciente).`
+        : `${paciente.nombre} ahora también aparece en Alumnos.`)
+    })
+  }
+
   const handleEstado = (id: string, estado: 'activo' | 'suspendido' | 'eliminado') => {
     startTransition(async () => {
       const result = await cambiarEstadoAlumno(id, estado)
@@ -114,6 +125,10 @@ export function PacienteActionsCell({
           <DropdownMenuItem onClick={(e) => { e.preventDefault(); setSeleccionados(paciente.materialesAsignados || []); setBusquedaMaterial(''); setShowMaterialDialog(true) }}>
             <BookMarked className="mr-2 h-4 w-4 text-marca" />
             <span>Entregar material</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleVinculoAlumno() }}>
+            <GraduationCap className="mr-2 h-4 w-4 text-marca" />
+            <span>{paciente.es_alumno ? 'Quitar de Alumnos' : 'Marcar también como alumno'}</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 

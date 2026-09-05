@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Loader2, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { crearPacienteDirecto } from './actions'
@@ -16,15 +17,24 @@ export function CrearPacienteDialog() {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  // Arranca en paciente (es el diálogo de Pacientes) pero se puede marcar alumno además.
+  const [vinculo, setVinculo] = useState({ esAlumno: false, esPaciente: true })
 
   const handleSubmit = (formData: FormData) => {
     setErrorMsg(null)
+    if (!vinculo.esAlumno && !vinculo.esPaciente) {
+      setErrorMsg('Elegí si entra como alumno, como paciente, o las dos cosas.')
+      return
+    }
+    formData.append('es_alumno', String(vinculo.esAlumno))
+    formData.append('es_paciente', String(vinculo.esPaciente))
     startTransition(async () => {
       const result = await crearPacienteDirecto(formData)
       if (result?.error) {
         setErrorMsg(result.error)
       } else {
-        toast.success('Paciente creado. Se le envió un email para configurar su contraseña.')
+        toast.success('Cuenta creada. Se le envió un email para configurar su contraseña.')
+        setVinculo({ esAlumno: false, esPaciente: true })
         setOpen(false)
       }
     })
@@ -71,6 +81,36 @@ export function CrearPacienteDialog() {
             El link de videollamada es el que se usa por defecto en las sesiones virtuales
             de esta persona, salvo que la sesión traiga uno propio.
           </p>
+
+          <div className="space-y-3 pt-4 border-t border-border">
+            <Label className="font-bold text-tinta block">¿Cómo entra a la plataforma?</Label>
+            <div className="space-y-2">
+              <div className="flex items-start gap-3 bg-card p-3 rounded-lg border border-border">
+                <Checkbox
+                  id="nuevo-paciente-vinculo-alumno"
+                  checked={vinculo.esAlumno}
+                  onCheckedChange={(c) => setVinculo(v => ({ ...v, esAlumno: c as boolean }))}
+                />
+                <div className="grid leading-none cursor-pointer" onClick={() => setVinculo(v => ({ ...v, esAlumno: !v.esAlumno }))}>
+                  <label className="text-sm font-medium leading-none text-tinta">Alumno</label>
+                  <p className="text-xs text-muted-foreground mt-1">Cursa programas y formaciones.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-card p-3 rounded-lg border border-border">
+                <Checkbox
+                  id="nuevo-paciente-vinculo-paciente"
+                  checked={vinculo.esPaciente}
+                  onCheckedChange={(c) => setVinculo(v => ({ ...v, esPaciente: c as boolean }))}
+                />
+                <div className="grid leading-none cursor-pointer" onClick={() => setVinculo(v => ({ ...v, esPaciente: !v.esPaciente }))}>
+                  <label className="text-sm font-medium leading-none text-tinta">Paciente</label>
+                  <p className="text-xs text-muted-foreground mt-1">Sesiones agendadas y material puntual.</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">Podés marcar las dos si corresponde.</p>
+          </div>
+
 
           {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}
 

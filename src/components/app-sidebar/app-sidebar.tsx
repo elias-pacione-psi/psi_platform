@@ -150,7 +150,7 @@ function estaActivo(pathname: string, url: string, raiz: string) {
   return pathname === url || (url !== raiz && pathname.startsWith(url))
 }
 
-export function AppSidebar({ userRole }: { userRole?: string }) {
+export function AppSidebar({ userRole, soloPaciente = false }: { userRole?: string, soloPaciente?: boolean }) {
   const pathname = usePathname()
   const router = useRouter()
   // Cerrado por defecto: es una vista previa de lo que ve un alumno, no una sección de
@@ -167,7 +167,8 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
 
   const esPsicologo = userRole === 'psicologo'
   // El paciente entra por las mismas rutas que el alumno; lo único distinto es el menú.
-  const itemsDelUsuario = userRole === 'paciente' ? itemsPaciente : itemsAlumno
+  // Quien es paciente Y alumno ve el de alumno, que es el superconjunto.
+  const itemsDelUsuario = soloPaciente ? itemsPaciente : itemsAlumno
 
   return (
     <Sidebar className="border-r-gray-200">

@@ -8,9 +8,8 @@ export const metadata = { title: 'Pacientes | Elias Pacione' }
 // administra desde acá es la agenda (sesiones que se avisan por email) y el material
 // puntual que el psicólogo le entrega desde Biblioteca — nada clínico, ver AGENTS.md.
 //
-// Si el snippet 2026-09-05-rol-paciente.sql todavía no se corrió, la lista viene vacía
-// (no hay ninguna fila con rol 'paciente') y crear el primero devuelve un error que
-// explica qué falta. La página no se rompe.
+// El vínculo NO es excluyente: quien además cursa una formación aparece también en
+// Alumnos, con un chip que lo aclara en las dos listas.
 export default async function AdminPacientesPage() {
   const supabase = await createClient()
 
@@ -28,7 +27,7 @@ export default async function AdminPacientesPage() {
     supabase
       .from('alumnos')
       .select('*, recursos_asignados(recurso_id)')
-      .eq('rol', 'paciente')
+      .eq('es_paciente', true)
       .order('nombre', { ascending: true }),
     // Todo lo que hay en Biblioteca, no solo los PDF: el psicólogo decide qué entregar
     // (un libro, un audio, una guía de la carpeta Herramientas de Terapia).

@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2 } from 'lucide-react'
+import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, HeartHandshake } from 'lucide-react'
 import { toast } from 'sonner'
 import { actualizarAlumno, cambiarEstadoAlumno, eliminarUsuarioTotal } from '../actions'
+import { cambiarVinculo } from '../pacientes/actions'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alumno: any, todosLosProgramas: any[], stateType: string }) {
@@ -87,6 +88,18 @@ export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alum
     })
   }
 
+  // El vínculo no es excluyente: esto sólo suma o saca el lado de paciente, sin tocar
+  // el de alumno (por eso esAlumno queda fijo en true — si está en esta lista, lo es).
+  const handleVinculoPaciente = () => {
+    startTransition(async () => {
+      const result = await cambiarVinculo(alumno.id, { esAlumno: true, esPaciente: !alumno.es_paciente })
+      if (result?.error) toast.error(result.error)
+      else toast.success(alumno.es_paciente
+        ? `${alumno.nombre} salió de la lista de pacientes (sigue siendo alumno).`
+        : `${alumno.nombre} ahora también aparece en Pacientes.`)
+    })
+  }
+
   const executeArchive = () => {
     handleEstado(alumno.id, 'eliminado')
     setShowDeleteDialog(false)
@@ -105,6 +118,10 @@ export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alum
           <DropdownMenuItem onClick={(e) => { e.preventDefault(); setShowEditDialog(true); }}>
             <Settings2 className="mr-2 h-4 w-4 text-tinta" />
             <span>Gestionar / Editar</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleVinculoPaciente() }}>
+            <HeartHandshake className="mr-2 h-4 w-4 text-marca" />
+            <span>{alumno.es_paciente ? 'Quitar de Pacientes' : 'Marcar también como paciente'}</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 

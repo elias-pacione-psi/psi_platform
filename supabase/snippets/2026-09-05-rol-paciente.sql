@@ -1,6 +1,14 @@
 -- ============================================================================
 -- 2026-09-05 — Módulo Pacientes: rol 'paciente' en public.alumnos
--- Correr UNA VEZ en Supabase → SQL Editor. Es idempotente (se puede re-correr).
+--
+-- ⚠️ REEMPLAZADO por 2026-09-05b-alumno-y-paciente-no-excluyentes.sql, del mismo
+-- día. Este enfoque metía 'paciente' como valor de `rol`, y eso hacía imposible
+-- que una misma persona fuera alumna Y paciente a la vez (que es lo que hacía
+-- falta: alguien puede cursar una formación y además atenderse). El snippet "b"
+-- deshace este cambio y mueve el vínculo a dos flags independientes.
+--
+-- Queda versionado sólo como registro de lo que se corrió: NO lo corras de nuevo.
+-- Si estás poniendo la base al día desde cero, corré directamente el "b".
 -- ============================================================================
 --
 -- El psicólogo no solo dicta cursos: también atiende pacientes. En la plataforma

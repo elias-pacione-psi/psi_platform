@@ -41,12 +41,12 @@ export default async function AlumnoHomePage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: perfil } = await supabase.from('alumnos').select('rol, nombre, link_videollamada').eq('id', user?.id).single()
+  const { data: perfil } = await supabase.from('alumnos').select('rol, nombre, link_videollamada, es_alumno, es_paciente').eq('id', user?.id).single()
   const esPsicologo = perfil?.rol === 'psicologo'
-  // Un paciente entra por las mismas rutas que un alumno pero no cursa nada: no se le
-  // muestran programas ni se le recomiendan cursos, y lo que tiene agendado es una
-  // sesión, no una clase.
-  const esPaciente = perfil?.rol === 'paciente'
+  // Quien es SÓLO paciente no cursa nada: no se le muestran programas ni se le recomiendan
+  // cursos, y lo que tiene agendado es una sesión, no una clase. Si además es alumno ve la
+  // vista completa, que ya cubre las dos cosas.
+  const esPaciente = Boolean(perfil?.es_paciente) && !perfil?.es_alumno
 
   const [{ data: proximaSesion }, { count: countProg }, countRec] = await Promise.all([
     supabase

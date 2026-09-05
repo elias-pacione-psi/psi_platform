@@ -5,7 +5,7 @@ import { createAdminClient } from '@/utils/supabase/admin'
 import { fechaLarga, hora } from '@/utils/fecha-ar'
 import {
   Users, LayoutList, GraduationCap, Inbox, Library, FolderCog, Calendar,
-  ArrowRight, CheckCircle2, UserPlus, MapPin, Video, BookOpen,
+  ArrowRight, CheckCircle2, UserPlus, MapPin, Video, BookOpen, HeartHandshake,
 } from 'lucide-react'
 
 export const metadata = { title: 'Inicio | Elias Pacione' }
@@ -36,6 +36,7 @@ export default async function PsicologoHomePage() {
 
   const [
     { count: alumnosActivos },
+    { count: pacientesActivos },
     { count: entregasPendientes },
     { count: solicitudesPendientes },
     { count: totalProgramas },
@@ -44,7 +45,10 @@ export default async function PsicologoHomePage() {
     { count: totalEbooksPublicados },
     { data: proximaSesion },
   ] = await Promise.all([
-    supabase.from('alumnos').select('*', { count: 'exact', head: true }).eq('estado', 'activo').eq('rol', 'alumno'),
+    supabase.from('alumnos').select('*', { count: 'exact', head: true }).eq('estado', 'activo').eq('es_alumno', true),
+    // Los dos contadores pueden solaparse: quien cursa Y se atiende suma en ambos, que es
+    // justamente lo que el psicólogo quiere ver en cada tarjeta.
+    supabase.from('alumnos').select('*', { count: 'exact', head: true }).eq('estado', 'activo').eq('es_paciente', true),
     supabase.from('entregas').select('*', { count: 'exact', head: true }).eq('estado', 'entregada'),
     supabaseAdmin.from('solicitudes_registro').select('*', { count: 'exact', head: true }).eq('estado', 'pendiente'),
     supabase.from('programas').select('*', { count: 'exact', head: true }),
@@ -73,6 +77,7 @@ export default async function PsicologoHomePage() {
 
   const secciones = [
     { titulo: 'Alumnos', descripcion: 'Cuentas, contacto y programas asignados', url: '/psicologo/alumnos', icon: Users, dato: `${alumnosActivos ?? 0} ${alumnosActivos === 1 ? 'activo' : 'activos'}` },
+    { titulo: 'Pacientes', descripcion: 'Sesiones agendadas y material entregado', url: '/psicologo/pacientes', icon: HeartHandshake, dato: `${pacientesActivos ?? 0} ${pacientesActivos === 1 ? 'activo' : 'activos'}` },
     { titulo: 'Programas', descripcion: 'Módulos y lecciones de cada formación', url: '/psicologo/programas', icon: LayoutList, dato: `${totalProgramas ?? 0} ${totalProgramas === 1 ? 'programa' : 'programas'}` },
     { titulo: 'Formaciones', descripcion: 'Camadas que cursan juntas', url: '/psicologo/cohortes', icon: GraduationCap, dato: `${totalCohortes ?? 0} ${totalCohortes === 1 ? 'formación' : 'formaciones'}` },
     { titulo: 'Biblioteca', descripcion: 'Libros y material, con acceso por alumno o paciente', url: '/psicologo/biblioteca', icon: Library, dato: `${totalRecursos ?? 0} ${totalRecursos === 1 ? 'recurso' : 'recursos'}` },

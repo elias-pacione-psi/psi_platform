@@ -37,6 +37,19 @@ export const LABEL_INTERES: Record<string, string> = {
 // 2026-08-22-programas-tipo.sql — si se agrega una opción, hay que sumarla en los dos
 // lugares. Una formación se dicta con clases en vivo y un grupo; un curso asincrónico
 // lo recorre el alumno solo.
+// Qué vínculo pre-marcar en el diálogo de aprobación según lo que la persona eligió en el
+// desplegable del formulario público. Es sólo una sugerencia para ahorrar un clic: el
+// psicólogo confirma o cambia, y la decisión final siempre es suya (nadie se auto-asigna
+// nada desde un formulario abierto a internet).
+export const VINCULO_SUGERIDO_POR_INTERES: Record<string, { esAlumno: boolean, esPaciente: boolean }> = {
+  curso: { esAlumno: true, esPaciente: false },
+  formacion: { esAlumno: true, esPaciente: false },
+  supervision: { esAlumno: true, esPaciente: false },
+  terapia_individual: { esAlumno: false, esPaciente: true },
+  psicologia_fe: { esAlumno: true, esPaciente: false },
+  otro: { esAlumno: true, esPaciente: false },
+}
+
 export const LABEL_TIPO_PROGRAMA: Record<string, string> = {
   curso_asincronico: 'Curso asincrónico',
   formacion: 'Material de formación',

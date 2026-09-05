@@ -29,7 +29,7 @@ export default async function CohortesPage() {
       `)
       .order('created_at', { ascending: false }),
     supabase.from('programas').select('id, titulo').order('titulo', { ascending: true }),
-    supabase.from('alumnos').select('id, nombre, email').eq('estado', 'activo').eq('rol', 'alumno').order('nombre', { ascending: true }),
+    supabase.from('alumnos').select('id, nombre, email').eq('estado', 'activo').eq('es_alumno', true).order('nombre', { ascending: true }),
     // Para saber si una formación ya tiene clases agendadas y cuántas quedan por delante.
     supabase.from('agenda_sesiones').select('cohorte_id, fecha_hora').not('cohorte_id', 'is', null),
     // Para el selector de "Asignación de Libros y Material extra" del formulario:

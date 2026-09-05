@@ -16,6 +16,9 @@ export function CrearAlumnoDialog({ todosLosProgramas }: { todosLosProgramas: an
   const [isPending, startTransition] = useTransition()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [selectedProgramas, setSelectedProgramas] = useState<string[]>([])
+  // El alta manual también decide el vínculo: este diálogo arranca en alumno, pero se
+  // puede marcar paciente además (o en vez de, si te escribió por fuera del formulario).
+  const [vinculo, setVinculo] = useState({ esAlumno: true, esPaciente: false })
 
   const togglePrograma = (id: string, checked: boolean) => {
     setSelectedProgramas(prev => checked ? [...prev, id] : prev.filter(m => m !== id))
@@ -23,14 +26,21 @@ export function CrearAlumnoDialog({ todosLosProgramas }: { todosLosProgramas: an
 
   const handleSubmit = (formData: FormData) => {
     setErrorMsg(null)
+    if (!vinculo.esAlumno && !vinculo.esPaciente) {
+      setErrorMsg('Elegí si entra como alumno, como paciente, o las dos cosas.')
+      return
+    }
     selectedProgramas.forEach(id => formData.append('programas', id))
+    formData.append('es_alumno', String(vinculo.esAlumno))
+    formData.append('es_paciente', String(vinculo.esPaciente))
     startTransition(async () => {
       const result = await crearAlumnoDirecto(formData)
       if (result?.error) {
         setErrorMsg(result.error)
       } else {
-        toast.success('Alumno creado. Se le envió un email para configurar su contraseña.')
+        toast.success('Cuenta creada. Se le envió un email para configurar su contraseña.')
         setSelectedProgramas([])
+        setVinculo({ esAlumno: true, esPaciente: false })
         setOpen(false)
       }
     })
@@ -70,6 +80,36 @@ export function CrearAlumnoDialog({ todosLosProgramas }: { todosLosProgramas: an
               <Label htmlFor="nuevo-link_videollamada" className="font-bold text-tinta">Link de videollamada</Label>
               <Input id="nuevo-link_videollamada" name="link_videollamada" className="bg-card border-border" placeholder="https://meet.google.com/... o Zoom" />
             </div>
+          </div>
+
+
+          <div className="space-y-3 pt-4 border-t border-border">
+            <Label className="font-bold text-tinta block">¿Cómo entra a la plataforma?</Label>
+            <div className="space-y-2">
+              <div className="flex items-start gap-3 bg-card p-3 rounded-lg border border-border">
+                <Checkbox
+                  id="nuevo-alumno-vinculo-alumno"
+                  checked={vinculo.esAlumno}
+                  onCheckedChange={(c) => setVinculo(v => ({ ...v, esAlumno: c as boolean }))}
+                />
+                <div className="grid leading-none cursor-pointer" onClick={() => setVinculo(v => ({ ...v, esAlumno: !v.esAlumno }))}>
+                  <label className="text-sm font-medium leading-none text-tinta">Alumno</label>
+                  <p className="text-xs text-muted-foreground mt-1">Cursa programas y formaciones.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-card p-3 rounded-lg border border-border">
+                <Checkbox
+                  id="nuevo-alumno-vinculo-paciente"
+                  checked={vinculo.esPaciente}
+                  onCheckedChange={(c) => setVinculo(v => ({ ...v, esPaciente: c as boolean }))}
+                />
+                <div className="grid leading-none cursor-pointer" onClick={() => setVinculo(v => ({ ...v, esPaciente: !v.esPaciente }))}>
+                  <label className="text-sm font-medium leading-none text-tinta">Paciente</label>
+                  <p className="text-xs text-muted-foreground mt-1">Sesiones agendadas y material puntual.</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">Podés marcar las dos si corresponde.</p>
           </div>
 
           <div className="space-y-3 pt-4 border-t border-border">

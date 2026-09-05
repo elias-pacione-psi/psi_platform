@@ -29,6 +29,8 @@ export default async function AdminAlumnosPage() {
     { data: lecciones },
     { data: solicitudes, error: solicitudesError }
   ] = await Promise.all([
+    // es_alumno y no rol: el vínculo dejó de ser excluyente, así que quien además se
+    // atiende sigue apareciendo acá. El psicólogo queda afuera (es_alumno = false).
     supabase
       .from('alumnos')
       .select(`
@@ -40,6 +42,7 @@ export default async function AdminAlumnosPage() {
         progreso_lecciones(leccion_id),
         entregas(estado)
       `)
+      .eq('es_alumno', true)
       .order('nombre', { ascending: true }),
     supabase
       .from('programas')
