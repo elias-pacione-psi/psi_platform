@@ -96,7 +96,7 @@ export default async function CursosPage() {
                 preload="metadata"
                 className="block aspect-[4/3] w-full bg-tinta object-cover"
               />
-              <figcaption className="border-t border-border px-4 py-2.5 font-serif text-xs text-muted-foreground">
+              <figcaption className="border-t border-border px-4 py-2.5 font-sans text-sm text-tinta/75">
                 Lección grabada
               </figcaption>
             </figure>
