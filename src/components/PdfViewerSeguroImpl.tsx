@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react
 import { Document, Page, pdfjs } from 'react-pdf'
 import { Loader2, ZoomIn, ZoomOut, ShieldAlert, Maximize, Minimize } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { usePantallaCompleta, CLASES_PANTALLA_COMPLETA_CSS } from '@/hooks/use-pantalla-completa'
 
 // Worker propio (mismo origen que la app): no depende de un CDN de terceros.
 if (typeof window !== 'undefined') {
@@ -37,8 +38,8 @@ export default function PdfViewerSeguroImpl({ url }: { url: string }) {
   const [error, setError] = useState(false)
   const [pageWidth, setPageWidth] = useState(0)
   const [escala, setEscala] = useState(1)
-  const [pantallaCompleta, setPantallaCompleta] = useState(false)
   const contenedorRef = useRef<HTMLDivElement>(null)
+  const { activa: pantallaCompleta, porCss, alternar: togglePantallaCompleta } = usePantallaCompleta(contenedorRef)
   const pageAreaRef = useRef<HTMLDivElement>(null)
   const pageRefs = useRef<Record<number, HTMLDivElement | null>>({})
 
@@ -53,24 +54,6 @@ export default function PdfViewerSeguroImpl({ url }: { url: string }) {
   // y ancho totales. Se reaplica al scroll después del re-render para que el zoom no
   // "salte" al principio de la página.
   const anclaRef = useRef<{ fx: number; fy: number; cx: number; cy: number } | null>(null)
-
-  // El estado no se toca a mano en el toggle: se escucha el evento, así que salir con
-  // Escape (que no pasa por el botón) también deja el componente en sync.
-  useEffect(() => {
-    const alCambiar = () => setPantallaCompleta(!!document.fullscreenElement)
-    document.addEventListener('fullscreenchange', alCambiar)
-    return () => document.removeEventListener('fullscreenchange', alCambiar)
-  }, [])
-
-  const togglePantallaCompleta = () => {
-    if (!document.fullscreenElement) {
-      contenedorRef.current?.requestFullscreen().catch((err) => {
-        console.error('No se pudo entrar en pantalla completa:', err)
-      })
-    } else {
-      document.exitFullscreen()
-    }
-  }
 
   useEffect(() => {
     const el = pageAreaRef.current
@@ -223,7 +206,7 @@ export default function PdfViewerSeguroImpl({ url }: { url: string }) {
     // documento se ve más grande.
     <div
       ref={contenedorRef}
-      className={`space-y-3 ${pantallaCompleta ? 'h-screen bg-crema p-4 flex flex-col' : ''}`}
+      className={`space-y-3 ${pantallaCompleta ? `h-screen bg-crema p-4 flex flex-col ${porCss ? `${CLASES_PANTALLA_COMPLETA_CSS} overflow-auto` : ''}` : ''}`}
     >
       <div className="flex items-center justify-between gap-3 flex-wrap shrink-0">
         <span className="text-sm text-muted-foreground font-medium">
