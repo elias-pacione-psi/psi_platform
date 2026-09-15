@@ -22,5 +22,8 @@ export async function confirmarAcceso(formData: FormData) {
     }
   }
 
-  redirect(`/login?message=${encodeURIComponent('El enlace es inválido o ha expirado.')}`)
+  // Código y no texto libre: /login lo traduce a un cartel con el camino de salida
+  // (pedir un enlace nuevo). Un `message` suelto se perdía — la página nunca lo leía y
+  // el invitado caía en un login pelado, sin contraseña y sin saber por qué.
+  redirect('/login?error=enlace_invalido')
 }

@@ -17,7 +17,7 @@ export default async function ConfirmarAccesoPage({ searchParams }: Props) {
   const { token_hash, type, next } = await searchParams
 
   if (!token_hash || !type) {
-    redirect(`/login?message=${encodeURIComponent('El enlace es inválido o ha expirado.')}`)
+    redirect('/login?error=enlace_invalido')
   }
 
   return (
