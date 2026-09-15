@@ -55,9 +55,9 @@ export default async function AdminBibliotecaPage() {
   // (recursos_asignados), así que el diálogo de accesos los lista juntos.
   const { data: alumnos } = await supabase
     .from('alumnos')
-    .select('id, nombre, email, rol')
+    .select('id, nombre, email, es_alumno, es_paciente')
     .eq('estado', 'activo')
-    .in('rol', ['alumno', 'paciente'])
+    .or('es_alumno.eq.true,es_paciente.eq.true')
     .order('nombre', { ascending: true })
 
   return (

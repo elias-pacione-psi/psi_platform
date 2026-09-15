@@ -27,7 +27,9 @@ import { CrearAlumnoDialog } from './CrearAlumnoDialog'
 import { Check, Loader2, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { aprobarSolicitud, rechazarSolicitud } from '../actions'
-import { LABEL_INTERES } from '@/utils/taxonomia-labels'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { LABEL_INTERES, VINCULO_SUGERIDO_POR_INTERES } from '@/utils/taxonomia-labels'
 import { fechaCorta } from '@/utils/fecha-ar'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +40,15 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
   const [porAprobar, setPorAprobar] = useState<any>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [porRechazar, setPorRechazar] = useState<any>(null)
+  // Qué va a ser la persona al aprobarla. Se pre-marca con lo que eligió en el
+  // desplegable del formulario, pero manda lo que el psicólogo deje tildado.
+  const [vinculo, setVinculo] = useState({ esAlumno: true, esPaciente: false })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const abrirAprobacion = (req: any) => {
+    setVinculo(VINCULO_SUGERIDO_POR_INTERES[req.interes] ?? { esAlumno: true, esPaciente: false })
+    setPorAprobar(req)
+  }
 
   const activos = alumnos.filter(a => a.estado === 'activo' || !a.estado)
   const suspendidos = alumnos.filter(a => a.estado === 'suspendido')
@@ -46,8 +57,12 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
 
   const handleAprobar = () => {
     if (!porAprobar) return
+    if (!vinculo.esAlumno && !vinculo.esPaciente) {
+      toast.error('Elegí si entra como alumno, como paciente, o las dos cosas.')
+      return
+    }
     startTransition(async () => {
-      const res = await aprobarSolicitud(porAprobar.id)
+      const res = await aprobarSolicitud(porAprobar.id, vinculo)
       if (res?.error) {
         toast.error(res.error)
       } else {
@@ -105,7 +120,14 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
             ) : filteredUsers.map((alumno) => (
               <TableRow key={alumno.id}>
                 <TableCell>
-                  <div className="font-medium text-tinta">{alumno.nombre}</div>
+                  <div className="font-medium text-tinta">
+                    {alumno.nombre}
+                    {alumno.es_paciente && (
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-marca/10 text-marca align-middle">
+                        También paciente
+                      </span>
+                    )}
+                  </div>
                   <div className="text-muted-foreground text-sm">{alumno.email}</div>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">
@@ -187,7 +209,7 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
                 <TableCell className="text-right whitespace-nowrap space-x-2">
                   <Button
                     size="sm"
-                    onClick={() => setPorAprobar(req)}
+                    onClick={() => abrirAprobacion(req)}
                     disabled={isPending}
                     className="font-sans bg-marca hover:bg-marca/90 text-crema"
                   >
@@ -262,10 +284,45 @@ export function AdminAlumnosClient({ alumnos, todosLosProgramas, solicitudes }: 
             <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Aprobar esta solicitud?</AlertDialogTitle>
             <AlertDialogDescription className="font-sans text-muted-foreground">
               Se crea la cuenta de <b>{porAprobar?.nombre}</b> y se manda una invitación a{' '}
-              <b>{porAprobar?.email}</b> para que elija su contraseña. Después le asignás
-              programas desde la pestaña Activos.
+              <b>{porAprobar?.email}</b> para que elija su contraseña.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          <div className="space-y-3">
+            <Label className="font-bold text-tinta text-sm">¿Cómo entra a la plataforma?</Label>
+            <div className="space-y-2">
+              <div className="flex items-start gap-3 bg-card p-3 rounded-lg border border-border">
+                <Checkbox
+                  id="aprobar-alumno"
+                  checked={vinculo.esAlumno}
+                  onCheckedChange={(c) => setVinculo(v => ({ ...v, esAlumno: c as boolean }))}
+                  disabled={isPending}
+                />
+                <div className="grid leading-none cursor-pointer" onClick={() => !isPending && setVinculo(v => ({ ...v, esAlumno: !v.esAlumno }))}>
+                  <label className="text-sm font-medium leading-none text-tinta">Alumno</label>
+                  <p className="text-xs text-muted-foreground mt-1">Cursa programas y formaciones. Aparece en esta lista.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-card p-3 rounded-lg border border-border">
+                <Checkbox
+                  id="aprobar-paciente"
+                  checked={vinculo.esPaciente}
+                  onCheckedChange={(c) => setVinculo(v => ({ ...v, esPaciente: c as boolean }))}
+                  disabled={isPending}
+                />
+                <div className="grid leading-none cursor-pointer" onClick={() => !isPending && setVinculo(v => ({ ...v, esPaciente: !v.esPaciente }))}>
+                  <label className="text-sm font-medium leading-none text-tinta">Paciente</label>
+                  <p className="text-xs text-muted-foreground mt-1">Sesiones agendadas y material puntual. Aparece en Pacientes.</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {porAprobar?.interes
+                ? <>Pre-marcado según lo que eligió en el formulario: <b>{LABEL_INTERES[porAprobar.interes] ?? porAprobar.interes}</b>. Podés cambiarlo.</>
+                : 'Podés marcar las dos si corresponde.'}
+            </p>
+          </div>
+
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending} className="font-sans">Cancelar</AlertDialogCancel>
             <AlertDialogAction

@@ -370,7 +370,7 @@ export function BibliotecaAdminClient({ recursos, alumnos }: { recursos: any[], 
                   >
                     <label className="text-sm font-medium leading-none text-tinta peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                       {alumno.nombre}
-                      {alumno.rol === 'paciente' && (
+                      {alumno.es_paciente && (
                         <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-marca/10 text-marca align-middle">
                           Paciente
                         </span>

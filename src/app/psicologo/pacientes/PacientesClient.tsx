@@ -58,7 +58,14 @@ export function PacientesClient({ pacientes, recursos }: { pacientes: Paciente[]
             ) : filtrados.map((paciente: Paciente) => (
               <TableRow key={paciente.id}>
                 <TableCell>
-                  <div className="font-medium text-tinta">{paciente.nombre}</div>
+                  <div className="font-medium text-tinta">
+                    {paciente.nombre}
+                    {paciente.es_alumno && (
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-marca/10 text-marca align-middle">
+                        También alumno
+                      </span>
+                    )}
+                  </div>
                   <div className="text-muted-foreground text-sm">{paciente.email}</div>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">

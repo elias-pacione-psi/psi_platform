@@ -11,10 +11,11 @@ export default async function AlumnoLayout({
   const { data: { user } } = await supabase.auth.getUser()
 
   let userRole = 'alumno'
+  let soloPaciente = false
   if (user) {
     const { data: alumno } = await supabase
       .from('alumnos')
-      .select('rol, estado')
+      .select('rol, estado, es_alumno, es_paciente')
       .eq('id', user.id)
       .single()
 
@@ -31,12 +32,15 @@ export default async function AlumnoLayout({
         )
       }
       userRole = alumno.rol || 'alumno'
+      // Menú reducido sólo para quien es paciente y NADA más. Quien además cursa una
+      // formación necesita el menú completo: el de paciente le escondería sus programas.
+      soloPaciente = Boolean(alumno.es_paciente) && !alumno.es_alumno
     }
   }
 
   return (
     <SidebarProvider>
-      <AppSidebar userRole={userRole} />
+      <AppSidebar userRole={userRole} soloPaciente={soloPaciente} />
       <main className="flex-1 min-h-screen bg-crema/30 overflow-x-hidden flex flex-col">
         <div className="p-4 flex items-center border-b border-border bg-card sticky top-0 z-10 shrink-0">
           <SidebarTrigger className="text-tinta" />

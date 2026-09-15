@@ -56,11 +56,40 @@ tener que releer toda la conversación anterior.
   es lo que ya hacía el asunto del recordatorio diario. De paso se arregló un plural roto
   que generaba "2 clase virtuals".
 
-**Pendiente de Lucas (bloquea crear el primer paciente):** correr
-`supabase/snippets/2026-09-05-rol-paciente.sql` en el SQL Editor de Supabase (amplía el
-check de `alumnos.rol`). El conector MCP sigue apuntando a otra cuenta, así que no se pudo
-aplicar desde acá. Si no se corre, crear un paciente devuelve un error que dice exactamente
-eso; el resto de la app no se ve afectada.
+**Corrección del mismo día — alumno y paciente dejan de ser excluyentes.**
+
+Lucas corrió el primer snippet y ahí planteó el requisito real: *"quiero que el usuario se
+anote como siempre y el psicólogo pueda elegir si lo asigna como Paciente o como Alumno (o
+ambas de ser necesario)"*. Eso no entraba en el diseño de arriba, porque `rol` estaba
+haciendo dos trabajos a la vez: rol de seguridad (`es_psicologo()` cuelga de ahí) y etiqueta
+de qué es la persona. Se separaron:
+
+- `rol` vuelve a `('alumno','psicologo')` — sólo seguridad.
+- `es_alumno` / `es_paciente`: dos booleanos independientes. Para la RLS los dos vínculos
+  son idénticos (cada uno ve lo suyo), así que la distinción es puramente organizativa y no
+  tenía por qué vivir en una columna de un solo valor.
+- **El alta pasa a ser por el formulario público**: la persona llena Consultas → cae en
+  Solicitudes → al aprobar, el psicólogo tilda Alumno / Paciente / los dos. El diálogo
+  pre-marca según el `interes` que eligió la persona (`terapia_individual` → Paciente, el
+  resto → Alumno), pero decide el psicólogo. El alta manual de las dos listas se mantiene y
+  también elige el vínculo.
+- Se puede cambiar después: "Marcar también como paciente" desde la ficha en Alumnos y su
+  espejo en Pacientes (`cambiarVinculo`). Desmarcar NO borra nada — saca de la lista, nada
+  más; para dar de baja están suspender/archivar.
+- Quien es las dos cosas aparece en las dos listas con un chip, ve el menú completo de
+  alumno (el de paciente le escondería sus programas), y en el selector de Agenda aparece
+  una sola vez, en Pacientes, con "· también alumno" (dos entradas con el mismo `alumno_id`
+  romperían el Select).
+- El psicólogo queda con los dos flags en false: antes aparecía en su propia lista de
+  Alumnos, porque esa query no filtraba por rol.
+
+**Pendiente de Lucas (bloquea el merge, no sólo la feature):** correr
+`supabase/snippets/2026-09-05b-alumno-y-paciente-no-excluyentes.sql`. Las listas de Alumnos
+y Pacientes ahora filtran por `es_alumno`/`es_paciente`, así que **hasta que esas columnas
+existan, la página de Alumnos muestra el cartel de error**. El snippet hace el backfill
+desde el rol viejo, así que es seguro correrlo sobre lo que ya está. El conector MCP sigue
+apuntando a otra cuenta, por eso no se pudo aplicar desde acá.
+`2026-09-05-rol-paciente.sql` quedó marcado como reemplazado (no correrlo de nuevo).
 
 **No verificado en navegador**: el panel del psicólogo requiere login con contraseña, que
 Claude no hace. Se verificó en cambio: `lint`/`tsc`/`next build` limpios (los 35 errores de

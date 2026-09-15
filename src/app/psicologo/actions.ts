@@ -12,7 +12,7 @@ import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomi
 import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 import { baseUrl } from '@/utils/site-url'
-import { invitarUsuario } from '@/utils/supabase/invitaciones'
+import { invitarUsuario, type Vinculo } from '@/utils/supabase/invitaciones'
 import { enviarMail, enviarMailBatch, type OpcionesEmail } from '@/utils/email/resend'
 import { AsignacionProgramaEmail } from '@/emails/AsignacionProgramaEmail'
 import { EntregaRevisadaEmail } from '@/emails/EntregaRevisadaEmail'
@@ -142,6 +142,13 @@ export async function crearAlumnoDirecto(formData: FormData) {
   const { nombre, email } = parsed.data
   const programas = formData.getAll('programas') as string[]
 
+  // El alta manual también elige el vínculo. Por defecto alumno (es el diálogo de
+  // Alumnos), pero se puede marcar paciente además — o en vez de.
+  const vinculo: Vinculo = {
+    esAlumno: formData.get('es_alumno') !== 'false',
+    esPaciente: formData.get('es_paciente') === 'true',
+  }
+
   const supabaseAdmin = createAdminClient()
 
   const creado = await invitarUsuario({
@@ -149,7 +156,7 @@ export async function crearAlumnoDirecto(formData: FormData) {
     email,
     telefono: parsed.data.telefono || null,
     link_videollamada: parsed.data.link_videollamada || null,
-    rol: 'alumno',
+    vinculo,
     supabaseAdmin,
   })
   if ('error' in creado) return { error: creado.error }
@@ -169,7 +176,11 @@ export async function crearAlumnoDirecto(formData: FormData) {
 // como resuelta. `objetivos` NO se copia al perfil a propósito: es texto libre que la
 // persona escribió sobre su situación, y el modelo del alumno es cuenta + contenido +
 // agenda + progreso educativo (Ley 25.326). Queda donde ya estaba, en la solicitud.
-export async function aprobarSolicitud(solicitudId: string) {
+//
+// El vínculo (alumno / paciente / los dos) lo elige el psicólogo en el diálogo de
+// aprobación; el panel lo pre-marca según el `interes` que eligió la persona, pero la
+// decisión es del psicólogo — nadie se auto-asigna nada desde un formulario público.
+export async function aprobarSolicitud(solicitudId: string, vinculo: Vinculo) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
   if (!solicitudId) return { error: 'Falta la solicitud' }
@@ -181,6 +192,7 @@ export async function aprobarSolicitud(solicitudId: string) {
     .select('id, nombre, email, telefono, estado')
     .eq('id', solicitudId)
     .maybeSingle()
+
 
   if (errorSolicitud) return { error: errorSolicitud.message }
   if (!solicitud) return { error: 'Esa solicitud ya no existe.' }
@@ -206,7 +218,7 @@ export async function aprobarSolicitud(solicitudId: string) {
     email: parsed.data.email,
     telefono: parsed.data.telefono || null,
     link_videollamada: null,
-    rol: 'alumno',
+    vinculo,
     supabaseAdmin,
   })
   if ('error' in creado) return { error: creado.error }
@@ -218,6 +230,7 @@ export async function aprobarSolicitud(solicitudId: string) {
   if (errorEstado) return { error: errorEstado.message }
 
   revalidatePath('/psicologo/alumnos')
+  revalidatePath('/psicologo/pacientes')
   return { success: true }
 }
 

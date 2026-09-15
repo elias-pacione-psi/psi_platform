@@ -24,13 +24,24 @@ create table if not exists public.alumnos (
   nombre text not null,
   telefono text,
   link_videollamada text,
-  -- 'paciente' es un alumno sin cursos: cuenta + agenda + material puntual de
-  -- Biblioteca (ver snippets/2026-09-05-rol-paciente.sql). No lleva ningún campo
-  -- clínico — el rol dice a quién se le agenda una sesión, no qué le pasa.
-  rol text not null default 'alumno' check (rol in ('alumno', 'psicologo', 'paciente')),
+  -- `rol` es SOLO el rol de seguridad: de acá cuelga es_psicologo() y con eso toda la
+  -- RLS del panel. Qué es la persona para el psicólogo (alumno / paciente) vive en los
+  -- dos flags de abajo, no acá — ver snippets/2026-09-05b.
+  rol text not null default 'alumno' check (rol in ('alumno', 'psicologo')),
   estado text not null default 'activo' check (estado in ('activo', 'suspendido', 'eliminado')),
   created_at timestamptz not null default now()
 );
+
+-- Vínculo con el psicólogo, NO excluyente: alguien puede cursar una formación y además
+-- atenderse. Para la RLS los dos son lo mismo (cada uno ve lo suyo), así que esto es
+-- organizativo: define en qué lista del panel aparece y qué menú ve al entrar.
+-- `es_paciente` es un booleano y nada más — no hay ni va a haber campos clínicos
+-- colgando de acá (Ley 25.326, ver AGENTS.md).
+alter table public.alumnos add column if not exists es_alumno boolean not null default true;
+alter table public.alumnos add column if not exists es_paciente boolean not null default false;
+
+create index if not exists idx_alumnos_es_alumno on public.alumnos (es_alumno) where es_alumno;
+create index if not exists idx_alumnos_es_paciente on public.alumnos (es_paciente) where es_paciente;
 
 -- Programas = cursos / formaciones (ej: "Formación en TCC")
 create table if not exists public.programas (

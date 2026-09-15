@@ -22,9 +22,9 @@ export default async function AdminAgendaPage() {
   const [{ data: personas }, { data: cohortes }] = await Promise.all([
     supabase
       .from('alumnos')
-      .select('id, nombre, email, rol')
+      .select('id, nombre, email, es_alumno, es_paciente')
       .eq('estado', 'activo')
-      .in('rol', ['alumno', 'paciente'])
+      .or('es_alumno.eq.true,es_paciente.eq.true')
       .order('nombre', { ascending: true }),
     supabase
       .from('cohortes')
@@ -32,8 +32,13 @@ export default async function AdminAgendaPage() {
       .order('created_at', { ascending: false }),
   ])
 
-  const alumnos = (personas ?? []).filter((p: { rol: string }) => p.rol === 'alumno')
-  const pacientes = (personas ?? []).filter((p: { rol: string }) => p.rol === 'paciente')
+  // Quien es alumno Y paciente va una sola vez, en Pacientes: el destino de la agenda es
+  // el mismo `alumno_id`, así que repetirlo en los dos grupos daría dos opciones con el
+  // mismo value (y el Select no puede resolver el label de un value duplicado).
+  type Persona = { id: string, nombre: string, es_alumno: boolean, es_paciente: boolean }
+  const alumnos = (personas ?? []).filter((p: Persona) => p.es_alumno && !p.es_paciente)
+  const pacientes = (personas ?? []).filter((p: Persona) => p.es_paciente)
+    .map((p: Persona) => ({ ...p, nombre: p.es_alumno ? `${p.nombre} · también alumno` : p.nombre }))
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
