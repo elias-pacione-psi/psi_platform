@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { LABEL_INTERES } from '@/utils/taxonomia-labels'
-import { Loader2 } from 'lucide-react'
+import { Loader2, CheckCircle2 } from 'lucide-react'
 
 // Mismo orden en el que aparecen los botones de la nav (page.tsx), menos "otro": ese
 // solo lo ve quien entra directo al formulario sin pasar por un botón puntual.
@@ -30,18 +30,31 @@ export function LandingClient() {
   const interesInicial = desdeUrl && (OPCIONES_INTERES as readonly string[]).includes(desdeUrl) ? desdeUrl : ''
   const [interes, setInteres] = useState(interesInicial)
 
+  // Lo enviado queda en pantalla hasta que la persona decida hacer otra consulta. Antes
+  // esto era sólo un toast: se desvanecía solo y no quedaba ningún rastro de que la
+  // solicitud había salido ni de sobre qué era. Fue el primer pedido del feedback
+  // ("agregar página de respuesta... porque si no uno después se olvida").
+  const [enviado, setEnviado] = useState<{ nombre: string; email: string; interes: string } | null>(null)
+
   async function handleSubmit(formData: FormData) {
+    // Se leen antes de la action porque después el formulario se desmonta.
+    const nombre = ((formData.get('nombre') as string | null) ?? '').trim()
+    const email = ((formData.get('email') as string | null) ?? '').trim()
+    const interesElegido = (formData.get('interes') as string | null) ?? ''
+
     startTransition(async () => {
       const result = await crearSolicitud(formData)
       if (result?.error) {
         toast.error(result.error)
       } else {
-        toast.success("¡Solicitud enviada! Te contactaremos pronto.")
-        const form = document.getElementById('contact-form') as HTMLFormElement
-        if (form) form.reset()
-        setInteres('')
+        setEnviado({ nombre, email, interes: interesElegido })
       }
     })
+  }
+
+  function nuevaConsulta() {
+    setEnviado(null)
+    setInteres('')
   }
 
   return (
@@ -55,6 +68,34 @@ export function LandingClient() {
           de supervisión o el inicio de tu proceso terapéutico.
         </p>
 
+        {enviado ? (
+          <div className="bg-card p-8 md:p-10 rounded-2xl shadow-sm border border-border text-center">
+            <CheckCircle2 className="w-14 h-14 text-marca mx-auto" aria-hidden />
+            <h3 className="mt-5 text-2xl md:text-3xl font-heading font-bold text-tinta">
+              ¡Gracias{enviado.nombre ? `, ${enviado.nombre.split(' ')[0]}` : ''}!
+            </h3>
+            <p className="mt-3 font-serif text-muted-foreground leading-relaxed max-w-lg mx-auto">
+              Recibimos tu consulta sobre{' '}
+              <strong className="text-tinta font-sans font-semibold">
+                {LABEL_INTERES[enviado.interes] ?? 'lo que nos contaste'}
+              </strong>
+              . Elias te va a escribir a{' '}
+              <strong className="text-tinta font-sans font-semibold break-all">{enviado.email}</strong>{' '}
+              para coordinar los próximos pasos.
+            </p>
+            <p className="mt-4 font-serif text-sm text-muted-foreground">
+              Si no ves la respuesta en unos días, revisá la carpeta de spam.
+            </p>
+            <Button
+              type="button"
+              onClick={nuevaConsulta}
+              variant="outline"
+              className="mt-7 font-sans font-semibold border-border text-tinta hover:bg-gris-calido/60"
+            >
+              Hacer otra consulta
+            </Button>
+          </div>
+        ) : (
         <form id="contact-form" action={handleSubmit} className="bg-card p-8 md:p-10 rounded-2xl shadow-sm border border-border space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -127,6 +168,7 @@ export function LandingClient() {
             .
           </p>
         </form>
+        )}
       </div>
     </section>
   )
