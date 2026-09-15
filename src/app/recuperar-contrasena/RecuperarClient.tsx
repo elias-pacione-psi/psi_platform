@@ -42,8 +42,11 @@ export function RecuperarClient() {
       <Card className="w-full max-w-md shadow-lg border-border">
         <CardHeader className="space-y-2 pb-6">
           <CardTitle className="text-3xl font-heading text-center font-bold text-tinta">Recuperar Contraseña</CardTitle>
+          {/* Cubre los dos casos: acá llega tanto quien olvidó su contraseña como quien
+              nunca llegó a crearla porque su enlace de invitación venció. */}
           <CardDescription className="text-center font-sans">
-            Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+            Ingresá tu email y te mandamos un enlace para crear una contraseña nueva.
+            Sirve igual si es tu primera vez y todavía no tenés una.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -49,9 +49,15 @@ export function CrearCuentaClient({ emailInicial, ordenId }: { emailInicial: str
           <CardContent className="pt-8 pb-8 text-center space-y-3">
             <CheckCircle2 className="w-12 h-12 text-marca mx-auto" />
             <h1 className="text-2xl font-heading font-bold text-tinta">¡Cuenta creada!</h1>
+            {/* Nada de "te mandamos un email para confirmar": la cuenta se crea con
+                email_confirm: true (ver crear-cuenta/actions.ts) y no sale ningún mail.
+                El texto viejo dejaba a la persona esperando algo que nunca iba a llegar.
+                Acá sólo se llega si falló el login automático, así que ya tiene todo lo
+                que necesita para entrar: su email y la contraseña que acaba de elegir. */}
             <p className="text-muted-foreground">
-              Te mandamos un email a <b>{email}</b> para confirmar la cuenta. Una vez confirmada,
-              entrá desde <Link href="/login" className="text-marca underline underline-offset-2">Ingresar</Link>.
+              Tu cuenta con <b>{email}</b> ya está lista. Entrá desde{' '}
+              <Link href="/login" className="text-marca underline underline-offset-2">Ingresar</Link>
+              {' '}con la contraseña que acabás de elegir.
             </p>
           </CardContent>
         </Card>

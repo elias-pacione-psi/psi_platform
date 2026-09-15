@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useRef, useState, useEffect } from 'react'
+import { useRef } from 'react'
 import { Maximize, Minimize } from 'lucide-react'
 import { Button } from './ui/button'
 import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
+import { usePantallaCompleta, CLASES_PANTALLA_COMPLETA_CSS } from '@/hooks/use-pantalla-completa'
 
 interface DriveIframeProps {
   url: string;
@@ -15,26 +16,7 @@ interface DriveIframeProps {
 
 export function DriveIframe({ url, formato = 'video' }: DriveIframeProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [])
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(err => {
-        console.error("Error attempting to enable fullscreen:", err)
-      })
-    } else {
-      document.exitFullscreen()
-    }
-  }
+  const { activa: isFullscreen, porCss, alternar: toggleFullscreen } = usePantallaCompleta(containerRef)
 
   const getEmbedUrl = (rawUrl: string) => {
     try {
@@ -68,7 +50,7 @@ export function DriveIframe({ url, formato = 'video' }: DriveIframeProps) {
         ref={containerRef}
         className={`relative w-full overflow-hidden bg-muted shadow-inner ${
           isFullscreen
-            ? 'h-screen'
+            ? `h-screen ${porCss ? CLASES_PANTALLA_COMPLETA_CSS : ''}`
             : formato === 'documento'
               ? 'rounded-xl border border-border h-[78dvh] md:h-auto md:pt-[56.25%]'
               : 'rounded-xl border border-border pt-[56.25%]'

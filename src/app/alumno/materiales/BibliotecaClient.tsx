@@ -5,9 +5,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PlayCircle, FileText, FileAudio, FileVideo, FileImage, ExternalLink, X, Maximize, Minimize } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
 import { PdfViewerSeguro } from '@/components/PdfViewerSeguro'
+import { usePantallaCompleta, CLASES_PANTALLA_COMPLETA_CSS } from '@/hooks/use-pantalla-completa'
 
 type Recurso = { id: string, titulo: string, tipo_contenido: string, url_recurso: string }
 
@@ -15,26 +16,7 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
   const [selectedRecurso, setSelectedRecurso] = useState<Recurso | null>(null)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [])
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(err => {
-        console.error("Error attempting to enable fullscreen:", err)
-      })
-    } else {
-      document.exitFullscreen()
-    }
-  }
+  const { activa: isFullscreen, porCss, alternar: toggleFullscreen } = usePantallaCompleta(containerRef)
 
   const getIcon = (tipo: string) => {
     if (tipo.includes('video')) return <FileVideo className="w-5 h-5 text-marca" />;
@@ -153,7 +135,7 @@ export function BibliotecaClient({ recursos }: { recursos: Recurso[] }) {
 
                 <div
                   ref={containerRef}
-                  className={`relative w-full overflow-hidden bg-card shadow-2xl border border-border ${isFullscreen ? 'h-screen rounded-none border-none' : 'h-full rounded-xl'}`}
+                  className={`relative w-full overflow-hidden bg-card shadow-2xl border border-border ${isFullscreen ? `h-screen rounded-none border-none ${porCss ? CLASES_PANTALLA_COMPLETA_CSS : ''}` : 'h-full rounded-xl'}`}
                 >
                   {/* Escudo anti-popouts de Drive */}
                   <div className="absolute top-0 right-0 w-[60px] h-[60px] bg-transparent z-50 cursor-default" />

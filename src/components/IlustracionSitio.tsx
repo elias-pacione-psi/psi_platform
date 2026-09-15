@@ -48,7 +48,7 @@ export async function IlustracionSitio({ slug, icon, etiqueta, variante = 'marca
       />
       {/* Sin el rótulo "· ilustración" que llevaba el placeholder: acá la imagen es el
           asset definitivo, así que el pie solo nombra lo que se ve. */}
-      <figcaption className="border-t border-border px-4 py-2.5 font-serif text-xs text-muted-foreground">
+      <figcaption className="border-t border-border px-4 py-2.5 font-sans text-sm text-tinta/75">
         {etiqueta}
       </figcaption>
     </figure>
