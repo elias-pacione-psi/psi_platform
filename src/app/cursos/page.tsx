@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock } from 'lucide-react'
+import { PlayCircle, BookOpen, ClipboardCheck, ArrowRight, Clock, Users } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -108,6 +108,35 @@ export default async function CursosPage() {
               variante="marca"
             />
           )}
+        </div>
+      </section>
+
+      {/* PARA QUIÉN ES — el pedido central de la minuta con el psicólogo: alguien que cae
+          acá tiene que saber en la primera pantalla si esto es para él. El reclamo textual
+          era que "los profesionales no entienden qué es para quién", así que además de
+          decir a quién apunta esta página, se ofrece la salida a la que sí les corresponde. */}
+      <section className="bg-marca/5 border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 py-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <Users className="mt-1 h-7 w-7 shrink-0 text-marca" strokeWidth={1.5} aria-hidden />
+            <div>
+              <h2 className="font-heading font-semibold text-tinta text-lg tracking-tight">
+                Abiertos a todo público
+              </h2>
+              <p className="font-serif text-tinta/75 leading-relaxed mt-1.5 max-w-2xl">
+                No hace falta ser psicólogo ni tener formación previa. Están pensados para
+                cualquier persona que quiera entender mejor lo que le pasa y tener
+                herramientas concretas. Hay cursos grabados, para hacer a tu ritmo, y
+                cursadas en vivo con grupo y fechas.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/supervisiones"
+            className="shrink-0 inline-flex items-center gap-2 self-start md:self-auto rounded-full border border-tinta/20 px-5 py-2.5 font-sans text-sm font-medium text-tinta transition-colors hover:bg-tinta hover:text-crema"
+          >
+            ¿Sos profesional? <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

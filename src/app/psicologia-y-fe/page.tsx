@@ -142,6 +142,61 @@ export default function PsicologiaYFePage() {
         </div>
       </section>
 
+      {/* CURSOS Y FORMACIONES PROPIOS — pedido explícito de la minuta: "dentro de
+          psicología y fe aclarar que hay oferta de cursos y formaciones para ellos".
+          Antes la página solo mostraba charlas, consultas pastorales y supervisión, así
+          que quien buscaba formarse en este enfoque no tenía forma de saber que existía. */}
+      <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-4 tracking-tight">
+            También hay cursos y formaciones
+          </h2>
+          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl mb-10">
+            Psicología y Fe no es solo acompañamiento: tiene su propia oferta de formación,
+            con contenido pensado desde esta perspectiva. Como el resto de las propuestas,
+            no se compran online — se coordinan después de una consulta.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-card rounded-2xl border border-border p-7 flex flex-col">
+              <BookOpen className="w-7 h-7 text-marca mb-4" strokeWidth={1.5} aria-hidden />
+              <h3 className="font-heading font-semibold text-tinta text-lg mb-2 tracking-tight">
+                Cursos sobre psicología y fe
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed grow">
+                Contenido grabado para recorrer a tu ritmo, sobre el cruce entre salud
+                mental y vida espiritual. Abiertos tanto a personas de la comunidad como a
+                líderes que quieran entender mejor lo que acompañan.
+              </p>
+              <Link
+                href="/?interes=psicologia_fe#contacto"
+                className="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-marca hover:underline underline-offset-2"
+              >
+                Consultar por los cursos <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="bg-card rounded-2xl border border-border p-7 flex flex-col">
+              <Sparkles className="w-7 h-7 text-marca mb-4" strokeWidth={1.5} aria-hidden />
+              <h3 className="font-heading font-semibold text-tinta text-lg mb-2 tracking-tight">
+                Formaciones para la comunidad y para profesionales
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed grow">
+                Recorridos en grupo con clases en vivo: para equipos pastorales que
+                acompañan casos difíciles, y para psicólogos que trabajan con consultantes
+                desde una cosmovisión de fe.
+              </p>
+              <Link
+                href="/?interes=psicologia_fe#contacto"
+                className="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-marca hover:underline underline-offset-2"
+              >
+                Consultar por las formaciones <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA FINAL */}
       <section className="bg-tinta">
         <div className="max-w-3xl mx-auto px-6 py-16 text-center">
