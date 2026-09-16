@@ -103,32 +103,47 @@ export default function LandingPage() {
           Contenido tomado del perfil público de Psychology Today. */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-12 items-start">
-            <div>
-              <h2 className="font-heading font-semibold text-tinta text-3xl tracking-tight mb-4">
-                Sobre Elías
-              </h2>
-              <p className="font-serif text-tinta/75 text-base leading-relaxed mb-4">
-                Licenciado en Psicología, con más de 12 años de trayectoria acompañando
-                procesos de adolescentes, adultos y parejas. Su formación es ecléctica:
-                integra herramientas de distintos enfoques según lo que cada proceso
-                necesita, en modalidad presencial y virtual.
-              </p>
-              <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
-                Atiende presencialmente en Wilde y Quilmes (Buenos Aires), además de
-                sesiones virtuales para quienes están en otra ciudad o prefieren esa
-                modalidad.
-              </p>
-              <p className="font-serif italic text-tinta/60 text-sm leading-relaxed border-l-2 border-marca pl-4 mb-5">
-                &ldquo;No son los hechos o problemas lo que nos afectan, sino lo que
-                pensamos acerca de ellos.&rdquo;
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Colegio de Psicólogos de la Provincia de Buenos Aires · Distrito XII (Quilmes)
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.55fr)] gap-12 items-start">
+            {/* Foto tomada de una charla presencial — se deja el encuadre original
+                (retrato, luz de escenario) en vez de recortarla a un headshot de
+                estudio: es la que hay y transmite mejor la trayectoria que un
+                placeholder genérico. */}
+            <div className="mx-auto max-w-xs overflow-hidden rounded-2xl border border-border bg-card md:sticky md:top-24 md:mx-0 md:max-w-none">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/elias-charla.jpg"
+                alt="Elías dando una charla presencial, micrófono en mano"
+                width={758}
+                height={1127}
+                className="aspect-[2/3] w-full object-cover"
+              />
             </div>
 
             <div className="space-y-7">
+              <div>
+                <h2 className="font-heading font-semibold text-tinta text-3xl tracking-tight mb-4">
+                  Sobre Elías
+                </h2>
+                <p className="font-serif text-tinta/75 text-base leading-relaxed mb-4">
+                  Licenciado en Psicología, con más de 12 años de trayectoria acompañando
+                  procesos de adolescentes, adultos y parejas. Su formación es ecléctica:
+                  integra herramientas de distintos enfoques según lo que cada proceso
+                  necesita, en modalidad presencial y virtual.
+                </p>
+                <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
+                  Atiende presencialmente en Wilde y Quilmes (Buenos Aires), además de
+                  sesiones virtuales para quienes están en otra ciudad o prefieren esa
+                  modalidad.
+                </p>
+                <p className="font-serif italic text-tinta/60 text-sm leading-relaxed border-l-2 border-marca pl-4 mb-5">
+                  &ldquo;No son los hechos o problemas lo que nos afectan, sino lo que
+                  pensamos acerca de ellos.&rdquo;
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Colegio de Psicólogos de la Provincia de Buenos Aires · Distrito XII (Quilmes)
+                </p>
+              </div>
+
               <div>
                 <h3 className="font-heading font-semibold text-tinta text-sm uppercase tracking-[0.14em] mb-3">
                   Áreas de trabajo
