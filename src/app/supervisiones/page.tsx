@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users } from 'lucide-react'
+import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users, Presentation, BookOpen, BadgeCheck } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
@@ -61,6 +61,34 @@ export default function SupervisionesPage() {
         </div>
       </section>
 
+      {/* PARA QUIÉN ES — espejo del bloque de /cursos. La minuta pedía que esta sección
+          quedara marcada como la de profesionales, con su explicación aparte: es la puerta
+          de entrada de todo lo dirigido a colegas (supervisión, formaciones y cursos
+          dedicados), frente a /cursos que es la oferta de público general. */}
+      <section className="bg-marca/5 border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 py-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <BadgeCheck className="mt-1 h-7 w-7 shrink-0 text-marca" strokeWidth={1.5} aria-hidden />
+            <div>
+              <h2 className="font-heading font-semibold text-tinta text-lg tracking-tight">
+                Un espacio para profesionales
+              </h2>
+              <p className="font-serif text-tinta/75 leading-relaxed mt-1.5 max-w-2xl">
+                Esta sección es para psicólogos en ejercicio y estudiantes avanzados. Además
+                de la supervisión de casos, acá están las <strong className="font-sans font-semibold text-tinta">formaciones
+                y los cursos dedicados a colegas</strong>, distintos de los cursos de público general.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/cursos"
+            className="shrink-0 inline-flex items-center gap-2 self-start md:self-auto rounded-full border border-tinta/20 px-5 py-2.5 font-sans text-sm font-medium text-tinta transition-colors hover:bg-tinta hover:text-crema"
+          >
+            ¿Buscás cursos abiertos? <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* QUÉ ES */}
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16">
@@ -116,6 +144,59 @@ export default function SupervisionesPage() {
               <li>· Para estudiantes avanzados que están empezando sus primeras prácticas.</li>
               <li>· Para equipos que buscan un espacio de supervisión sostenido en el tiempo.</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FORMACIÓN PARA PROFESIONALES — Formaciones salió de la barra de navegación y
+          pasó a vivir acá (minuta del psicólogo). La página /formaciones sigue existiendo
+          con el detalle completo; esto es la puerta de entrada. */}
+      <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-4 tracking-tight">
+            Formación para profesionales
+          </h2>
+          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl mb-10">
+            Más allá de la supervisión de casos, hay dos caminos para seguir formándote.
+            Ninguno se compra online: se coordinan con Elias después de una consulta.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-card rounded-2xl border border-border p-7 flex flex-col">
+              <Presentation className="w-7 h-7 text-marca mb-4" strokeWidth={1.5} aria-hidden />
+              <h3 className="font-heading font-semibold text-tinta text-lg mb-2 tracking-tight">
+                Formaciones con clases en vivo
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed grow">
+                Un recorrido en grupo con fechas fijas, clases en vivo (presenciales o
+                virtuales), programa estructurado, devolución personalizada en los trabajos
+                y un ebook que acompaña todo el trayecto.
+              </p>
+              <Link
+                href="/formaciones"
+                className="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-marca hover:underline underline-offset-2"
+              >
+                Ver cómo funcionan <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="bg-card rounded-2xl border border-border p-7 flex flex-col">
+              <BookOpen className="w-7 h-7 text-marca mb-4" strokeWidth={1.5} aria-hidden />
+              <h3 className="font-heading font-semibold text-tinta text-lg mb-2 tracking-tight">
+                Cursos dedicados a colegas
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed grow">
+                Cursos puntuales sobre temas de la práctica clínica, pensados para quien ya
+                tiene formación de base. Son distintos de los cursos de público general:
+                asumen el vocabulario y el recorrido de un profesional.
+              </p>
+              <Link
+                href="/?interes=formacion#contacto"
+                className="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-marca hover:underline underline-offset-2"
+              >
+                Consultar por los cursos <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

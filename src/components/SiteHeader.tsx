@@ -13,11 +13,17 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 // Es client component sólo por usePathname(): sin saber en qué ruta estamos no se puede
 // marcar la sección activa, que era el punto 5 del feedback ("recalcar con algún color
 // el tema en el que estás, o poner un óvalo blanco para que quede seleccionado").
-const SECCIONES_NAV = [
+// Reunión con el psicólogo (minuta del 2026-09-15): el problema de fondo era que
+// "los profesionales no entienden qué es para quién". Formaciones sale de la barra y
+// pasa a vivir dentro de Supervisiones, que queda como la puerta de entrada de todo lo
+// dirigido a profesionales (supervisión + formaciones + cursos dedicados). Cursos queda
+// como la oferta para público general. La página /formaciones sigue existiendo y se
+// llega desde Supervisiones — por eso `rutasRelacionadas`, para que estando ahí la barra
+// igual marque Supervisiones y no deje a la persona sin saber dónde está parada.
+const SECCIONES_NAV: { titulo: string; href: string; rutasRelacionadas?: string[] }[] = [
   { titulo: 'ebooks', href: '/ebooks' },
   { titulo: 'Cursos', href: '/cursos' },
-  { titulo: 'Formaciones', href: '/formaciones' },
-  { titulo: 'Supervisiones', href: '/supervisiones' },
+  { titulo: 'Supervisiones', href: '/supervisiones', rutasRelacionadas: ['/formaciones'] },
   { titulo: 'Terapia individual', href: '/terapia-individual' },
   { titulo: 'Psicología y Fe', href: '/psicologia-y-fe' },
 ]
@@ -44,7 +50,9 @@ export function SiteHeader() {
         <div className="order-last w-full relative lg:order-none lg:w-auto lg:flex-1">
           <nav className="flex items-center gap-1 overflow-x-auto lg:justify-end lg:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {SECCIONES_NAV.map((seccion) => {
-              const activo = pathname === seccion.href || pathname.startsWith(`${seccion.href}/`)
+              const activo = [seccion.href, ...(seccion.rutasRelacionadas ?? [])].some(
+                (ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`),
+              )
               return (
                 <Link
                   key={seccion.titulo}
