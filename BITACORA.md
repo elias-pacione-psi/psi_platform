@@ -6,6 +6,111 @@ terminó (ver instrucción en `AGENTS.md`) — más reciente arriba. El objetivo
 que una sesión nueva pueda entender el estado y las decisiones tomadas sin
 tener que releer toda la conversación anterior.
 
+## 2026-09-18
+
+**El video de cursos salió a producción: reemplaza el hero de `/cursos` en R2. Antes se
+retocó el guion y se arregló la voz robotizada.**
+
+- **Guion final** (`gen_voz.py`, variable `GUION`): S1 "…te anotaste en un curso…",
+  S2 "contenido ya grabado", S4 "¿Tenés la agenda apretada? / ¿Te gusta aprender a tu
+  manera, sin que nadie te apure? / Este formato fue pensado para eso.", S5 "y empezá
+  cuando estés listo." Se sacó de S4 la idea de "sin la dinámica de un grupo" (sonaba a
+  que el curso es para quien no quiere gente cerca) y de S5 el "vos" final repetido.
+- **Voz v3 — por qué sonaba robotizada**: la v2 partía cada escena en muchas frases
+  cortas y en la escena 2 llegaba a sintetizar "videos," / "lecturas," / "ejercicios,"
+  como tres audios de UNA palabra cada uno. Un modelo neural sintetizando una palabra
+  aislada pierde la prosodia de frase, y cada empalme por `ffmpeg concat` es un corte
+  duro. La v3 sintetiza cada escena en **dos tramos**: el cuerpo entero en una sola
+  llamada (el modelo maneja su propia entonación) + el remate lento/grave aparte.
+- **`WordBoundary` SÍ funciona** en `edge-tts` 7.2.8, al contrario de lo que decía la
+  entrada del 2026-09-16 ("edge-tts ya no emite WordBoundary"). `gen_voz.py` ahora pide
+  `boundary="WordBoundary"` y lee los timestamps REALES de videos/lecturas/ejercicios
+  dentro de la oración completa, en vez de estimarlos por duración de clips sueltos.
+  `gen_boundaries.py` ya no hace falta.
+- **Trampa que casi se publica**: el MP4 que estaba en `~/lucas-bucket/` (y que se
+  subió primero a R2) era un render de las 11:23, ANTERIOR al arreglo de voz de las
+  11:35 — o sea, tenía el audio robotizado. Se detectó por la duración (39,50 s del
+  timeline viejo vs 39,45 s del nuevo). **Tocar `gen_voz.py` obliga a re-correr todo**:
+  `timeline.mjs --write` → `mezclar-audio.mjs` → `render.mjs` → `armar.sh`.
+- **Otra trampa del render**: `frames/` NO se limpia entre renders. El render nuevo
+  escribió 1183 frames pero quedaban `f_001184/85.png` del anterior, y `armar.sh` los
+  habría tragado porque ffmpeg lee el patrón `f_%06d.png` hasta el primer hueco. Hay que
+  borrar las sobras (o limpiar la carpeta) cuando la duración se acorta.
+- **Publicación**: `Biblioteca R2/Videos/Videos Main Principal/Cursos asincronicos.mp4`
+  reemplazado vía API S3 (`PutObjectCommand` + verificación con `HeadObjectCommand`), NO
+  por el mount de rclone — que sube async y no garantiza el reemplazo. Final: 39,43 s,
+  3,39 MB, h264/aac. El video anterior (18 MB, foto realista con IA) quedó respaldado en
+  `~/lucas-bucket/respaldos/Cursos asincronicos (respaldo 2026-09-18).mp4`, MD5 verificado
+  contra el ETag que tenía en R2.
+- **Poster regenerado**: `public/hero-cursos-poster.jpg` era un frame del video viejo
+  (foto de alguien tecleando) y no pegaba con el nuevo estilo ilustrado. Ahora es el
+  frame t=0 del video nuevo, recortado a 4:3 960×720 — el contenedor del hero es
+  `aspect-[4/3]` con `object-cover` sobre un video 16:9, así que recorta ~12,5 % de cada
+  lado; se verificó que no se come nada del contenido.
+- **Verificado en el navegador**: `/cursos` carga el video con `readyState 4`, sin error,
+  duración 39,43 s y sin errores de consola.
+- **Pendiente**: el `curso-asincronico-9x16.mp4` (Reels/TikTok) sigue con el audio v2
+  viejo — si se va a publicar, re-renderizar con `node src/render.mjs --aspect=tall` y
+  `./armar.sh frames9 out/curso-asincronico-9x16.mp4`. Y queda por validar de oído si la
+  voz v3 convence o si conviene grabar a Elias.
+
+## 2026-09-16
+
+**Video "qué es un curso asincrónico" (~40 s) para redes/landing — producido de punta a
+punta como motion graphics programático, en `marketing/curso-asincronico/`.**
+
+- **Qué se entregó**: `out/curso-asincronico-16x9.mp4` (1920×1080, landing/YouTube) y
+  `out/curso-asincronico-9x16.mp4` (1080×1920, Reels/TikTok/Stories). 40.27 s, 30 fps,
+  h264+aac, ~3.3 MB, -15.1 LUFS integrados. Las 5 escenas del brief de Lucas, con la
+  paleta y el trazo del sitio, Poppins/Lora reales y el isotipo real de
+  `public/brand/mark.png` en el cierre.
+- **Cómo se hizo (stack)**: ilustraciones SVG por código en el MISMO idioma visual de
+  `generar-ilustraciones.mjs` (trazo tinta 8-10, personas sin cara, planta/taza/libro),
+  animadas frame a frame en JS y rasterizadas con `@resvg/resvg-js` (sin navegador);
+  voz en off con edge-tts (`es-AR-TomasNeural`, rate -2% — rioplatense genuino pero se
+  nota TTS); música ambient sintetizada con numpy (pad Cmaj7-Am7-Fmaj7-G6 + punteos
+  Karplus-Strong); ensamblado con ffmpeg. Sin servicios de IA de video ni stock.
+- **Línea de tiempo por audio, no por brief**: las duraciones de escena se calculan de
+  los mp3 medidos (`src/timeline.mjs`: leadIn/tail por escena, total 40.26 s). Los chips
+  "Videos/Lecturas/Ejercicios" de la escena 2 aparecen en sincronía con la voz: edge-tts
+  ya no emite WordBoundary, así que `gen_boundaries.py` sintetiza la escena 2 en tres
+  frases medidas y estima el offset de cada palabra.
+- **Para re-render o retocar**: `cd marketing/curso-asincronico` → `./venv/bin/python
+  gen_voz.py` (+ `gen_boundaries.py`), `node src/timeline.mjs --write`,
+  `node src/mezclar-audio.mjs`, `node src/render.mjs --aspect=wide|tall`,
+  `./armar.sh frames|frames9 out/<nombre>.mp4`. Frames sueltos para iterar diseño:
+  `node src/render.mjs --probe=<t1,t2,...> [--aspect=tall]`. Frames/audio/MP4 no se
+  versionan (`.gitignore`), igual que `.ilustraciones/`: el código es la fuente.
+- **Pendiente de Lucas**: ver los dos MP4 y decidir si la voz TTS alcanza o si graba la
+  voz real de Elias (basta reemplazar `audio/voz/escena*.mp3` y correr timeline + mezcla
+  + armar, sin tocar el video); subir los archivos a donde se publiquen (no se subieron a
+  R2 ni a redes). Si cambia el guion: editar `gen_voz.py` y repetir el pipeline.
+
+**Revisión de audio (mismo día, pedido de Lucas: la v1 sonaba robotizada).**
+
+- Causa: la v1 mandaba el párrafo entero de una a edge-tts → ritmo metronómico, pausas
+  y pitch planos. La v2 de `gen_voz.py` sintetiza **frase por frase** con prosodia
+  individual (remates de oración más lentos y graves, listas más ágiles) y pausas
+  diseñadas entre frases; cada frase se limpia de silencios de borde y se rellena con la
+  pausa exacta, así que los boundaries de los chips salen de tiempos reales medidos, no
+  de estimación. `gen_voz_una.py` y `gen_boundaries.py` quedaron absorbidos y borrados.
+- Mezcla: compresor suave + highpass sobre la voz antes del loudnorm
+  (`src/mezclar-audio.mjs`). Duración final 39.07 s. Se re-renderizaron los dos MP4
+  (la línea de tiempo cambió: aires leadIn/tail más generosos en `src/timeline.mjs`).
+- Si sigue sin convencer la voz, el salto real es grabar a Elias (o ElevenLabs con API
+  key): el pipeline acepta reemplazar `audio/voz/escena*.mp3` sin tocar el video.
+
+**Cambios de guion (mismo día, Lucas editó `gen_voz.py` a mano y se re-corrió todo).**
+
+- Guion final: S1 "...te anotaste en un curso...", S2 "contenido ya grabado", S4 "¿Tenés
+  la agenda apretada? / ¿Te gusta aprender a tu manera, sin que nadie te apure? / Este
+  formato fue pensado para eso.", S5 "y empezá cuando estés listo." Solo voz: el texto
+  en pantalla no se tocó y las frases "videos/lecturas/ejercicios" quedaron intactas, así
+  que la sincronía de los chips siguió funcionando sin cambios de código.
+- Pipeline completo re-ejecutado (voz → timeline → mezcla → 1185 frames ×2 → MP4):
+  duración final **39.50 s**. Los MP4 definitivos quedaron copiados en `~/lucas-bucket/`
+  (reemplazando a los anteriores) además de en `marketing/curso-asincronico/out/`.
+
 ## 2026-09-05
 
 **Biblioteca rota: causa raíz y arreglo (venía a medias de una sesión de qwen).**
