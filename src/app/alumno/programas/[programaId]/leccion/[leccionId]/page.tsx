@@ -9,10 +9,12 @@ import { Button } from '@/components/ui/button'
 import { esPaginaDePreviewSandboxeable } from '@/lib/utils'
 import { firmarUrlsRecursos, firmarUrlEntrega } from '@/utils/supabase/recursos'
 import { obtenerPreguntasSinRespuesta } from '@/utils/supabase/quiz'
+import { siguienteLeccion } from '@/utils/siguiente-leccion'
 import { QuizSolver } from './QuizSolver'
 import { EntregaForm } from './EntregaForm'
 import { EjerciciosCliente } from './EjerciciosCliente'
 import { CompletarButton } from './CompletarButton'
+import { SiguienteLeccionLink } from './SiguienteLeccionLink'
 
 export default async function LeccionPage(props: { params: Promise<{ programaId: string, leccionId: string }> }) {
   const params = await props.params
@@ -41,13 +43,20 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
     redirect('/alumno/programas')
   }
 
-  const { data: progreso } = await supabase
-    .from('progreso_lecciones')
-    .select('completado')
-    .eq('alumno_id', user?.id)
-    .eq('leccion_id', leccionId)
-    .maybeSingle()
+  const [{ data: progreso }, { data: modulosOrden }, { data: leccionesOrden }] = await Promise.all([
+    supabase
+      .from('progreso_lecciones')
+      .select('completado')
+      .eq('alumno_id', user?.id)
+      .eq('leccion_id', leccionId)
+      .maybeSingle(),
+    supabase.from('modulos').select('id').eq('programa_id', programaId).order('orden', { ascending: true }).order('created_at', { ascending: true }),
+    supabase.from('lecciones').select('id, titulo, modulo_id, tipo_contenido').eq('programa_id', programaId).order('orden', { ascending: true }).order('created_at', { ascending: true }),
+  ])
   const completado = !!progreso?.completado
+  const siguiente = siguienteLeccion(modulosOrden ?? [], leccionesOrden ?? [], leccionId)
+  const SiguienteLink = siguiente && <SiguienteLeccionLink programaId={programaId} siguiente={siguiente} />
+  const PieSiguiente = SiguienteLink && <div className="mt-8 flex justify-end">{SiguienteLink}</div>
 
   const [leccion] = await firmarUrlsRecursos([leccionDB])
   const tipo = leccion.tipo_contenido
@@ -75,6 +84,7 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
       <div className="max-w-4xl mx-auto">
         {Header}
         <QuizSolver preguntas={preguntas} leccionId={leccionId} programaId={programaId} />
+        {PieSiguiente}
       </div>
     )
   }
@@ -87,6 +97,7 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
       <div className="max-w-4xl mx-auto">
         {Header}
         <EjerciciosCliente contenido={leccion.url_recurso ?? ''} titulo={leccion.titulo} />
+        {PieSiguiente}
       </div>
     )
   }
@@ -115,6 +126,7 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
           )}
           <EntregaForm leccionId={leccionId} programaId={programaId} entrega={entrega} />
         </div>
+        {PieSiguiente}
       </div>
     )
   }
@@ -159,8 +171,9 @@ export default async function LeccionPage(props: { params: Promise<{ programaId:
           <MarkdownRico>{leccion.url_recurso}</MarkdownRico>
         )}
 
-        <div className="mt-12 pt-8 border-t border-border flex justify-center">
+        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-center gap-4">
           <CompletarButton leccionId={leccionId} programaId={programaId} completadoInicial={completado} />
+          {SiguienteLink}
         </div>
       </div>
     </div>
