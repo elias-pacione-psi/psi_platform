@@ -50,3 +50,12 @@ Cuentas asociadas Plataforma Elias.txt
 # python
 __pycache__/
 *.pyc
+
+# generador de video de marketing/curso-asincronico — el código (src/, gen_*.py,
+# armar.sh) es la fuente; frames, audio y MP4 se regeneran corriéndolo
+/marketing/curso-asincronico/node_modules/
+/marketing/curso-asincronico/venv/
+/marketing/curso-asincronico/frames/
+/marketing/curso-asincronico/frames9/
+/marketing/curso-asincronico/out/
+/marketing/curso-asincronico/audio/
