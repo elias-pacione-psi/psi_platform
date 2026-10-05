@@ -79,26 +79,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CONCEPTOS — pausa, escucha, contención, cercanía */}
-      {/* Fondo con el azul pálido del board (--gris-calido) y no con --sage: el
-          sage es el único verde de una paleta por lo demás azul, y al 25% sobre el
-          lienzo la mezcla daba un oliva que no pertenecía a ninguna de las dos
-          familias. */}
-      <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {conceptos.map(({ titulo, texto }) => (
-              <div key={titulo}>
-                <h2 className="font-heading font-semibold text-tinta text-base tracking-[0.14em] uppercase mb-3">
-                  {titulo}
-                </h2>
-                <p className="font-serif text-sm text-tinta/70 leading-relaxed">{texto}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* SOBRE ELÍAS — credibilidad profesional antes de mostrar la plataforma.
           Contenido tomado del perfil público de Psychology Today. */}
       <section className="border-b border-border">
@@ -191,6 +171,26 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CONCEPTOS — pausa, escucha, contención, cercanía */}
+      {/* Fondo con el azul pálido del board (--gris-calido) y no con --sage: el
+          sage es el único verde de una paleta por lo demás azul, y al 25% sobre el
+          lienzo la mezcla daba un oliva que no pertenecía a ninguna de las dos
+          familias. */}
+      <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 py-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {conceptos.map(({ titulo, texto }) => (
+              <div key={titulo}>
+                <h2 className="font-heading font-semibold text-tinta text-base tracking-[0.14em] uppercase mb-3">
+                  {titulo}
+                </h2>
+                <p className="font-serif text-sm text-tinta/70 leading-relaxed">{texto}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
