@@ -197,7 +197,9 @@ export default async function CursosPage() {
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <div className="flex items-center gap-4 text-left">
-                      <div className="w-14 h-14 rounded-lg bg-muted overflow-hidden shrink-0 flex items-center justify-center">
+                      {/* 3:4 exacto, igual que las portadas (707×942): con un cuadrado, object-cover recortaba la
+                          banda de arriba y el título de abajo. */}
+                      <div className="w-12 h-16 rounded-md bg-muted overflow-hidden shrink-0 flex items-center justify-center">
                         {p.portada_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={p.portada_url} alt="" className="w-full h-full object-cover" />
@@ -217,9 +219,9 @@ export default async function CursosPage() {
                     <div className="grid md:grid-cols-[200px_1fr] gap-6 mt-4 items-start">
                       {p.portada_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.portada_url} alt={p.titulo} className="w-full aspect-[4/3] object-cover rounded-xl border border-border" />
+                        <img src={p.portada_url} alt={p.titulo} className="w-full max-w-[220px] aspect-[3/4] object-cover rounded-xl border border-border" />
                       ) : (
-                        <div className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted flex items-center justify-center">
+                        <div className="w-full max-w-[220px] aspect-[3/4] rounded-xl border border-dashed border-border bg-muted flex items-center justify-center">
                           <BookOpen className="w-8 h-8 text-muted-foreground" />
                         </div>
                       )}
