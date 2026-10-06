@@ -6,6 +6,65 @@ terminó (ver instrucción en `AGENTS.md`) — más reciente arriba. El objetivo
 que una sesión nueva pueda entender el estado y las decisiones tomadas sin
 tener que releer toda la conversación anterior.
 
+## 2026-10-06
+
+**Programa nuevo "Operador Socioterapéutico" armado desde el libro (11 módulos, 124
+diapositivas para usar en vivo) y portadas de los 7 programas de `/cursos`. Cierra con un
+PR que junta todo lo que había quedado sin commitear de las últimas sesiones.**
+
+- **Operador Socioterapéutico** (`scripts/operador-socioterapeutico/`, con README): el libro
+  "Programa de Formación: Operador Socioterapéutico en Adicciones" pasó a ser un programa de
+  tipo *Material de formación* (`tipo = 'formacion'`, id `33333333-…`). Cada capítulo es un
+  módulo y su contenido, **una lección = una presentación 16:9** (presentación, encuadre
+  ético, módulos 1 a 8 y cierre: 11 módulos, 124 diapositivas). La lección es el PDF
+  (`PdfViewerSeguro`: una diapositiva por pantalla); el `.pptx` editable, con **notas del
+  orador** (el desarrollo del libro, textual), está aparte en R2
+  (`Formaciones/Operador Socioterapeutico/diapositivas editables/`) para presentar offline.
+- **Qué lleva cada módulo**: portada, objetivos, agenda con los bloques proporcionales de los
+  120 minutos, **mapas conceptuales con frases de enlace**, esquemas propios del contenido
+  (estadios del cambio, Ciclo Invisible de la Recaída™, curva del craving, niveles de
+  atención), **claves del módulo** y la herramienta práctica como hoja imprimible.
+- **Cómo está hecho**: el contenido son datos (`contenido/NN-*.js`), la maquetación está en
+  `lib/slides.js` (pptxgenjs → LibreOffice → PDF) y `lib/medir.js` mide cada texto con las
+  métricas reales de Poppins/Lora: así no se desborda ni se parte una palabra al pasar a
+  PDF. `generar.js` imprime un reporte de legibilidad (cuerpo ≥ 14 pt para proyectar).
+  `deploy.js` es idempotente (ids fijos) y verifica R2 con `HeadObject`, no por el mount.
+- **Decisiones**: el programa se creó **oculto** (`publicado_en_home = false`, opt-in de la
+  plataforma); "Operador Terapeutico", el programa de prueba que ya existía, **no se tocó**;
+  no se crearon quizzes ni entregas (no se pidieron; el libro trae material para hacerlos);
+  la lección de cada módulo se llama "Diapositivas · <capítulo>" (el módulo ya lleva el
+  título del capítulo; el prefijo deja a la vista el formato).
+- **Portadas de programas**: `docs/portadas/generar-portadas-programas.mjs` (una escena SVG
+  por programa; 7 + la del Operador = 8 PNG de 707×942, variante "panel ilustrado" de las
+  portadas de ebooks, ver `docs/portadas/README.md`). Quedaron en R2
+  (`Biblioteca R2/portadas/programas/`) y asignadas en `programas.portada_key`. `/cursos` las
+  muestra en 3:4 (antes un cuadrado/4:3 recortaba la banda de arriba y el título).
+- **Datos del libro para revisar con el autor** (las diapositivas lo reproducen tal cual):
+  3.3 dice "más de 39 millones" con trastornos por consumo — es la cifra del Informe Mundial
+  sobre las Drogas 2023; el de 2024 (el mismo que da los 292 millones, el +20 % y el "1 de
+  cada 7 hombres / 1 de cada 18 mujeres" que cita el libro) estima **64 millones**. 3.5 dice
+  que la curva del craving "es la base de la herramienta 5", pero la 5 es "El espejo de la
+  comunidad" (esa referencia se omitió en la diapositiva). Y la metodología habla de
+  "bloques de 40 minutos" mientras que la estructura de cada módulo usa bloques de 5 a 30.
+- **Pendiente de Lucas**: mergear el PR y desplegar (la portada en 3:4 de `/cursos` y el
+  resto necesitan deploy; los datos y archivos del Operador ya están en producción);
+  tildar "Publicar en Home" en el programa cuando quiera mostrarlo; proyectar al menos un
+  módulo para ver si el tamaño de letra le sirve en el salón; decidir si se borra
+  "Operador Terapeutico" (sigue público con texto de prueba) y si se actualiza la cifra
+  de 39 a 64 millones (se cambia en `contenido/02-modulo-1.js`, `node generar.js` y
+  `node deploy.js`).
+- **Otras sesiones, incluidas en el mismo PR sin cambios de mi parte** (revisadas antes de
+  commitear): "Restaurar credenciales" para alumnos y pacientes (borra todo lo de la persona
+  y le manda de nuevo la invitación; `eliminarUsuarioTotal` comparte ahora la baja con
+  `utils/supabase/usuarios.ts`); página pública `/quien-soy` con galería de fotos desde R2 y
+  el perfil profesional en `utils/perfil-profesional.ts` (la landing quedó con una
+  introducción corta que enlaza ahí); matrícula del pie de los manuales de la formación
+  pastoral corregida a M.P. 62423; y el código de los videos mudos de features
+  (`marketing/features/`, ya descripto en 2026-09-16) más sus reglas de `.gitignore`.
+- **Lint**: `eslint.config.mjs` apaga `no-require-imports` solo para `scripts/**/*.js`
+  (herramientas CommonJS de línea de comandos; sumaban 83 errores de ruido). Quedan los
+  4 errores `any` que ya estaban.
+
 ## 2026-09-18
 
 **El video de cursos salió a producción: reemplaza el hero de `/cursos` en R2. Antes se
@@ -110,6 +169,25 @@ punta como motion graphics programático, en `marketing/curso-asincronico/`.**
 - Pipeline completo re-ejecutado (voz → timeline → mezcla → 1185 frames ×2 → MP4):
   duración final **39.50 s**. Los MP4 definitivos quedaron copiados en `~/lucas-bucket/`
   (reemplazando a los anteriores) además de en `marketing/curso-asincronico/out/`.
+
+**Videos mudos de Supervisiones, Terapia individual y Psicología y Fe (mismo día).**
+
+- Tres MP4 por feature (título con el copy real del hero de cada página + viñeta animada
+  basada en la ilustración hero del sitio: supervisiones-charla, terapia-encuentro,
+  fe-puente), en 16:9 y 9:16, 11.2 s, 30 fps, **sin audio**: `marketing/features/out/`
+  (supervisiones-*, terapia-individual-*, psicologia-y-fe-*). Misma estética de la serie
+  (paleta, trazo tinta 8-10, Poppins/Lora, isotipo real, firma de tres barras).
+- Código en `marketing/features/` (src/lib.mjs, src/titulo.mjs, src/videos/*.mjs,
+  src/render.mjs `--video=... --aspect=... [--probe=...]`, armar.sh). Las fuentes y el
+  isotipo se leen de la carpeta hermana curso-asincronico, no se duplican. Frames y MP4
+  ignorados en git: el código es la fuente.
+- Detalle que mordió: el selector de video de render.mjs caía a supervisiones para
+  cualquier nombre no exacto (los probes de terapia y fe salieron con la escena de
+  supervisiones) — corregido mapeando alias (`terapia`, `terapia-individual`, `fe`,
+  `psicologia-y-fe`).
+- Pendiente de Lucas: ver los 6 MP4. Los 6 quedaron además copiados en
+  `~/lucas-bucket/` (junto a los dos del curso asincrónico); no se subieron a R2 del
+  sitio ni a redes.
 
 ## 2026-09-05
 
