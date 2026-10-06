@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users, Presentation, BookOpen, BadgeCheck } from 'lucide-react'
+import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users, Presentation, BookOpen, BadgeCheck, ClipboardList } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Supervisiones | Elias Pacione' }
 
-// Ver formaciones/page.tsx: se regenera cada hora para que la firma de R2 no venza.
+// Ver formaciones/page.tsx: se regenera cada hora para que un reemplazo de las ilustraciones en el bucket se note solo.
 export const revalidate = 3600
 
 const PASOS = [
@@ -57,6 +57,7 @@ export default function SupervisionesPage() {
             icon={MessagesSquare}
             etiqueta="Charla de supervisión"
             variante="marca"
+            prioridad
           />
         </div>
       </section>
@@ -89,18 +90,27 @@ export default function SupervisionesPage() {
         </div>
       </section>
 
-      {/* QUÉ ES */}
+      {/* QUÉ ES — ilustración a la izquierda; en mobile el texto va primero (ver /cursos). */}
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es un espacio de supervisión?
-          </h2>
-          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es un espacio de trabajo entre colegas: sirve para pensar en conjunto los
-            casos que te generan dudas, revisar decisiones clínicas y sostener tu
-            propio proceso como profesional. No reemplaza tu formación de base — la
-            complementa con la mirada de alguien externo a tu día a día.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div className="md:order-2">
+            <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
+              ¿Qué es un espacio de supervisión?
+            </h2>
+            <p className="font-serif text-tinta/75 text-base leading-relaxed">
+              Es un espacio de trabajo entre colegas: sirve para pensar en conjunto los
+              casos que te generan dudas, revisar decisiones clínicas y sostener tu
+              propio proceso como profesional. No reemplaza tu formación de base — la
+              complementa con la mirada de alguien externo a tu día a día.
+            </p>
+          </div>
+          <IlustracionSitio
+            slug="supervisiones-caso"
+            icon={ClipboardList}
+            etiqueta="Un caso, revisado entre dos"
+            variante="sage"
+            className="md:order-1"
+          />
         </div>
       </section>
 
@@ -132,7 +142,7 @@ export default function SupervisionesPage() {
             slug="supervisiones-colegas"
             icon={GraduationCap}
             etiqueta="Encuentro entre colegas"
-            variante="sage"
+            variante="marca"
             className="md:order-2"
           />
           <div className="md:order-1">

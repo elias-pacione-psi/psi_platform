@@ -1,12 +1,14 @@
 import Link from 'next/link'
-import { Presentation, Users, CalendarCheck, ArrowRight, BookOpen } from 'lucide-react'
+import { Presentation, Users, CalendarCheck, ArrowRight, BookOpen, Route } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Formaciones | Elias Pacione' }
 
-// La página es estática salvo por las ilustraciones, que llegan con una URL de R2 firmada
-// por 6 horas. Regenerándola cada hora la firma siempre está fresca cuando se sirve.
+// La página es estática y se regenera cada hora. Las ilustraciones ya no llevan una URL de R2
+// firmada —que vencía a las 6 h, y una página servida vieja las dejaba rotas—: las sirve la
+// ruta /ilustraciones (ver utils/ilustraciones.ts). Lo que sí cambia al regenerar es la
+// versión (`?v=`) de cada una, para que un reemplazo en el bucket se note solo.
 export const revalidate = 3600
 
 const PASOS = [
@@ -58,22 +60,32 @@ export default function FormacionesPage() {
             icon={Presentation}
             etiqueta="Clase en vivo"
             variante="marca"
+            prioridad
           />
         </div>
       </section>
 
-      {/* QUÉ ES */}
+      {/* QUÉ ES — ilustración a la izquierda; en mobile el texto va primero (ver /cursos). */}
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es una formación?
-          </h2>
-          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es un recorrido junto a un grupo (la cohorte), con clases en vivo —
-            presenciales o virtuales— además del programa y la biblioteca de apoyo que
-            también tienen los cursos. La diferencia está en el encuentro: hay fechas
-            fijas, intercambio con otros y devolución personalizada en los trabajos.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div className="md:order-2">
+            <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
+              ¿Qué es una formación?
+            </h2>
+            <p className="font-serif text-tinta/75 text-base leading-relaxed">
+              Es un recorrido junto a un grupo (la cohorte), con clases en vivo —
+              presenciales o virtuales— además del programa y la biblioteca de apoyo que
+              también tienen los cursos. La diferencia está en el encuentro: hay fechas
+              fijas, intercambio con otros y devolución personalizada en los trabajos.
+            </p>
+          </div>
+          <IlustracionSitio
+            slug="formaciones-recorrido"
+            icon={Route}
+            etiqueta="Un recorrido en grupo, con fechas"
+            variante="sage"
+            className="md:order-1"
+          />
         </div>
       </section>
 
@@ -105,7 +117,7 @@ export default function FormacionesPage() {
             slug="formaciones-grupo-cohorte"
             icon={Users}
             etiqueta="Grupo de la cohorte"
-            variante="sage"
+            variante="marca"
             className="md:order-2"
           />
           <div className="md:order-1">

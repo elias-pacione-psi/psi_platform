@@ -65,6 +65,49 @@ PR que junta todo lo que había quedado sin commitear de las últimas sesiones.*
   (herramientas CommonJS de línea de comandos; sumaban 83 errores de ruido). Quedan los
   4 errores `any` que ya estaban.
 
+**Imágenes de las páginas públicas: tres por página, las existentes rehechas y un bug que
+las dejaba rotas (mismo día).**
+
+- **Pedido y lectura**: Lucas pidió buscar "todas las imágenes que faltan" (citó el cierre de
+  Cursos, Supervisiones, "Un espacio confidencial" de Terapia individual y "Rigor clínico y
+  marco ético" de Psicología y Fe) y mejorar las existentes. Esas secciones **ya tenían**
+  ilustración y cargaban bien en producción (200, `image/svg+xml`, claro y oscuro, móvil), así
+  que "faltan" se leyó como: secciones sin imagen y cierres flojos (objetos sueltos, nadie
+  dibujado justo donde el texto habla de personas).
+- **Un bug real que puede dejarlas rotas**: las páginas estáticas (`revalidate = 3600`)
+  llevaban las ilustraciones con una URL de R2 firmada por 6 h. ISR sirve la página vieja a la
+  primera visita después de la hora (stale-while-revalidate, ver
+  `node_modules/next/dist/docs/01-app/02-guides/incremental-static-regeneration.md`) y en un
+  sitio con poco tráfico "vieja" puede ser más de 6 h: esa primera visita vería **todas** las
+  ilustraciones de la página como imagen rota, y un reload lo arreglaría. Se dedujo del doc de
+  Next y de la vigencia de la firma; no se llegó a ver una página rota en vivo. El comentario
+  de `formaciones/page.tsx` ("la firma siempre está fresca") no valía para ese caso.
+- **Arreglo**: `src/app/ilustraciones/[archivo]/route.ts` sirve los SVG leyéndolos del bucket
+  (solo slugs de `ILUSTRACIONES`); `proxy.ts` ya deja afuera las rutas `.svg`, así que no pide
+  sesión. La URL lleva `?v=<ETag>` (cache inmutable, y un reemplazo en el bucket se nota al
+  regenerar la página). La CSP estricta de ese path va en `next.config.ts`: una cabecera puesta
+  desde la ruta la pisa la regla general (en config gana la última regla). `IlustracionSitio`
+  carga en diferido salvo el hero (`prioridad`) y en la práctica baja solo la del tema visible.
+- **Escenas** (`generar-ilustraciones.mjs`; 15 slugs × claro/oscuro, subidos a
+  `Imagenes del sitio/` y verificados byte a byte): cada página lleva hero + "¿Qué es…?"
+  (nueva, a la izquierda: zig-zag) + cierre. Nuevas: `cursos-para-quien` (los tres perfiles del
+  texto), `supervisiones-caso`, `terapia-umbral`, `fe-integral`, `formaciones-recorrido`.
+  Rehechas, ahora con personas, piso, luz y sombras: `cursos-material-apoyo` (pasa a "¿Qué
+  es…?"), `supervisiones-colegas`, `terapia-espacio-individual`, `fe-enfoque-profesional`. Los
+  heroes solo ganaron piso, sombras y atril. El respaldo de las anteriores quedó en
+  `.ilustraciones/previas-2026-10-06/` (local, ignorado por git).
+- **Home**: `ConceptoGlifo` pone un dibujo chico en línea sobre Pausa / Escucha / Contención /
+  Cercanía (hoja sobre el agua, taza con vapor, cuenco con brote, dos personas). El hero de la
+  home no se tocó: se dejó liso a pedido.
+- **Ya visible en producción sin deploy**: al subir las escenas al bucket, las ilustraciones
+  que ya existían cambiaron de dibujo (se nota al regenerarse cada página, hasta 1 h). El resto
+  —zig-zag con la imagen nueva de "¿Qué es…?", la ruta y los dibujos de la home— necesita deploy.
+- **Pendiente**: la galería de `/quien-soy` (`utils/galeria-quien-soy.ts`) tiene el mismo
+  problema de firmas vencidas sobre una página estática; hoy no se nota porque en el bucket no
+  hay fotos en `Imagenes del sitio/Quien soy/`. Conviene arreglarlo antes de subirlas (una ruta
+  propia como la de las ilustraciones, o firmar a 7 días). Si alguna ilustración no convence:
+  se retoca la escena y se corre `node generar-ilustraciones.mjs --solo=<slug> --subir`.
+
 ## 2026-09-18
 
 **El video de cursos salió a producción: reemplaza el hero de `/cursos` en R2. Antes se

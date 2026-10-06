@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { BookOpen, Users, MessageSquareQuote, ShieldCheck, ArrowRight, HeartHandshake, Sparkles, UserCheck } from 'lucide-react'
+import { BookOpen, Users, MessageSquareQuote, ShieldCheck, ArrowRight, HeartHandshake, Sparkles, UserCheck, TreeDeciduous } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Psicología y Fe | Elias Pacione' }
 
-// Ver formaciones/page.tsx: se regenera cada hora para que la firma de R2 no venza.
+// Ver formaciones/page.tsx: se regenera cada hora para que un reemplazo de las ilustraciones en el bucket se note solo.
 export const revalidate = 3600
 
 const SERVICIOS = [
@@ -60,22 +60,32 @@ export default function PsicologiaYFePage() {
             icon={HeartHandshake}
             etiqueta="Psicología y fe integrada"
             variante="marca"
+            prioridad
           />
         </div>
       </section>
 
-      {/* QUÉ ES */}
+      {/* QUÉ ES — ilustración a la izquierda; en mobile el texto va primero (ver /cursos). */}
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿En qué consiste este espacio?
-          </h2>
-          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-3xl">
-            Entendemos que la mente, las emociones y la espiritualidad forman parte de una misma
-            unidad integral. Este espacio ofrece intervenciones psicológicas rigurosas, éticas y
-            respetuosas de los valores de fe, sin confundir el rol del profesional de la salud mental
-            con el del acompañamiento pastoral, sino integrándolos armónicamente.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div className="md:order-2">
+            <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
+              ¿En qué consiste este espacio?
+            </h2>
+            <p className="font-serif text-tinta/75 text-base leading-relaxed">
+              Entendemos que la mente, las emociones y la espiritualidad forman parte de una misma
+              unidad integral. Este espacio ofrece intervenciones psicológicas rigurosas, éticas y
+              respetuosas de los valores de fe, sin confundir el rol del profesional de la salud mental
+              con el del acompañamiento pastoral, sino integrándolos armónicamente.
+            </p>
+          </div>
+          <IlustracionSitio
+            slug="fe-integral"
+            icon={TreeDeciduous}
+            etiqueta="Mente, emociones y espiritualidad"
+            variante="sage"
+            className="md:order-1"
+          />
         </div>
       </section>
 
@@ -115,7 +125,7 @@ export default function PsicologiaYFePage() {
             slug="fe-enfoque-profesional"
             icon={BookOpen}
             etiqueta="Enfoque profesional"
-            variante="sage"
+            variante="marca"
             className="md:order-2"
           />
           <div className="md:order-1">

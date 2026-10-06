@@ -60,6 +60,19 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Las ilustraciones (src/app/ilustraciones/[archivo]/route.ts) son SVG servidos desde el
+      // origen de la app. Un SVG abierto directo en el navegador puede ejecutar scripts, y la
+      // CSP general los permite ('unsafe-inline'), así que acá se pisa con una que no deja
+      // nada más que estilos. Va DESPUÉS de la regla de arriba a propósito: si dos reglas
+      // ponen la misma cabecera, gana la última (y una cabecera puesta desde la ruta misma
+      // pierde contra las dos). Dentro de un <img> la CSP de la imagen no se aplica: no afecta
+      // cómo se ven en las páginas.
+      {
+        source: '/ilustraciones/:path*',
+        headers: [
+          { key: 'Content-Security-Policy', value: "default-src 'none'; style-src 'unsafe-inline'; sandbox" },
+        ],
+      },
     ]
   },
 };

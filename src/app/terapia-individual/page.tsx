@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { HeartHandshake, UserRound, MessageCircleHeart, ArrowRight, ShieldCheck } from 'lucide-react'
+import { HeartHandshake, UserRound, MessageCircleHeart, ArrowRight, ShieldCheck, DoorOpen } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Terapia individual | Elias Pacione' }
 
-// Ver formaciones/page.tsx: se regenera cada hora para que la firma de R2 no venza.
+// Ver formaciones/page.tsx: se regenera cada hora para que un reemplazo de las ilustraciones en el bucket se note solo.
 export const revalidate = 3600
 
 const PASOS = [
@@ -57,22 +57,32 @@ export default function TerapiaIndividualPage() {
             icon={HeartHandshake}
             etiqueta="Encuentro terapéutico"
             variante="marca"
+            prioridad
           />
         </div>
       </section>
 
-      {/* QUÉ ES */}
+      {/* QUÉ ES — ilustración a la izquierda; en mobile el texto va primero (ver /cursos). */}
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es la terapia individual?
-          </h2>
-          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es un espacio de encuentro, uno a uno, para acompañarte en lo que estés
-            atravesando — con escucha, contención y un vínculo de confianza. No hay una
-            fórmula única: la frecuencia y la modalidad se piensan juntos, según tu
-            momento y tus tiempos.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div className="md:order-2">
+            <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
+              ¿Qué es la terapia individual?
+            </h2>
+            <p className="font-serif text-tinta/75 text-base leading-relaxed">
+              Es un espacio de encuentro, uno a uno, para acompañarte en lo que estés
+              atravesando — con escucha, contención y un vínculo de confianza. No hay una
+              fórmula única: la frecuencia y la modalidad se piensan juntos, según tu
+              momento y tus tiempos.
+            </p>
+          </div>
+          <IlustracionSitio
+            slug="terapia-umbral"
+            icon={DoorOpen}
+            etiqueta="La primera consulta"
+            variante="sage"
+            className="md:order-1"
+          />
         </div>
       </section>
 
@@ -104,7 +114,7 @@ export default function TerapiaIndividualPage() {
             slug="terapia-espacio-individual"
             icon={UserRound}
             etiqueta="Espacio individual"
-            variante="sage"
+            variante="marca"
             className="md:order-2"
           />
           <div className="md:order-1">
