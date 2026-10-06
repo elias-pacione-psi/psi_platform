@@ -14,7 +14,7 @@ export const metadata = { title: 'Cursos | Elias Pacione' }
 // nombre en esta carpeta, alcanza con reemplazar el archivo en el bucket.
 const KEY_VIDEO_HERO_CURSOS = 'Biblioteca R2/Videos/Videos Main Principal/Cursos asincronicos.mp4'
 
-// Mismo cuidado que firmarIlustracion: firmar es cálculo local, no confirma que el archivo
+// Mismo cuidado que resolverIlustracion: firmar es cálculo local, no confirma que el archivo
 // exista, así que sin el existeEnR2 una key movida o borrada dejaría un <video> roto en una
 // página pública. Devolver null hace que el hero caiga a la ilustración de siempre.
 async function firmarVideoHeroCursos(): Promise<string | null> {
@@ -106,6 +106,7 @@ export default async function CursosPage() {
               icon={PlayCircle}
               etiqueta="Lección grabada"
               variante="marca"
+              prioridad
             />
           )}
         </div>
@@ -140,18 +141,29 @@ export default async function CursosPage() {
         </div>
       </section>
 
-      {/* QUÉ ES */}
+      {/* QUÉ ES — el zig-zag de las páginas de servicio: hero a la derecha, esta a la
+          izquierda, la de cierre otra vez a la derecha. En mobile el texto va primero para
+          no apilar dos imágenes pegadas a la del hero. */}
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
-            ¿Qué es un curso asincrónico?
-          </h2>
-          <p className="font-serif text-tinta/75 text-base leading-relaxed max-w-2xl">
-            Es contenido ya grabado — videos, lecturas y ejercicios — que vas viendo
-            cuando quieras, en el orden en que Elias lo pensó. No hay clases en vivo ni
-            fechas de inscripción: entrás con tu usuario y avanzás lección por lección.
-            Es la opción para quien prefiere aprender solo, a su propio ritmo.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+          <div className="md:order-2">
+            <h2 className="text-tinta text-2xl md:text-3xl font-heading font-semibold mb-5 tracking-tight">
+              ¿Qué es un curso asincrónico?
+            </h2>
+            <p className="font-serif text-tinta/75 text-base leading-relaxed">
+              Es contenido ya grabado — videos, lecturas y ejercicios — que vas viendo
+              cuando quieras, en el orden en que Elias lo pensó. No hay clases en vivo ni
+              fechas de inscripción: entrás con tu usuario y avanzás lección por lección.
+              Es la opción para quien prefiere aprender solo, a su propio ritmo.
+            </p>
+          </div>
+          <IlustracionSitio
+            slug="cursos-material-apoyo"
+            icon={BookOpen}
+            etiqueta="Módulo con material de apoyo"
+            variante="sage"
+            className="md:order-1"
+          />
         </div>
       </section>
 
@@ -249,10 +261,10 @@ export default async function CursosPage() {
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
           <IlustracionSitio
-            slug="cursos-material-apoyo"
-            icon={BookOpen}
-            etiqueta="Módulo con material de apoyo"
-            variante="sage"
+            slug="cursos-para-quien"
+            icon={Users}
+            etiqueta="Quiénes hacen estos cursos"
+            variante="marca"
             className="md:order-2"
           />
           <div className="md:order-1">
