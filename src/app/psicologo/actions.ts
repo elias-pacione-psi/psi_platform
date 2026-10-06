@@ -13,6 +13,7 @@ import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
 import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
 import { baseUrl } from '@/utils/site-url'
 import { invitarUsuario, type Vinculo } from '@/utils/supabase/invitaciones'
+import { borrarArchivosDeEntregas, borrarCuentaYDatos } from '@/utils/supabase/usuarios'
 import { enviarMail, enviarMailBatch, type OpcionesEmail } from '@/utils/email/resend'
 import { AsignacionProgramaEmail } from '@/emails/AsignacionProgramaEmail'
 import { EntregaRevisadaEmail } from '@/emails/EntregaRevisadaEmail'
@@ -338,19 +339,99 @@ export async function eliminarUsuarioTotal(id: string) {
 
   const supabaseAdmin = createAdminClient()
 
-  const tablasUsuario = ['programas_asignados', 'recursos_asignados', 'agenda_sesiones', 'cohortes_alumnos', 'progreso_lecciones', 'quiz_intentos', 'entregas']
-  for (const tabla of tablasUsuario) {
-    const { error } = await supabaseAdmin.from(tabla).delete().eq('alumno_id', id)
-    if (error) console.error(`Error borrando ${tabla} del alumno (se continúa):`, error.message)
-  }
-
-  await supabaseAdmin.from('alumnos').delete().eq('id', id)
-  const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id)
-  if (authError) return { error: authError.message }
+  const baja = await borrarCuentaYDatos(supabaseAdmin, id)
+  if ('error' in baja) return { error: baja.error }
 
   revalidatePath('/psicologo/alumnos')
   revalidatePath('/psicologo/pacientes')
   return { success: true }
+}
+
+// "Restaurar credenciales": borra TODO lo de la persona (cuenta, asignaciones, progreso,
+// quizzes, entregas con sus archivos, agenda, cohortes, material, opiniones) y le manda
+// de nuevo el mail de invitación para que cree su acceso de cero.
+//
+// Lo único que sobrevive es lo que hace falta para poder invitarla otra vez y lo que no es
+// suyo: nombre, email, teléfono, link de videollamada y si es alumno/paciente (el perfil se
+// recrea con eso), y las compras de ebooks, que son registro de venta atado al email del
+// pago — se re-vinculan a la cuenta nueva igual que cuando alguien crea su cuenta después
+// de comprar (ver crear-cuenta/actions.ts).
+//
+// Hay que borrar el usuario de Auth y no solo "mandar otro mail": inviteUserByEmail()
+// rechaza un email que ya tiene cuenta. Por eso el orden importa y es de menor a mayor
+// daño: primero los archivos (las keys salen de las filas, que todavía existen), después la
+// cuenta, y recién al final la invitación. Si la invitación falla ya no hay perfil al que
+// volver, así que se reintenta una vez y, si sigue fallando, el error dice exactamente
+// qué datos usar para dar de alta a la persona a mano.
+export async function restaurarCredenciales(id: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+
+  // El id termina en el prefijo de R2 (entregas/{id}/): un id vacío o con barras apuntaría
+  // a más archivos que los de esta persona.
+  if (!RE_UUID.test(id ?? '')) return { error: 'Falta la persona' }
+  if (auth.user.id === id) return { error: 'No podés restaurar tus propias credenciales.' }
+
+  const supabaseAdmin = createAdminClient()
+
+  const { data: perfil } = await supabaseAdmin
+    .from('alumnos')
+    .select('id, email, nombre, telefono, link_videollamada, rol, estado, es_alumno, es_paciente')
+    .eq('id', id)
+    .maybeSingle()
+  if (!perfil) return { error: 'Esa persona ya no existe.' }
+  if (perfil.rol === 'psicologo') return { error: 'No se pueden restaurar las credenciales de una cuenta de psicólogo.' }
+  // Una cuenta suspendida o archivada vuelve "activa" con la cuenta nueva: eso sería levantar
+  // el bloqueo por la ventana de al lado. Primero se reactiva a propósito, después se restaura.
+  if (perfil.estado !== 'activo') return { error: 'Reactivá el acceso antes de restaurar las credenciales.' }
+  if (!perfil.email) return { error: 'Esa persona no tiene email: no hay a dónde mandar la invitación.' }
+
+  // Un perfil sin ningún vínculo no debería existir (cambiarVinculo no lo deja), pero
+  // invitarUsuario() lo rechaza, y eso pasaría DESPUÉS de haber borrado la cuenta.
+  const vinculo: Vinculo = perfil.es_alumno || perfil.es_paciente
+    ? { esAlumno: perfil.es_alumno, esPaciente: perfil.es_paciente }
+    : { esAlumno: true, esPaciente: false }
+
+  const archivos = await borrarArchivosDeEntregas(supabaseAdmin, id)
+  if ('error' in archivos) return { error: archivos.error }
+
+  const baja = await borrarCuentaYDatos(supabaseAdmin, id)
+  if ('error' in baja) return { error: baja.error }
+
+  const datosInvitacion = {
+    nombre: perfil.nombre,
+    email: perfil.email,
+    telefono: perfil.telefono,
+    link_videollamada: perfil.link_videollamada,
+    vinculo,
+    supabaseAdmin,
+  }
+  let creado = await invitarUsuario(datosInvitacion)
+  if ('error' in creado) creado = await invitarUsuario(datosInvitacion)
+  if ('error' in creado) {
+    console.error('Restaurar credenciales: la cuenta se borró pero la invitación falló:', creado.error)
+    revalidatePath('/psicologo/alumnos')
+    revalidatePath('/psicologo/pacientes')
+    return {
+      error: `Se borraron los datos de ${perfil.nombre}, pero el mail de acceso no salió (${creado.error}). `
+        + `Volvé a crearla desde "Crear nuevo ${vinculo.esAlumno ? 'alumno' : 'paciente'}" con el email ${perfil.email}.`,
+    }
+  }
+
+  const { error: errorOrdenes } = await supabaseAdmin
+    .from('ordenes')
+    .update({ alumno_id: creado.id })
+    .eq('email_comprador', perfil.email)
+    .eq('estado', 'pagada')
+    .is('alumno_id', null)
+  if (errorOrdenes) console.error('No se pudieron re-vincular las compras (se continúa):', errorOrdenes.message)
+
+  revalidatePath('/psicologo/alumnos')
+  revalidatePath('/psicologo/pacientes')
+  revalidatePath('/psicologo/entregas')
+  revalidatePath('/psicologo/agenda')
+  revalidatePath('/psicologo/cohortes')
+  return { success: true, email: perfil.email as string }
 }
 
 // ============================================================
