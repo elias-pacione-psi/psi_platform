@@ -1,0 +1,17 @@
+{
+  "name": "operador-socioterapeutico",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Presentaciones (PPTX + PDF) del programa Operador Socioterapéutico y su alta en la plataforma",
+  "scripts": {
+    "generar": "node generar.js",
+    "deploy": "node deploy.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1125.0",
+    "@supabase/supabase-js": "^2.114.0",
+    "dotenv": "^17.4.2",
+    "fontkit": "^2.0.4",
+    "pptxgenjs": "^4.0.1"
+  }
+}

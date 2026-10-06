@@ -13,6 +13,13 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // scripts/: herramientas de línea de comandos en CommonJS (generadores de PDF/presentaciones,
+  // deploy de contenido). No son código de la app ni pasan por el bundler: `require()` es lo
+  // normal ahí, y la regla de imports ES solo les da ruido.
+  {
+    files: ["scripts/**/*.js"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
 ]);
 
 export default eslintConfig;

@@ -1,0 +1,155 @@
+const { nota, bajada } = require('./notas')
+
+module.exports = {
+  orden: 3,
+  archivo: '03-modulo-2-neurociencia-de-la-adiccion',
+  etiqueta: 'Módulo 2 · Neurociencia de la adicción',
+  moduloTitulo: 'Módulo 2 · Neurociencia de la adicción',
+  moduloDescripcion: 'Comprender qué le sucede al cerebro de una persona con consumo problemático, para reemplazar el juicio moral por comprensión clínica.',
+  leccionTitulo: 'Diapositivas · Neurociencia de la adicción',
+  slides: [
+    {
+      tipo: 'portada', numero: 2, kicker: 'Módulo 2 de 8 · Semana 2',
+      titulo: 'Neurociencia de la adicción',
+      bajada: 'Comprender qué le sucede al cerebro de una persona con consumo problemático, para reemplazar el juicio moral por comprensión clínica.',
+      chips: ['3 horas cátedra', '120 minutos', '6 bloques'],
+      notas: bajada(2),
+    },
+    {
+      tipo: 'objetivos',
+      items: [
+        'Comprender el circuito de recompensa cerebral y el rol de la dopamina.',
+        'Explicar tolerancia, sensibilización, dependencia y abstinencia desde la neurobiología.',
+        'Relacionar los hallazgos neurocientíficos con la pérdida de control característica de la adicción.',
+        'Aplicar el conocimiento neurocientífico para reducir el juicio moral en la intervención.',
+      ],
+    },
+    {
+      tipo: 'agenda', total: 120,
+      bloques: [
+        { min: 10, t: '2.1 Reconexión y repaso del módulo anterior' },
+        { min: 30, t: '2.2 El cerebro y el sistema de recompensa' },
+        { min: 30, t: '2.3 Neurotransmisión y dopamina: el mecanismo íntimo del consumo' },
+        { min: 25, t: '2.4 Tolerancia, sensibilización y el cerebro que aprende mal' },
+        { min: 15, t: '2.5 Neuroplasticidad y esperanza: el cerebro también puede reaprender' },
+        { min: 10, t: '2.6 Cierre' },
+      ],
+    },
+    {
+      tipo: 'tarjetas', kicker: '2.2 · El cerebro y el sistema de recompensa',
+      titulo: 'La adicción es, ante todo, un trastorno del sistema de recompensa',
+      lead: 'En una persona sana, ese sistema refuerza lo esencial para sobrevivir: hace que esas actividades resulten placenteras y memorables.',
+      tarjetas: [
+        { kicker: 'En la persona sana', titulo: 'Lo natural se refuerza', texto: 'Comer, beber, el vínculo social, la reproducción: el circuito hace que la persona quiera repetirlos.' },
+        { kicker: 'En la adicción', titulo: 'El circuito se apropia', texto: 'Las sustancias y conductas adictivas toman ese mismo circuito.' },
+        { kicker: 'El resultado', titulo: 'Una necesidad nueva', texto: 'Una necesidad natural del organismo se transforma en una necesidad de la sustancia o la conducta.', oscura: true },
+      ],
+      notas: nota('2.2'),
+    },
+    {
+      tipo: 'pasos', kicker: '2.2 · 2.3 · La comunicación entre neuronas',
+      titulo: 'Así funciona la recompensa: la dopamina en la sinapsis',
+      pasos: [
+        { t: 'Impulso eléctrico', d: 'Cuando una neurona se estimula lo suficiente, el impulso viaja por el axón hasta la terminal nerviosa.' },
+        { t: 'Liberación', d: 'En la terminal libera el neurotransmisor en la hendidura sináptica, el espacio entre neuronas.' },
+        { t: 'Unión al receptor', d: 'La dopamina se une a los receptores de la neurona vecina: aparece la sensación placentera o de recompensa.' },
+        { t: 'Recaptación', d: 'El transportador de dopamina la recupera y se cierra el ciclo.' },
+      ],
+      nota: 'La vía de recompensa: dopamina desde el área tegmental ventral (mesencéfalo) hacia el sistema límbico y la corteza frontal.',
+      notas: nota('2.2', '2.3'),
+    },
+    {
+      tipo: 'tabla', kicker: '2.3 · Dopamina: el mecanismo íntimo del consumo',
+      titulo: 'Cada sustancia llega a la dopamina por un camino distinto',
+      cols: ['Sustancia', 'Qué hace sobre la dopamina'],
+      anchos: [3.4, 8.8], pt: 16,
+      filas: [
+        ['Alcohol, heroína y nicotina', 'Excitan indirectamente a las neuronas productoras de dopamina: más actividad de la habitual.'],
+        ['Cocaína', 'Actúa sobre el transportador de dopamina y bloquea su recaptación: la dopamina se acumula en la sinapsis.'],
+        ['Metanfetamina', 'Actúa de forma similar y, además, puede liberar dopamina incluso sin un estímulo eléctrico previo.'],
+        ['Resultado común', 'Una cantidad de dopamina muy superior a la habitual: la euforia intensa que describen quienes consumen.'],
+      ],
+      notas: nota('2.3'),
+    },
+    {
+      tipo: 'pasos', kicker: '2.4 · Tolerancia y sensibilización',
+      titulo: 'El cerebro que aprende mal: del placer artificial a la pérdida de interés',
+      pasos: [
+        { t: 'Oleadas artificiales de dopamina', d: 'La exposición repetida a estas oleadas…' },
+        { t: 'El sistema se desensibiliza', d: 'Deja de responder con la misma intensidad a una comida, un logro, un abrazo.' },
+        { t: 'Tolerancia', d: 'Se necesita cada vez más para sentir el mismo efecto.' },
+        { t: 'Pérdida de interés', d: 'Lo único capaz de generar placer pasa a ser la sustancia o la conducta.' },
+      ],
+      destacar: 3,
+      notas: nota('2.4'),
+    },
+    {
+      tipo: 'comparacion', kicker: '2.4 · El freno también se debilita',
+      titulo: 'La voluntad compite en desventaja con un circuito sobreestimulado',
+      izq: { titulo: 'Circuito de recompensa', tono: 'ladrillo', items: ['Sobreestimulado por las oleadas de dopamina', 'Empuja a consumir'] },
+      der: { titulo: 'Corteza prefrontal: el freno', tono: 'sage', items: ['Planifica, controla impulsos y evalúa las consecuencias a largo plazo', 'Cuando está comprometida, la persona no «elige» consumir como elige qué ropa ponerse'] },
+      notas: nota('2.4'),
+    },
+    {
+      tipo: 'frase',
+      texto: 'En lugar de «¿por qué no puede parar si quiere?», preguntar: «¿qué tan comprometido está, en este momento, el freno que necesitaría para parar?»',
+      autor: 'Módulo 2 · 2.4 El cerebro que aprende mal',
+      notas: nota('2.4'),
+    },
+    {
+      tipo: 'lista', kicker: '2.4 · Por qué esto importa en la práctica',
+      titulo: 'Tres razones para explicar la neurobiología',
+      items: [
+        { t: 'La voluntad es un recurso real, pero limitado', d: 'y neurológicamente insuficiente por sí sola frente a un circuito de recompensa alterado.' },
+        { t: 'Explicarla reduce la culpa y el juicio moral', d: 'y mejora la adherencia al tratamiento.' },
+        { t: 'Ningún dato neurocientífico exime de responsabilidad', d: 'lo que cambia es el punto de partida desde el cual se construye el proceso de recuperación.' },
+      ],
+      notas: nota('2.4'),
+    },
+    {
+      tipo: 'tarjetas', kicker: '2.5 · Neuroplasticidad',
+      titulo: 'El cerebro que aprendió a priorizar una sustancia también puede reaprender',
+      tarjetas: [
+        { kicker: 'Lo que lo permite', titulo: 'La neuroplasticidad', texto: 'El mismo mecanismo que explica cómo el cerebro se adapta al consumo es la base biológica de la esperanza en el tratamiento.' },
+        { kicker: 'Con qué', titulo: 'Tiempo y acompañamiento', texto: 'Abstinencia sostenida e intervenciones adecuadas: el cerebro reorganiza sus circuitos y recupera sensibilidad a las recompensas naturales.' },
+        { kicker: 'Lo que hay que saber', titulo: 'No es inmediato', texto: 'Suele tomar meses. Es exactamente lo que los próximos módulos, sobre modelos de cambio y de tratamiento, ayudan a sostener.', oscura: true },
+      ],
+      notas: nota('2.5'),
+    },
+    {
+      tipo: 'mapa', kicker: 'Mapa del módulo',
+      titulo: 'Del circuito de recompensa a la esperanza del reaprendizaje',
+      centro: 'Sistema de recompensa',
+      ramas: [
+        { rel: 'en la persona sana', t: 'Refuerza lo esencial', hijos: ['Comer, beber, vínculo y reproducción'] },
+        { rel: 'las sustancias', t: 'Disparan la dopamina', hijos: ['Cada una, por un mecanismo distinto'] },
+        { rel: 'la exposición repetida', t: 'Desensibiliza el sistema', hijos: ['Tolerancia y pérdida de interés'] },
+        { rel: 'y compromete a la', t: 'Corteza prefrontal', hijos: ['El freno queda en desventaja'] },
+        { rel: 'pero', t: 'El cerebro puede reaprender', hijos: ['Con abstinencia y acompañamiento: lleva meses'] },
+      ],
+    },
+    {
+      tipo: 'claves', titulo: 'Claves del módulo',
+      items: [
+        'La adicción es, ante todo, un trastorno del sistema de recompensa.',
+        'La mayoría de las sustancias elevan la dopamina; cada una por un mecanismo distinto.',
+        'La voluntad es insuficiente por sí sola: el freno —la corteza prefrontal— queda en desventaja.',
+        'Explicar la neurobiología reduce la culpa y mejora la adherencia, sin eximir de responsabilidad.',
+        'La neuroplasticidad es la base biológica de la esperanza: el cerebro puede reaprender.',
+      ],
+    },
+    {
+      tipo: 'herramienta', numero: 2, nombre: 'Ficha de psicoeducación: qué le pasa al cerebro',
+      uso: 'Uso con pacientes y familias · hoja para explicar, en lenguaje simple, el mecanismo neurobiológico del consumo.',
+      partes: [{ titulo: 'Para leer junto a la persona o su familia', estilo: 'preguntas', items: [
+        'El cerebro tiene un sistema de recompensa: nos hace sentir bien cuando comemos, nos abrazan o logramos algo, y así nos motiva a repetirlo.',
+        'La sustancia (o la conducta) «hackea» ese sistema: genera una oleada de dopamina mucho más intensa que cualquier recompensa natural.',
+        'El cerebro se acostumbra: cada vez hace falta más para sentir lo mismo (tolerancia), y las cosas simples de la vida dejan de alcanzar.',
+        'El freno también se debilita: la zona que planifica y frena impulsos queda en desventaja; por eso «solo con voluntad» rara vez alcanza.',
+        'El cerebro puede reaprender: con tiempo de abstinencia y acompañamiento recupera sensibilidad — no de un día para el otro.',
+      ] }],
+      cierre: 'El objetivo no es que memoricen términos técnicos, sino que entiendan la lógica del proceso.',
+      notas: nota('H2'),
+    },
+  ],
+}

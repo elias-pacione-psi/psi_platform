@@ -1,0 +1,728 @@
+{
+ "P0": {
+  "titulo": "Presentación del programa",
+  "parrafos": [
+   "Este programa nace de un recorrido que combina tres fuentes que no siempre se integran en la formación en adicciones: la experiencia directa de trabajo en un centro de recuperación, el conocimiento clínico validado por la investigación en psicología de las adicciones, y una mirada humana y espiritual que entiende que ninguna intervención funciona si no hay, primero, una decisión de acercarse sin prejuicio.",
+   "Está pensado para dos públicos que en general se forman por separado y que aquí conviven en un mismo espacio de aprendizaje: por un lado, profesionales de la salud mental, el trabajo social o la medicina que quieren especializarse en el abordaje de las adicciones; por otro, personas sin formación clínica previa —líderes comunitarios, pastores, familiares, voluntarios de instituciones— que quieren formarse como operadores socioterapéuticos: la figura que acompaña procesos de recuperación en el día a día, articulada con el equipo profesional, pero sin reemplazarlo. El lenguaje del programa es técnico de nivel intermedio: se nombran y explican los modelos y conceptos que sostienen la práctica profesional en adicciones —el modelo transteórico de cambio, la entrevista motivacional, la prevención de recaídas, la neurobiología del consumo— pero siempre traducidos a un lenguaje claro, con ejemplos concretos y sin el tecnicismo que aleja a quien no tiene formación clínica previa."
+  ]
+ },
+ "P1": {
+  "titulo": "A quién está dirigido",
+  "parrafos": [
+   "• Psicólogos, trabajadores sociales, enfermeros, médicos generalistas y acompañantes terapéuticos que quieren especializarse en adicciones.",
+   "• Líderes y pastores, equipos de acompañamiento pastoral y voluntarios de centros de día u hogares de recuperación.",
+   "• Familiares de personas con consumo problemático que buscan comprender el proceso desde un lugar informado.",
+   "• Docentes, operadores comunitarios y todo público adulto interesado en formarse como operador socioterapéutico en adicciones."
+  ]
+ },
+ "P2": {
+  "titulo": "Objetivos generales",
+  "parrafos": [
+   "• Comprender la adicción como un fenómeno biopsicosocial y, para quien lo desee integrar, también espiritual — nunca como una falla de carácter.",
+   "• Conocer los principales modelos de tratamiento con respaldo empírico: el modelo transteórico de cambio, la entrevista motivacional y la prevención de recaídas.",
+   "• Explicar con fundamento neurocientífico qué le sucede al cerebro de una persona con consumo problemático, y por qué la sola fuerza de voluntad no alcanza.",
+   "• Reconocer el rol de la familia como sistema y desarrollar herramientas concretas de intervención familiar.",
+   "• Identificar los factores sociales que multiplican el riesgo y reflexionar sobre el rol de la comunidad frente al estigma.",
+   "• Diseñar un plan de tratamiento integral, con identificación temprana de señales de recaída y una red de derivación clara.",
+   "• Incorporar el perfil, los límites éticos y las herramientas de autocuidado propias del operador socioterapéutico."
+  ]
+ },
+ "P3": {
+  "titulo": "Metodología",
+  "parrafos": [
+   "El programa se dicta en 8 módulos semanales de 3 horas cátedra cada uno (120 minutos de encuentro, organizados en bloques de 40 minutos), a lo largo de 2 meses. Cada módulo combina exposición teórica, análisis de casos, dinámicas grupales y el trabajo con una herramienta práctica en hoja suelta, pensada para poder imprimirse y usarse de manera independiente durante el módulo, en la práctica profesional posterior, o como material de trabajo personal. Cada hoja de trabajo puede fotocopiarse o entregarse en formato digital a los participantes; están diseñadas para funcionar tanto dentro del aula como en el consultorio, el hogar o el espacio comunitario donde el futuro operador socioterapéutico desarrolle su tarea."
+  ]
+ },
+ "P4": {
+  "titulo": "Cronograma general",
+  "parrafos": [
+   "Semana",
+   "Módulo",
+   "Herramienta práctica",
+   "1",
+   "Introducción a la problemática y encuadre del rol",
+   "Mi mapa de prejuicios",
+   "2",
+   "Neurociencia de la adicción",
+   "Ficha de psicoeducación: qué le pasa al cerebro",
+   "3",
+   "El ciclo de la recaída y los modelos de cambio",
+   "Mapa de disparadores y estadio de cambio",
+   "4",
+   "El ámbito familiar como sistema",
+   "Guía para familiares: qué sí y qué no",
+   "5",
+   "Contexto social y adicciones de conducta",
+   "El espejo de la comunidad",
+   "6",
+   "Modelos y dispositivos de tratamiento",
+   "Mapa de dispositivos y derivación",
+   "7",
+   "El rol del operador socioterapéutico",
+   "Protocolo de alerta temprana del operador",
+   "8",
+   "Plan de tratamiento integral y cierre",
+   "Plantilla de Plan de Tratamiento Integral"
+  ]
+ },
+ "P5": {
+  "titulo": "Materiales necesarios",
+  "parrafos": [
+   "• Proyector o pantalla para el apoyo visual de cada módulo.",
+   "• Hoja de trabajo del módulo, impresa, una por participante.",
+   "• Lapiceras y, para las dinámicas grupales, tarjetas o post-its de dos colores.",
+   "• Música suave de fondo para los momentos de reflexión individual.",
+   "• Datos de contacto de profesionales o instituciones de derivación de la zona, actualizados antes de comenzar el programa."
+  ]
+ },
+ "E0": {
+  "titulo": "Encuadre ético del programa",
+  "parrafos": [
+   "Este programa forma operadores socioterapéuticos: personas capacitadas para acompañar, contener, orientar y trabajar en red junto a profesionales de la salud mental. No forma terapeutas ni sustituye la formación de grado en psicología, psiquiatría o trabajo social. Conviene explicitar esta diferencia desde el primer módulo y sostenerla durante todo el proceso."
+  ]
+ },
+ "E1": {
+  "titulo": "Tres acuerdos que sostienen el aula",
+  "parrafos": [
+   "• Lo que se comparte en la sala queda en la sala. La confidencialidad es la base de cualquier espacio de formación en esta temática.",
+   "• Nadie está obligado a compartir su historia personal ni la de su familia. La participación en las dinámicas es siempre voluntaria.",
+   "• Si durante un módulo surge una situación de riesgo actual —consumo activo de un menor sin supervisión, violencia, ideación suicida—, se aborda en privado al finalizar el encuentro y se deriva a un profesional o institución competente. El facilitador del curso no diagnostica ni brinda tratamiento durante la formación."
+  ]
+ },
+ "E2": {
+  "titulo": "Los límites del rol del operador socioterapéutico",
+  "parrafos": [
+   "A lo largo del programa se insiste en una distinción que ordena toda la práctica futura: el operador socioterapéutico acompaña, contiene, informa, motiva y articula con la red profesional; no diagnostica, no indica medicación, no reemplaza una psicoterapia y no sostiene solo, sin supervisión, un caso de riesgo. El módulo 7 desarrolla en profundidad estos límites y las herramientas de autocuidado que los sostienen."
+  ]
+ },
+ "M1": {
+  "titulo": "Módulo 1",
+  "parrafos": [
+   "Introducción a la problemática y encuadre del rol Comprender la adicción como fenómeno biopsicosocial y espiritual, dimensionar el problema y sentar las bases éticas de todo el programa.",
+   "Objetivos del módulo ●",
+   "Comprender la adicción como fenómeno biopsicosocial y espiritual, no como una falla de carácter.",
+   "• Dimensionar la problemática a partir de datos epidemiológicos actuales.",
+   "• Reconocer el valor y los límites de la experiencia personal o vicaria como herramienta de acompañamiento.",
+   "• Incorporar el encuadre ético que sostiene todo el programa.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "20 min",
+   "1.1 Apertura, presentación del programa y encuadre general",
+   "25 min",
+   "1.2 Qué es una adicción: mirada biopsicosocial y espiritual",
+   "20 min",
+   "1.3 Magnitud del problema: estadísticas y realidad regional",
+   "25 min",
+   "1.4 La lección de la experiencia: del prejuicio al acompañamiento",
+   "20 min",
+   "1.5 El estigma como primer obstáculo clínico",
+   "10 min",
+   "1.6 Cierre, síntesis y consigna de trabajo semanal"
+  ]
+ },
+ "1.2": {
+  "titulo": "Qué es una adicción, realmente",
+  "parrafos": [
+   "Una adicción es un patrón de conducta —hacia una sustancia o hacia una conducta como el juego, las pantallas o las redes sociales— que la persona no puede regular pese a las consecuencias negativas que le trae en su salud, sus vínculos, su trabajo o su vida espiritual. No es una cuestión de «vicio» en sentido moral: es un patrón que compromete al mismo tiempo al cerebro, a las emociones, a la familia y al entorno social. Por eso hablamos de un fenómeno biopsicosocial y, para quienes lo deseen integrar en su práctica, también espiritual: tiene una base biológica, una dimensión psicológica, un componente social y, en muchos procesos de recuperación, un componente del sentido y del alma.",
+   "Clínicamente, se reconocen algunos indicadores centrales que conviene manejar con precisión: la pérdida de control sobre la cantidad o la frecuencia del consumo; la aparición de tolerancia (necesitar cada vez más para el mismo efecto); los síntomas de abstinencia al reducir o suspender; el deseo intenso o craving; el abandono progresivo de actividades antes importantes; y la continuidad del consumo a pesar de saber que produce daño. Ninguno de estos indicadores aislado define una adicción — es la combinación y la persistencia en el tiempo lo que orienta el diagnóstico, que siempre corresponde a un profesional de la salud.",
+   "Existen adicciones a sustancias —alcohol, cocaína, marihuana, opioides, pastillas— y adicciones de conducta: el juego, la pantalla, el celular, las redes sociales, el trabajo, la comida. El mecanismo interno que se activa es muy similar en todas ellas, aunque la consecuencia visible cambie. Esta idea es clave para el operador socioterapéutico: permite comprender, por ejemplo, un cuadro de uso problemático de pantallas en un adolescente con la misma seriedad clínica que un consumo de sustancias, sin jerarquizar sufrimientos."
+  ]
+ },
+ "1.3": {
+  "titulo": "Una magnitud que no podemos ignorar",
+  "parrafos": [
+   "Datos para dimensionar el problema Según el último Informe Mundial sobre las Drogas de Naciones Unidas, se estima que 292 millones de personas en el mundo consumieron alguna droga en 2022, un 20% más que diez años antes.",
+   "Los trastornos por consumo de sustancias afectan a más de 39 millones de personas, de las cuales solo una fracción accede a tratamiento: aproximadamente 1 de cada 7 hombres y 1 de cada 18 mujeres.",
+   "La Organización Mundial de la Salud calcula más de 3 millones de muertes anuales atribuibles al consumo de alcohol y otras sustancias.",
+   "Estos números no se traen para alarmar, sino para confirmar algo central en este programa: esto no es un tema marginal ni lejano. Atraviesa a toda la sociedad, y quien se forma como operador socioterapéutico va a encontrarse con esta realidad, tarde o temprano, muy cerca de su propio entorno."
+  ]
+ },
+ "1.4": {
+  "titulo": "La lección de la experiencia: del prejuicio al acompañamiento",
+  "parrafos": [
+   "Buena parte de quienes se acercan a este campo —tanto profesionales como voluntarios— lo hacen a partir de una experiencia personal o vicaria: haber trabajado en un centro de recuperación, tener un familiar o un amigo cercano atravesado por el consumo, o simplemente haber sostenido, alguna vez, prejuicios sobre el tema que después la propia práctica desmintió. Esa experiencia es un recurso valioso: da autenticidad, credibilidad y una empatía que no se aprende solo en los libros. Pero también tiene un riesgo que conviene nombrar desde el primer módulo: la sobreidentificación. La sobreidentificación aparece cuando el operador deja de ver a la persona que tiene enfrente y empieza a verse a sí mismo, o a su propia historia familiar, en cada caso. Esto puede traducirse en intervenciones motivadas más por la necesidad de resolver algo propio que por lo que la otra persona necesita en ese momento. El desafío formativo de este módulo es transformar la experiencia personal en una fuente de empatía profesional, no en un mandato de salvar a nadie. Una frase útil para sostener este equilibrio: la experiencia abre la puerta, pero no reemplaza el mapa técnico que este programa ofrece.",
+   "No prejuzgar sobre algo que se desconoce, y no decir «nunca» sin antes acercarse, es el primer principio que sostiene cualquier intervención en este campo — mucho antes que cualquier técnica."
+  ]
+ },
+ "1.5": {
+  "titulo": "El estigma como primer obstáculo clínico",
+  "parrafos": [
+   "El estigma —propio y social— es, en la práctica, la primera barrera que encuentra cualquier persona con consumo problemático antes de pedir ayuda. El lenguaje importa: hablar de «una persona con consumo problemático» en lugar de «un adicto» o «un drogadicto» no es una cuestión cosmética, sino clínica — el lenguaje que despersonaliza refuerza la identidad de «enfermo» y dificulta que la persona se piense a sí misma como alguien capaz de cambiar. El operador socioterapéutico es, muchas veces, el primer punto de contacto no estigmatizante que una persona o una familia encuentran en su proceso."
+  ]
+ },
+ "H1": {
+  "titulo": "Herramienta 1",
+  "parrafos": [
+   "Mi mapa de prejuicios Uso individual · para completar antes de comenzar el programa, con honestidad y sin que nadie más lo lea.",
+   "Antes de acompañar a otros, conviene mirar los propios prejuicios. Este ejercicio no tiene respuestas correctas: busca que cada participante identifique, con honestidad, desde dónde llega a este tema.",
+   "1. ¿Qué imagen aparece primero en mi mente cuando pienso en «un adicto»?",
+   "2. ¿De dónde viene esa imagen? (una experiencia propia, algo que vi, algo que escuché, los medios de comunicación)",
+   "3. ¿Tuve o tengo una experiencia personal o familiar cercana con el consumo problemático? ¿Cómo influye eso en las ganas de hacer este curso?",
+   "4. Si esa persona con adicción fuera alguien de mi propia familia, ¿cambiaría la forma en que la miro?",
+   "5. ¿Qué frase me comprometo a dejar de usar, o de pensar, a partir de hoy?",
+   "No hay respuestas correctas. Solo hay respuestas honestas. Reconocer un prejuicio propio no invalida a nadie para hacer este trabajo — lo que sí lo invalida es no revisarlo nunca."
+  ]
+ },
+ "M2": {
+  "titulo": "Módulo 2",
+  "parrafos": [
+   "Neurociencia de la adicción Comprender qué le sucede al cerebro de una persona con consumo problemático, para reemplazar el juicio moral por comprensión clínica.",
+   "Objetivos del módulo ●",
+   "Comprender el circuito de recompensa cerebral y el rol de la dopamina.",
+   "• Explicar tolerancia, sensibilización, dependencia y abstinencia desde la neurobiología.",
+   "• Relacionar los hallazgos neurocientíficos con la pérdida de control característica de la adicción.",
+   "• Aplicar el conocimiento neurocientífico para reducir el juicio moral en la intervención.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "2.1 Reconexión y repaso del módulo anterior",
+   "30 min",
+   "2.2 El cerebro y el sistema de recompensa",
+   "30 min",
+   "2.3 Neurotransmisión y dopamina: el mecanismo íntimo del consumo",
+   "25 min",
+   "2.4 Tolerancia, sensibilización y el cerebro que aprende mal",
+   "15 min",
+   "2.5 Neuroplasticidad y esperanza: el cerebro también puede reaprender",
+   "10 min",
+   "2.6 Cierre"
+  ]
+ },
+ "2.2": {
+  "titulo": "El cerebro y el sistema de recompensa",
+  "parrafos": [
+   "La adicción es, ante todo, un trastorno que afecta al sistema de recompensa del cerebro. En una persona sana, este sistema refuerza comportamientos esenciales para la supervivencia — comer, beber, el vínculo social, la reproducción — haciendo que esas actividades resulten placenteras y memorables, de modo que la persona quiera repetirlas. Las sustancias y conductas adictivas se apropian de este mismo circuito, transformando una necesidad natural del organismo en una necesidad de la sustancia o la conducta.",
+   "El cerebro está compuesto por billones de neuronas que se comunican entre sí a través de mensajeros químicos llamados neurotransmisores. Cuando una neurona se estimula lo suficiente, genera un impulso eléctrico que viaja por el axón hasta la terminal nerviosa y allí libera un neurotransmisor en el espacio que separa a las neuronas —la hendidura sináptica—. Ese neurotransmisor se une a un receptor en la neurona vecina y transmite así la información."
+  ]
+ },
+ "2.3": {
+  "titulo": "Dopamina: el mecanismo íntimo del consumo",
+  "parrafos": [
+   "Las principales vías de recompensa involucran la transmisión de dopamina desde el área tegmental ventral, en el mesencéfalo, hacia el sistema límbico y la corteza frontal. Participar en actividades agradables genera actividad en las neuronas productoras de dopamina de esta zona, lo que causa su liberación en el espacio sináptico; esa dopamina se une a los receptores de la neurona receptora y produce la sensación placentera o de recompensa. Luego, las moléculas de dopamina son recapturadas por la neurona transmisora mediante una proteína específica, el transportador de dopamina, cerrando el ciclo.",
+   "La mayoría de las sustancias de abuso incrementan el nivel de dopamina en esta vía de recompensa, aunque cada una lo hace por un mecanismo distinto. El alcohol, la heroína y la nicotina excitan indirectamente a las neuronas productoras de dopamina, generando más actividad de la habitual. La cocaína actúa directamente sobre el transportador de dopamina y bloquea su recaptación, de modo que la dopamina se acumula en la sinapsis. La metanfetamina actúa de forma similar y, además, puede provocar liberación de dopamina incluso sin que haya un estímulo eléctrico previo. El resultado común a todas ellas es que la dopamina se acumula en la sinapsis en una cantidad muy superior a la habitual, lo que produce la euforia intensa que describen quienes consumen."
+  ]
+ },
+ "2.4": {
+  "titulo": "Tolerancia, sensibilización y el cerebro que aprende mal",
+  "parrafos": [
+   "La exposición repetida a estas oleadas artificiales de dopamina termina desensibilizando el sistema de recompensa: deja de responder con la misma intensidad a los estímulos cotidianos —una comida, un logro, un abrazo— y la sustancia o la conducta se convierte en lo único capaz de generar placer. Este es el mecanismo neurobiológico detrás de dos fenómenos que toda familia y todo operador reconocen: la tolerancia (se necesita cada vez más para sentir el mismo efecto) y la pérdida de interés progresiva en actividades que antes importaban.",
+   "Este proceso también compromete a la corteza prefrontal, la región encargada de la planificación, el control de impulsos y la evaluación de consecuencias a largo plazo. Cuando esta región funciona de manera comprometida, la persona no «elige» consumir de la misma forma en que elige qué ropa ponerse: el circuito de recompensa, sobreestimulado, compite en desventaja con la capacidad de frenar el impulso. Comprender esto es central para el operador: permite reemplazar preguntas como «¿por qué no puede parar si quiere?» por preguntas clínicamente más precisas, como «¿qué tan comprometido está, en este momento, el freno que necesitaría para parar?».",
+   "Por qué esto importa en la práctica La voluntad es un recurso real, pero limitado y neurológicamente insuficiente por sí sola frente a un circuito de recompensa alterado.",
+   "Explicar la neurobiología a la persona y a su familia reduce la culpa y el juicio moral, y mejora la adherencia al tratamiento.",
+   "Ningún dato neurocientífico exime de responsabilidad al proceso de recuperación: lo que cambia es el punto de partida desde el cual se construye ese proceso."
+  ]
+ },
+ "2.5": {
+  "titulo": "Neuroplasticidad: el cerebro también puede reaprender",
+  "parrafos": [
+   "El mismo mecanismo que explica cómo el cerebro se adapta al consumo —la neuroplasticidad— es la base biológica de la esperanza en el tratamiento. El cerebro que aprendió a priorizar una sustancia o una conducta también puede, con el tiempo, la abstinencia sostenida y las intervenciones adecuadas, reorganizar sus circuitos y recuperar sensibilidad a las recompensas naturales. Este proceso no es inmediato — suele tomar meses — y es exactamente lo que los próximos módulos, centrados en los modelos de cambio y de tratamiento, ayudan a sostener."
+  ]
+ },
+ "H2": {
+  "titulo": "Herramienta 2",
+  "parrafos": [
+   "Ficha de psicoeducación: qué le pasa al cerebro Uso con pacientes y familias · hoja para explicar, en lenguaje simple, el mecanismo neurobiológico del consumo.",
+   "Esta ficha está pensada para leerla junto a la persona o su familia, como apoyo visual de una explicación oral. El objetivo no es que memoricen términos técnicos, sino que entiendan la lógica del proceso.",
+   "1. El cerebro tiene un sistema de recompensa Nos hace sentir bien cuando comemos, cuando nos abrazan, cuando logramos algo. Así nos motiva a repetir lo que nos hace bien.",
+   "2. La sustancia (o la conducta) «hackea» ese sistema Genera una oleada de una sustancia química llamada dopamina mucho más intensa que cualquier recompensa natural.",
+   "3. El cerebro se acostumbra Deja de responder igual ante las cosas que antes daban placer. Por eso cada vez hace falta más cantidad para sentir lo mismo (tolerancia), y las cosas simples de la vida dejan de alcanzar.",
+   "4. El freno también se debilita La zona del cerebro que planifica y frena impulsos queda en desventaja frente a un sistema de recompensa hiperactivado. Por eso «solo con voluntad» rara vez alcanza.",
+   "5. El cerebro puede reaprender Con tiempo de abstinencia y el acompañamiento adecuado, el sistema de recompensa recupera sensibilidad. Esto no ocurre de un día para el otro — y es exactamente lo que el tratamiento acompaña."
+  ]
+ },
+ "M3": {
+  "titulo": "Módulo 3",
+  "parrafos": [
+   "El ciclo de la recaída y los modelos de cambio Incorporar los modelos con mayor respaldo empírico para comprender el proceso de cambio y trabajar con la motivación de la persona.",
+   "Objetivos del módulo ●",
+   "Conocer el modelo transteórico de cambio de Prochaska y DiClemente y sus seis estadios.",
+   "• Incorporar los principios y herramientas básicas de la entrevista motivacional.",
+   "• Comprender el Ciclo Invisible de la Recaída y sus etapas previas al consumo visible.",
+   "• Identificar disparadores y craving, y su rol en el proceso de cambio.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "3.1 Reconexión",
+   "25 min",
+   "3.2 El modelo transteórico de cambio",
+   "30 min",
+   "3.3 Entrevista motivacional: principios y herramientas OARS",
+   "25 min",
+   "3.4 El Ciclo Invisible de la Recaída: seis etapas",
+   "20 min",
+   "3.5 Disparadores y craving",
+   "10 min",
+   "3.6 Cierre"
+  ]
+ },
+ "3.2": {
+  "titulo": "El modelo transteórico de cambio",
+  "parrafos": [
+   "Propuesto por Prochaska y DiClemente, este modelo describe el cambio de conducta —cualquier cambio, no solo en adicciones— como un proceso que atraviesa estadios, y no como una decisión puntual. Comprenderlo evita uno de los errores más frecuentes del acompañamiento: exigirle a una persona una acción propia de un estadio en el que todavía no está.",
+   "Los seis estadios del cambio Precontemplación — la persona no percibe el consumo como un problema, o minimiza sus consecuencias. Contemplación — empieza a reconocer que existe un problema, pero está ambivalente respecto de cambiar. Determinación (o preparación) — decide cambiar y comienza a planificar los primeros pasos concretos. Acción — modifica activamente su conducta y su entorno.",
+   "Mantenimiento — sostiene el cambio en el tiempo y previene recaídas.",
+   "Recaída — un consumo puntual o un regreso al patrón anterior, que puede reingresar al ciclo en cualquier estadio previo, sin que eso invalide lo avanzado.",
+   "La intervención más eficaz es siempre la que coincide con el estadio real de la persona: confrontar a alguien en precontemplación con la exigencia de «acción» suele generar resistencia y abandono, mientras que trabajar la ambivalencia propia de la contemplación con las herramientas adecuadas es lo que habilita el paso al siguiente estadio."
+  ]
+ },
+ "3.3": {
+  "titulo": "Entrevista motivacional: principios y herramientas OARS",
+  "parrafos": [
+   "Desarrollada por Miller y Rollnick, la entrevista motivacional es un método centrado en la persona, no directivo pero orientado, que busca fortalecer la motivación intrínseca hacia el cambio explorando y resolviendo la ambivalencia. Se apoya en cuatro principios: expresar empatía sin juzgar; desarrollar la discrepancia entre la conducta actual y los propios valores u objetivos de la persona; evitar la confrontación directa, que casi siempre aumenta la resistencia; y apoyar la autoeficacia, es decir, la confianza de la persona en su propia capacidad de cambiar.",
+   "La sigla OARS: cuatro herramientas básicas Open questions — preguntas abiertas que invitan a elaborar, en lugar de preguntas cerradas de sí o no. Affirmations — afirmaciones genuinas que reconocen fortalezas y esfuerzos ya realizados.",
+   "Reflective listening — escucha reflexiva: devolver, con las propias palabras, lo que la persona expresó, para que se escuche a sí misma.",
+   "Summarizing — resúmenes periódicos que ordenan lo conversado y tienden un puente hacia el siguiente paso."
+  ]
+ },
+ "3.4": {
+  "titulo": "El Ciclo Invisible de la Recaída™",
+  "parrafos": [
+   "Las recaídas nunca aparecen de golpe: siempre empiezan mucho antes. El Ciclo Invisible de la Recaída describe seis etapas, y el consumo visible —lo que todos identifican como «el problema»— es apenas la quinta. Las anteriores ya ocurrieron sin que nadie las viera.",
+   "Las seis etapas del ciclo 1. Disparador emocional — tensión, estrés, soledad.",
+   "2. Pensamiento automático — una justificación interna que aparece antes de que la persona sea consciente de ella. 3. Emoción acumulada — ansiedad o vacío que sigue creciendo en silencio.",
+   "4. Decisión pequeña — aislarse, alejarse de una rutina protectora, que nadie nota.",
+   "5. Consumo o conducta — la recaída visible, la única etapa que todos señalan.",
+   "6. Culpa y vergüenza — no cierran el ciclo, lo alimentan: se convierten en el disparador del próximo.",
+   "Una imagen útil para trabajar este ciclo con pacientes y familias: la voluntad es el combustible, el mapa es el volante. Sin mapa, el combustible no alcanza, por más que haya mucho — y esto no convierte el fracaso en una cuestión de carácter, sino de orientación."
+  ]
+ },
+ "3.5": {
+  "titulo": "Disparadores y craving",
+  "parrafos": [
+   "Un disparador es cualquier estímulo —un lugar, una persona, un horario, una emoción— que el sistema nervioso aprendió a asociar con el consumo, sin que la persona lo decida conscientemente. El craving, el deseo intenso de consumir, tiene un pico de intensidad y luego desciende: es momentáneo, no permanente. Enseñar esta curva a la persona —que el impulso baja si se sostiene la espera unos minutos— es una de las intervenciones más simples y efectivas del acompañamiento cotidiano, y es la base de la herramienta 5 de este programa."
+  ]
+ },
+ "H3": {
+  "titulo": "Herramienta 3",
+  "parrafos": [
+   "Mapa de disparadores y estadio de cambio Uso combinado: la persona completa el mapa de disparadores; el operador identifica el estadio de cambio antes de intervenir.",
+   "Parte A — Mi mapa de disparadores personales (para completar con la persona)",
+   "No hace falta llenarlo todo en un solo encuentro. Se puede completar y retomar a lo largo del proceso. Emocionales ¿Qué emociones activan el ciclo? _______________________________",
+   "Sociales ¿Qué personas o situaciones sociales representan un riesgo? _______________________________",
+   "Ambientales y de horario ¿Qué lugares, y en qué momentos del día o de la semana, aparece más vulnerabilidad?",
+   "_______________________________",
+   "Frase de interrupción ¿Qué podría decirse la persona a sí misma la próxima vez que aparezca el pensamiento automático? Una sola frase, concreta, propia. _______________________________",
+   "Parte B — Identificación del estadio de cambio (para uso del operador)",
+   "☐ Precontemplación — no reconoce el problema. Intervención sugerida: informar sin confrontar, sembrar duda con respeto.",
+   "☐ Contemplación — ambivalente. Intervención sugerida: explorar pros y contras con entrevista motivacional. ☐ Determinación — decidido a cambiar. Intervención sugerida: ayudar a planificar pasos concretos y pequeños. ☐ Acción — cambiando activamente. Intervención sugerida: sostener, reforzar, anticipar disparadores. ☐ Mantenimiento — sosteniendo el cambio. Intervención sugerida: prevención de recaídas, red de apoyo. ☐ Recaída — retorno al consumo. Intervención sugerida: sin juicio, retomar desde el estadio real, no desde cero."
+  ]
+ },
+ "M4": {
+  "titulo": "Módulo 4",
+  "parrafos": [
+   "El ámbito familiar como sistema Comprender a la familia como sistema, identificar los roles que se organizan alrededor de la adicción y desarrollar herramientas concretas de intervención familiar.",
+   "Objetivos del módulo ●",
+   "Comprender a la familia como un sistema que se reorganiza frente a la adicción.",
+   "• Reconocer los cuatro roles familiares descritos por la psicología familiar sistémica.",
+   "• Distinguir codependencia de acompañamiento saludable.",
+   "• Incorporar una guía práctica de qué sí y qué no hacer en la intervención familiar.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "4.1 Reconexión",
+   "25 min",
+   "4.2 La familia como sistema",
+   "20 min",
+   "4.3 Los cuatro roles familiares frente a la adicción",
+   "20 min",
+   "4.4 Codependencia: cuando ayudar sostiene el problema",
+   "25 min",
+   "4.5 Guía de intervención familiar: qué sí y qué no",
+   "15 min",
+   "4.6 Reconstruir la confianza después de una recaída",
+   "5 min",
+   "4.7 Cierre"
+  ]
+ },
+ "4.2": {
+  "titulo": "La familia como sistema",
+  "parrafos": [
+   "La familia es un sistema: cada integrante cumple un rol y una función, y esos roles se acomodan en función del equilibrio del conjunto. Cuando aparece un problema tan visible como una adicción, es habitual —y comprensible— que la familia coloque a quien la padece en el lugar del «problema», del síntoma. Pero un sistema no cambia solo porque se trate al integrante más sintomático: el resto de los roles no deja de existir, y muchas veces sostiene, sin quererlo, el mismo ciclo que busca resolver.",
+   "Por eso, en el tratamiento de las adicciones se trabaja con la persona y, con la misma importancia, con la familia. Si la familia no se involucra en su propio proceso, falta una pata fundamental del tratamiento. Y una aclaración necesaria para el trabajo comunitario: «familia» no se restringe al núcleo tradicional. Incluye a cualquier persona que haya oficiado de figura de crianza o de autoridad afectiva — abuelos, tíos, padrastros, madres o padres del corazón."
+  ]
+ },
+ "4.3": {
+  "titulo": "Los cuatro roles familiares frente a la adicción",
+  "parrafos": [
+   "Roles que la psicología familiar sistémica suele describir El héroe — habitualmente el hijo «brillante», sostiene la imagen de normalidad de la familia frente al exterior.",
+   "El chivo expiatorio — suele ser quien desarrolla la adicción o el síntoma más visible, y carga con la culpa de todo el sistema.",
+   "El niño perdido — se vuelve invisible, no pide nada, para no sumar más carga a una familia ya sobrepasada. La mascota o bufón — usa el humor o la ternura para bajar la tensión familiar, muchas veces a costa de sus propias necesidades.",
+   "Ninguno de estos roles es «culpa» de quien lo ocupa: son acomodamientos automáticos del sistema frente al dolor, y reconocerlos —tanto en la propia familia de origen del operador como en las familias que va a acompañar— es una herramienta clínica de primer orden."
+  ]
+ },
+ "4.4": {
+  "titulo": "Codependencia: cuando ayudar sostiene el problema",
+  "parrafos": [
+   "La codependencia describe un patrón en el que un familiar organiza buena parte de su vida emocional alrededor del consumo de otro, al punto de sostener —sin quererlo— las mismas conductas que dice querer cambiar: dar dinero sin condiciones, encubrir consecuencias, tolerar promesas incumplidas. No es debilidad ni ingenuidad: es, muchas veces, la única forma que esa persona encontró de sentir que tiene algo de control sobre una situación que la desborda. Trabajar la codependencia con la familia —ayudándola a cuidar su propia estabilidad emocional— no es abandonar a quien consume: es la única forma de estar disponible cuando esa persona esté lista para cambiar."
+  ]
+ },
+ "4.5": {
+  "titulo": "Guía de intervención familiar: qué sí y qué no",
+  "parrafos": [
+   "Qué NO hacer",
+   "Qué SÍ hacer",
+   "Dar dinero sin condiciones claras — sostiene el problema, aunque duela negarlo.",
+   "Poner límites claros, no como castigo sino como estructura — los límites son actos de amor.",
+   "El control constante — agota a ambos y no cambia el ciclo.",
+   "Hablar en momentos de calma, nunca durante el impulso o la intoxicación.",
+   "Creer cada promesa sin cambios concretos que la acompañen.",
+   "Observar patrones de conducta repetidos, no solo palabras.",
+   "Sermonear o juzgar — la persona ya sabe lo que está mal, remarcarlo no ayuda.",
+   "Pedir ayuda también para uno mismo: grupos de apoyo, terapia, espacios propios."
+  ]
+ },
+ "4.6": {
+  "titulo": "Reconstruir la confianza después de una recaída",
+  "parrafos": [
+   "La confianza no se recupera con promesas grandes, sino con acciones pequeñas y repetidas. Es más útil trabajar con la familia la idea de «hoy no» que la de «nunca más», y la de «esta hora» que la de «para siempre». Conviene anticipar, además, que van a existir recaídas, mentiras y momentos de tensión en el proceso: esto no significa que la persona no quiera salir, es propio del proceso mismo. El operador socioterapéutico ayuda a la familia a sostener su propia tolerancia a la frustración, sin que eso implique resignarse ni dejar de acompañar."
+  ]
+ },
+ "H4": {
+  "titulo": "Herramienta 4",
+  "parrafos": [
+   "Guía para familiares: qué sí y qué no Hoja para entregar directamente a la familia · resume, en un formato breve, los criterios trabajados en este módulo.",
+   "No podés controlar la voluntad del otro. Pero sí podés dejar de actuar a ciegas.",
+   "Evitar Dar dinero sin condiciones claras.",
+   "El control constante.",
+   "Discutir durante el impulso o la intoxicación — en ese momento el cerebro no puede procesar; la conversación puede esperar.",
+   "Creer cada promesa sin cambios concretos.",
+   "Sermonear, juzgar, decir «lo que está bien y lo que está mal» — la persona ya lo sabe.",
+   "Priorizar Poner límites claros, no como castigo sino como estructura.",
+   "Hablar en momentos de calma, nunca durante el impulso.",
+   "Pedir ayuda para uno mismo también.",
+   "Diferenciar si la persona está intoxicada o no, y ajustar el diálogo a eso.",
+   "Cuidar la propia estabilidad emocional: es el recurso más valioso que se puede ofrecer.",
+   "Cuidarte a vos mismo no es abandonarlo. Es la única forma de estar disponible cuando esté listo para cambiar."
+  ]
+ },
+ "M5": {
+  "titulo": "Módulo 5",
+  "parrafos": [
+   "Contexto social y adicciones de conducta Reconocer los factores sociales que multiplican el riesgo, comprender las adicciones de conducta y reflexionar sobre el rol de la comunidad.",
+   "Objetivos del módulo ●",
+   "Identificar los principales factores sociales que multiplican el riesgo de adicción.",
+   "• Comprender las adicciones de conducta: pantallas, juego y gratificación instantánea.",
+   "• Distinguir los paradigmas de reducción de daños y de abstinencia, y cuándo se complementan.",
+   "• Reflexionar sobre la respuesta de la comunidad frente al estigma: ¿juicio o compañía?",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "5.1 Reconexión",
+   "25 min",
+   "5.2 Factores sociales que multiplican el riesgo",
+   "25 min",
+   "5.3 Adicciones de conducta: pantallas, juego y gratificación instantánea",
+   "25 min",
+   "5.4 Reducción de daños y abstinencia: dos paradigmas complementarios",
+   "25 min",
+   "5.5 El rol de la comunidad: entre el juicio y el acompañamiento",
+   "10 min",
+   "5.6 Cierre"
+  ]
+ },
+ "5.2": {
+  "titulo": "Factores sociales que multiplican el riesgo",
+  "parrafos": [
+   "Ninguna adicción crece en el vacío: crece en un contexto que, muchas veces sin que nadie se lo proponga, la favorece. Entre los factores más estudiados se destacan: la disponibilidad y la normalización social de una sustancia o conducta; la publicidad y la cultura del consumo, que asocian sustancias o pantallas con éxito o pertenencia; la presión de grupo, especialmente decisiva en la adolescencia; y, de manera paradójica, el propio estigma social, que aísla a quien ya está sufriendo y le cierra caminos de ayuda."
+  ]
+ },
+ "5.3": {
+  "titulo": "Adicciones de conducta: pantallas, juego y gratificación instantánea",
+  "parrafos": [
+   "Las redes sociales, los videojuegos y las plataformas de apuestas están diseñados, en muchos casos de manera deliberada, para maximizar el tiempo de uso mediante mecanismos de recompensa variable: la misma lógica neurobiológica que describimos en el módulo 2 para las sustancias. Esto entrena al cerebro a esperar alivio inmediato ante cualquier malestar, y baja progresivamente la tolerancia a la frustración y al aburrimiento — dos capacidades centrales para sostener cualquier proceso de cambio. El operador socioterapéutico debe poder reconocer estos cuadros con la misma seriedad clínica que un consumo de sustancias, particularmente en la población adolescente."
+  ]
+ },
+ "5.4": {
+  "titulo": "Reducción de daños y abstinencia: dos paradigmas complementarios",
+  "parrafos": [
+   "La abstinencia plantea el cese total del consumo como objetivo del tratamiento. La reducción de daños, en cambio, propone minimizar las consecuencias negativas del consumo mientras la persona no está en condiciones —o no elige, en ese momento— dejar de consumir por completo: por ejemplo, evitar el uso compartido de jeringas, espaciar los consumos, o simplemente sostener un vínculo de confianza que mantenga abierta la puerta de la ayuda. Ambos paradigmas no son opuestos sino, en la práctica clínica actual, complementarios: la reducción de daños suele ser la puerta de entrada a un proceso que, con el tiempo, puede orientarse hacia la abstinencia — y en muchos casos, sostener a la persona con vida hasta ese momento."
+  ]
+ },
+ "5.5": {
+  "titulo": "El rol de la comunidad: entre el juicio y el acompañamiento",
+  "parrafos": [
+   "Vivimos en una cultura con una soledad estructural cada vez más marcada, con menos comunidad real y más conexión superficial. Cuando la necesidad de pertenecer y ser aceptado no se cubre en los vínculos reales, muchas personas la buscan, temporalmente, en una sustancia o en una pantalla siempre disponible. Frente a esto, la primera reacción de una comunidad —sea un barrio, una institución educativa o una comunidad de fe— rara vez debería ser el juicio: la persona con consumo problemático ya está, en general, sobreexpuesta al reproche. Lo que multiplica las posibilidades de cambio es la aceptación, la escucha atenta y la disposición a acercarse sin condiciones previas."
+  ]
+ },
+ "H5": {
+  "titulo": "Herramienta 5",
+  "parrafos": [
+   "El espejo de la comunidad Uso individual, luego en parejas · una reflexión personal, no acusatoria, sobre cómo respondemos frente a la adicción.",
+   "Cuando pensás en «una persona con adicción», ¿qué palabra aparece primero en tu mente? ¿Y si esa persona fuera tu hijo, tu hermano, o vos mismo hace unos años?",
+   "1. ¿Cómo reaccionó históricamente mi comunidad (familia, institución, barrio) ante alguien con una adicción?",
+   "2. ¿Qué prejuicio propio identifico al pensar en esto?",
+   "3. Si el primer contacto no debería ser de juicio sino de aceptación, ¿qué gesto concreto podría ofrecer esta semana?",
+   "4. ¿Dónde necesito, primero, recibir yo esa misma aceptación?"
+  ]
+ },
+ "M6": {
+  "titulo": "Módulo 6",
+  "parrafos": [
+   "Modelos y dispositivos de tratamiento Conocer los enfoques de tratamiento con mayor respaldo empírico y los distintos dispositivos disponibles según la gravedad del caso.",
+   "Objetivos del módulo ●",
+   "Conocer la terapia cognitivo-conductual y el modelo de prevención de recaídas de Marlatt y Gordon.",
+   "• Identificar el modelo matriz y otros programas ambulatorios estructurados con evidencia de eficacia.",
+   "• Distinguir los distintos niveles de atención disponibles según la gravedad del caso.",
+   "• Incorporar criterios básicos para decidir cuándo y hacia dónde derivar.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "6.1 Reconexión",
+   "30 min",
+   "6.2 Terapia cognitivo-conductual y prevención de recaídas (Marlatt y Gordon)",
+   "20 min",
+   "6.3 Modelo matriz y otros programas basados en evidencia",
+   "25 min",
+   "6.4 Dispositivos de tratamiento: niveles de atención",
+   "20 min",
+   "6.5 Grupos de ayuda mutua y comunidades terapéuticas",
+   "10 min",
+   "6.6 Trabajo en red: cuándo y cómo derivar",
+   "5 min",
+   "6.7 Cierre"
+  ]
+ },
+ "6.2": {
+  "titulo": "Terapia cognitivo-conductual y prevención de recaídas",
+  "parrafos": [
+   "La terapia cognitivo-conductual es, hasta hoy, el enfoque con mayor respaldo empírico para el tratamiento de las adicciones. Dentro de ella, el modelo de prevención de recaídas desarrollado por Marlatt y Gordon en 1985 ocupa un lugar central: entiende la recaída no como un fracaso del tratamiento sino como parte esperable del proceso de cambio, y como una oportunidad de aprendizaje sobre las propias situaciones de riesgo. El modelo trabaja especialmente sobre tres factores cognitivos: la autoeficacia —la confianza percibida en la propia capacidad de afrontar una situación de riesgo—, las expectativas sobre los resultados de volver a consumir, y las atribuciones que la persona hace sobre las causas de una recaída pasada.",
+   "En la práctica, la prevención de recaídas trabaja identificando las situaciones de alto riesgo específicas de cada persona, entrenando estrategias de afrontamiento concretas para esas situaciones, y preparando a la persona para que, si ocurre un consumo puntual (un «lapso»), no lo viva como el fracaso total de todo el proceso —lo que en la literatura se conoce como el efecto de violación de la abstinencia— sino como una señal para ajustar el plan, no para abandonarlo."
+  ]
+ },
+ "6.3": {
+  "titulo": "Modelo matriz y otros programas basados en evidencia",
+  "parrafos": [
+   "El modelo matriz es un programa ambulatorio intensivo y estructurado, desarrollado originalmente para el tratamiento de la dependencia a estimulantes, que integra en un mismo esquema semanal la psicoeducación, la terapia cognitivo- conductual individual y grupal, el trabajo familiar y la derivación a grupos de ayuda mutua. Junto a la entrevista motivacional (trabajada en el módulo 3) y la terapia familiar sistémica (módulo 4), conforma el conjunto de enfoques que los organismos internacionales de referencia en la materia —como el Instituto Nacional sobre el Abuso de Drogas de Estados Unidos— reconocen con mayor evidencia de eficacia para el tratamiento ambulatorio de las adicciones."
+  ]
+ },
+ "6.4": {
+  "titulo": "Dispositivos de tratamiento: niveles de atención",
+  "parrafos": [
+   "De menor a mayor intensidad Grupos de ayuda mutua y espacios comunitarios — apoyo entre pares, sin supervisión clínica directa, complementarios a cualquier otro nivel.",
+   "Tratamiento ambulatorio — consultas periódicas individuales, familiares o grupales, la persona sostiene su vida cotidiana.",
+   "Hospital de día — asistencia varias horas al día, varios días a la semana, sin pernoctar en la institución. Internación de corta estadía (desintoxicación) — para el manejo seguro del síndrome de abstinencia en casos de riesgo físico.",
+   "Comunidad terapéutica o internación de mediana/larga estadía — convivencia estructurada, indicada cuando el entorno habitual sostiene el consumo o el riesgo es alto.",
+   "La elección del nivel de atención depende de la gravedad del cuadro, el riesgo de vida, la presencia de patología psiquiátrica asociada, el sostén familiar y social disponible, y los recursos existentes en la zona. Esta decisión corresponde siempre al equipo profesional tratante — el rol del operador socioterapéutico es reconocer las señales que ameritan una consulta o una derivación urgente, no decidir el nivel de atención por sí solo."
+  ]
+ },
+ "6.5": {
+  "titulo": "Grupos de ayuda mutua y comunidades terapéuticas",
+  "parrafos": [
+   "Los grupos de ayuda mutua basados en el modelo de pares —como Alcohólicos Anónimos, Narcóticos Anónimos o Jugadores Anónimos— ofrecen algo que ningún tratamiento profesional reemplaza por completo: el testimonio de otra persona que atravesó el mismo proceso y sostiene su recuperación. Funcionan mejor como complemento del tratamiento profesional que como sustituto de él. Las comunidades terapéuticas, por su parte, ofrecen un dispositivo residencial de mediana o larga duración, estructurado alrededor de la convivencia, el trabajo y la disciplina cotidiana, indicado especialmente cuando el entorno habitual de la persona sostiene activamente el consumo."
+  ]
+ },
+ "6.6": {
+  "titulo": "Trabajo en red: cuándo y cómo derivar",
+  "parrafos": [
+   "Ningún operador socioterapéutico debería sostener en soledad un caso de riesgo. Antes de comenzar a ejercer el rol, conviene mapear la propia red local: profesionales de referencia, centros de salud, hospitales con guardia de salud mental, comunidades terapéuticas de la zona y líneas de atención telefónica. La herramienta de este módulo ayuda a construir ese mapa."
+  ]
+ },
+ "H6": {
+  "titulo": "Herramienta 6",
+  "parrafos": [
+   "Mapa de dispositivos y derivación Uso personal del operador · construir, antes de empezar a acompañar casos, la propia red de derivación local.",
+   "Profesional o institución de referencia en salud mental Nombre / institución: _______________________ Teléfono: _______________________",
+   "Centro de salud u hospital con guardia de salud mental más cercano Nombre: _______________________ Dirección: _______________________ Teléfono: _______________________",
+   "Comunidad terapéutica o dispositivo de internación de referencia Nombre: _______________________ Teléfono: _______________________ Requisitos de admisión:",
+   "_______________________",
+   "Grupo de ayuda mutua más accesible (AA / NA / JA u otro)",
+   "Nombre: _______________________ Día y horario: _______________________ Lugar: _______________________",
+   "Línea telefónica de emergencia en salud mental / adicciones de mi región Número: _______________________",
+   "¿Cuándo derivar con urgencia?",
+   "☐ Riesgo de vida por intoxicación aguda o síndrome de abstinencia grave.",
+   "☐ Ideación o intento de suicidio.",
+   "☐ Violencia activa hacia sí mismo o hacia terceros.",
+   "☐ Consumo activo y sin supervisión de un menor de edad.",
+   "☐ Deterioro físico o psíquico severo que excede claramente el rol de acompañamiento."
+  ]
+ },
+ "M7": {
+  "titulo": "Módulo 7",
+  "parrafos": [
+   "El rol del operador socioterapéutico Definir el perfil, las competencias, los límites éticos y las herramientas de autocuidado propias de quien acompaña procesos de recuperación.",
+   "Objetivos del módulo ●",
+   "Definir el perfil y las competencias centrales del operador socioterapéutico.",
+   "• Incorporar herramientas básicas de primeros auxilios psicológicos y manejo de crisis.",
+   "• Establecer con claridad los límites profesionales, la confidencialidad y la ética del acompañamiento.",
+   "• Reconocer el desgaste por empatía y desarrollar un plan personal de autocuidado.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "7.1 Reconexión",
+   "20 min",
+   "7.2 Perfil y competencias del operador socioterapéutico",
+   "30 min",
+   "7.3 Primeros auxilios psicológicos y manejo de crisis",
+   "25 min",
+   "7.4 Límites profesionales, confidencialidad y ética del acompañamiento",
+   "25 min",
+   "7.5 Desgaste por empatía y autocuidado del operador",
+   "10 min",
+   "7.6 Cierre"
+  ]
+ },
+ "7.2": {
+  "titulo": "Perfil y competencias del operador socioterapéutico",
+  "parrafos": [
+   "El operador socioterapéutico es quien sostiene el acompañamiento cotidiano de una persona en proceso de recuperación, articulado siempre con un equipo profesional. No diagnostica, no medica ni reemplaza una psicoterapia; sí escucha, contiene, informa, motiva, identifica señales de alarma y sostiene el vínculo entre la persona, su familia y la red de tratamiento. Las competencias centrales que este programa buscó desarrollar en los módulos anteriores — comprensión biopsicosocial de la adicción, manejo básico de la entrevista motivacional, lectura del sistema familiar, conocimiento de la red de derivación— se integran aquí en un perfil de rol con límites explícitos."
+  ]
+ },
+ "7.3": {
+  "titulo": "Primeros auxilios psicológicos y manejo de crisis",
+  "parrafos": [
+   "Frente a una persona en estado de intoxicación aguda o en una crisis emocional intensa, el objetivo del operador no es razonar ni sermonear, sino contener. Conviene diferenciar el estado de la persona: si está bajo los efectos del consumo, suele estar inquieta, nerviosa, con la mirada rígida o, en el otro extremo, somnolienta — en ese momento el cerebro no puede procesar explicaciones largas, y lo indicado es dar indicaciones breves, con firmeza y calidez («ahora vamos a hacer esto», «vení, sentate acá»), sin perder el control de la situación ni exponerse a un riesgo físico. Principios de primeros auxilios psicológicos Proteger — garantizar la seguridad física, propia y de la persona, antes que cualquier otra cosa.",
+   "Conectar — presentarse con calma, sin apuro, sin invadir el espacio físico.",
+   "Escuchar sin presionar a hablar de lo que no se quiere compartir.",
+   "Nombrar la emoción, no el hecho: «te noto muy angustiado» en lugar de sermonear sobre lo ocurrido. Conectar con la red — familiar de confianza, profesional tratante o servicio de emergencias, según la gravedad.",
+   "Ante ideación suicida expresada de forma directa o indirecta, el operador socioterapéutico nunca gestiona la situación en soledad: acompaña, no deja sola a la persona, y activa de inmediato la derivación a un servicio de salud mental o a una línea de emergencia. Preguntar directamente si la persona está pensando en hacerse daño no aumenta el riesgo — por el contrario, es una de las intervenciones que la evidencia recomienda con mayor firmeza."
+  ]
+ },
+ "7.4": {
+  "titulo": "Límites profesionales, confidencialidad y ética del acompañamiento",
+  "parrafos": [
+   "La confidencialidad sostiene la confianza necesaria para cualquier proceso de acompañamiento, pero no es absoluta: cuando existe riesgo de vida —propio o de terceros—, el operador tiene la responsabilidad de romper la confidencialidad y activar la red de ayuda correspondiente, comunicándolo a la persona siempre que sea posible. Es fundamental que este límite se explicite desde el primer encuentro con cada persona acompañada, del mismo modo en que se explicitó en el encuadre de este programa.",
+   "Otro límite central es el de los vínculos duales: evitar mezclar el rol de acompañamiento con relaciones económicas, afectivas o de dependencia personal con quien se acompaña. Este límite no es frialdad — es lo que permite sostener el vínculo de ayuda en el tiempo sin que el propio operador termine, sin darse cuenta, reproduciendo la misma dinámica de sobreidentificación que se trabajó en el módulo 1."
+  ]
+ },
+ "7.5": {
+  "titulo": "Desgaste por empatía y autocuidado del operador",
+  "parrafos": [
+   "Acompañar procesos de recuperación de manera sostenida expone al operador a un desgaste específico —conocido en la literatura como fatiga por compasión o desgaste por empatía— que combina el cansancio propio de cualquier tarea de cuidado con el impacto emocional de estar en contacto frecuente con el sufrimiento ajeno. No es una señal de debilidad ni de falta de vocación: es un riesgo laboral inherente al rol, que se previene y se trata igual que cualquier otro. La supervisión periódica, los espacios propios de terapia o de grupos de pares, y un protocolo personal de señales de alerta temprana —que se trabaja en la herramienta de este módulo— son las estrategias con mejor evidencia para sostener la tarea en el tiempo."
+  ]
+ },
+ "H7": {
+  "titulo": "Herramienta 7",
+  "parrafos": [
+   "Protocolo de alerta temprana del operador Uso personal y periódico · para revisar el propio estado antes de que el desgaste comprometa la calidad del acompañamiento.",
+   "Señales de alarma en mí mismo ☐ Me cuesta desconectar de los casos fuera del horario de trabajo.",
+   "☐ Noto irritabilidad, cinismo o desesperanza creciente frente a los casos que acompaño.",
+   "☐ Empecé a saltear mis propios espacios de descanso, supervisión o cuidado personal.",
+   "☐ Siento que «solo yo puedo ayudar» a alguna persona en particular.",
+   "☐ Estoy cruzando, o tentado a cruzar, algún límite del rol (préstamos de dinero, contacto fuera del espacio de acompañamiento, vínculo afectivo).",
+   "Mi plan de sostén Espacio de supervisión o terapia propia: ¿con qué frecuencia? _______________________ Persona o grupo de pares con quien puedo hablar de un caso que me está pesando: _______________________ Una actividad personal, ajena a este rol, que sostengo cada semana pase lo que pase: _______________________ Mi propia señal de alerta temprana (la primera que suelo ignorar): _______________________",
+   "Cuidarte a vos mismo como operador no es egoísmo. Es la única forma de sostener, con calidad, el acompañamiento a largo plazo."
+  ]
+ },
+ "M8": {
+  "titulo": "Módulo 8",
+  "parrafos": [
+   "Plan de tratamiento integral y cierre del programa Integrar todo lo trabajado en un plan de tratamiento concreto, con identificación temprana de señales de recaída, y cerrar el programa con un compromiso personal.",
+   "Objetivos del módulo ●",
+   "Integrar los contenidos del programa en el diseño de un plan de tratamiento individual.",
+   "• Incorporar un sistema propio de identificación temprana de señales de recaída.",
+   "• Aplicar lo aprendido a un caso práctico integrador.",
+   "• Cerrar el programa con una síntesis del recorrido y un compromiso personal concreto.",
+   "Estructura del encuentro (3 horas cátedra · 120 minutos)",
+   "Tiempo",
+   "Bloque",
+   "10 min",
+   "8.1 Reconexión",
+   "30 min",
+   "8.2 Cómo construir un plan de tratamiento integral",
+   "25 min",
+   "8.3 Identificación temprana de señales de recaída",
+   "30 min",
+   "8.4 Caso práctico integrador",
+   "20 min",
+   "8.5 Cierre del programa y compromiso personal",
+   "5 min",
+   "8.6 Palabras finales y evaluación"
+  ]
+ },
+ "8.2": {
+  "titulo": "Cómo construir un plan de tratamiento integral",
+  "parrafos": [
+   "Un plan de tratamiento integral no es un documento clínico reservado a los profesionales: es el mapa compartido que ordena el acompañamiento de un caso, y en su construcción participa también el operador socioterapéutico, siempre bajo supervisión profesional. Un buen plan integra, como mínimo, seis dimensiones trabajadas a lo largo de este programa: el estadio de cambio en el que se encuentra la persona (módulo 3), el mapa de sus disparadores personales (módulo 3), el estado de su sistema familiar y el rol que cada integrante ocupa (módulo 4), los factores de riesgo del contexto social inmediato (módulo 5), el nivel de atención y la red de derivación disponible (módulo 6), y un protocolo concreto de identificación temprana de señales de recaída, que se desarrolla a continuación."
+  ]
+ },
+ "8.3": {
+  "titulo": "Identificación temprana de señales de recaída",
+  "parrafos": [
+   "El Ciclo Invisible de la Recaída trabajado en el módulo 3 muestra que el consumo visible es apenas una etapa entre otras seis, y no la primera. Por eso, un buen plan de tratamiento no espera al consumo para intervenir: entrena a la persona, a su familia y al operador para reconocer las etapas previas — el disparador emocional, el pensamiento automático, la emoción acumulada y la pequeña decisión de aislarse — como las verdaderas señales de alerta temprana.",
+   "Preguntas guía para construir el protocolo de alerta temprana de cada persona",
+   "¿Cuáles son, históricamente, los primeros signos —de conducta, de ánimo, de rutina— que preceden a una recaída en este caso particular?",
+   "¿Quién de la red (familiar, operador, grupo de pares) suele notar esos signos primero?",
+   "¿Qué acción concreta se activa apenas aparece una de esas señales, y quién la lleva adelante?",
+   "¿Cómo se revisa, después de cada episodio —haya o no derivado en consumo—, qué funcionó y qué no del protocolo?"
+  ]
+ },
+ "8.4": {
+  "titulo": "Caso práctico integrador",
+  "parrafos": [
+   "Se propone trabajar en pequeños grupos sobre un caso simulado (o, si el grupo lo permite y respetando el encuadre de confidencialidad, un caso real anonimizado) aplicando el instrumento de la herramienta de este módulo: completar cada una de sus seis dimensiones con la información disponible, identificar qué información falta y cómo se relevaría, y presentar brevemente el plan resultante al resto del grupo."
+  ]
+ },
+ "8.5": {
+  "titulo": "Cierre del programa y compromiso personal",
+  "parrafos": [
+   "A lo largo de estos ocho módulos se recorrió el problema desde el cerebro hasta la comunidad: qué es una adicción y qué la sostiene invisiblemente; qué le sucede al cerebro y por qué la sola voluntad no alcanza; cómo acompañar el proceso de cambio sin exigir lo que la persona todavía no puede dar; qué rol cumple la familia como sistema; qué factores sociales multiplican el riesgo; qué dispositivos de tratamiento existen y cuándo derivar; y, finalmente, qué perfil, qué límites y qué cuidados sostienen al propio operador en el tiempo. El cierre invita a cada participante a llevarse, no un plan entero, sino un solo paso concreto."
+  ]
+ },
+ "H8": {
+  "titulo": "Herramienta 8",
+  "parrafos": [
+   "Plantilla de Plan de Tratamiento Integral Uso profesional, bajo supervisión · plantilla completa para integrar en un solo documento las seis dimensiones trabajadas en el programa.",
+   "1. Datos generales y motivo de consulta Persona acompañada (o iniciales): _______ Fecha: _______ Motivo de consulta / contexto de derivación: _______________________",
+   "2. Estadio de cambio (módulo 3)",
+   "☐ Precontemplación ☐ Contemplación ☐ Determinación ☐ Acción ☐ Mantenimiento ☐ Recaída",
+   "3. Disparadores identificados (módulo 3)",
+   "Emocionales: _______ Sociales: _______ Ambientales / horarios: _______",
+   "4. Sistema familiar (módulo 4)",
+   "Composición del núcleo de sostén: _______ Rol de cada integrante: _______ Nivel de involucramiento en el tratamiento: _______",
+   "5. Factores de contexto social (módulo 5)",
+   "Factores de riesgo predominantes: _______ Recursos comunitarios disponibles: _______",
+   "6. Dispositivo y red de derivación (módulo 6)",
+   "Nivel de atención indicado: _______ Profesional / institución de referencia: _______ Grupo de ayuda mutua (si corresponde): _______",
+   "7. Protocolo de alerta temprana (módulo 8)",
+   "Primeras señales históricas de recaída: _______ Quién las detecta primero: _______ Acción inmediata ante su aparición: _______",
+   "8. Próxima revisión del plan Fecha: _______ Responsable: _______"
+  ]
+ },
+ "C0": {
+  "titulo": "Cierre del programa",
+  "parrafos": [
+   "Este programa no pretende agotar el conocimiento sobre las adicciones — ningún programa de ocho módulos podría hacerlo — sino ofrecer un mapa sólido, con base clínica y humana, para empezar a acompañar con fundamento. Quien lo completa no termina siendo un especialista definitivo, sino alguien que dejó de mirar el problema desde lejos y aprendió a acercarse con las herramientas adecuadas.",
+   "No necesitás ver toda la escalera. Solo necesitás ver el próximo peldaño. — Martin Luther King Jr."
+  ]
+ },
+ "C1": {
+  "titulo": "Criterios de finalización sugeridos",
+  "parrafos": [
+   "• Asistencia mínima al 80% de los encuentros (7 de 8 módulos).",
+   "• Entrega de la Plantilla de Plan de Tratamiento Integral completa, trabajada sobre el caso práctico del módulo 8.",
+   "• Participación activa en al menos dos de las dinámicas grupales del programa."
+  ]
+ },
+ "C2": {
+  "titulo": "Bibliografía y fuentes de referencia",
+  "parrafos": [
+   "• Prochaska, J. O. y DiClemente, C. C. — Modelo transteórico de cambio de conducta (estadios de cambio).",
+   "• Miller, W. R. y Rollnick, S. — Entrevista motivacional: principios y práctica.",
+   "• Marlatt, G. A. y Gordon, J. R. (1985) — Relapse Prevention: Maintenance Strategies in the Treatment of Addictive Behaviors.",
+   "• Instituto Nacional sobre el Abuso de Drogas de Estados Unidos (NIDA) — Principios de tratamiento para la drogadicción y modelos con evidencia (modelo matriz, terapia familiar, refuerzo comunitario, entre otros).",
+   "• Oficina de Naciones Unidas contra la Droga y el Delito (UNODC) — Informe Mundial sobre las Drogas.",
+   "• Organización Mundial de la Salud (OMS) — Datos sobre mortalidad asociada al consumo de sustancias.",
+   "• Elias Pacione — Seminario en Adicciones: Guión del facilitador y Cuadernillo de hojas de trabajo para participantes (material propio, base del enfoque experiencial y espiritual integrado en el programa)."
+  ]
+ },
+ "C3": {
+  "titulo": "Índice de herramientas del programa",
+  "parrafos": [
+   "• 1. Mi mapa de prejuicios (módulo 1)",
+   "• 2. Ficha de psicoeducación: qué le pasa al cerebro (módulo 2)",
+   "• 3. Mapa de disparadores y estadio de cambio (módulo 3)",
+   "• 4. Guía para familiares: qué sí y qué no (módulo 4)",
+   "• 5. El espejo de la comunidad (módulo 5)",
+   "• 6. Mapa de dispositivos y derivación (módulo 6)",
+   "• 7. Protocolo de alerta temprana del operador (módulo 7)",
+   "• 8. Plantilla de Plan de Tratamiento Integral (módulo 8)"
+  ]
+ }
+}
