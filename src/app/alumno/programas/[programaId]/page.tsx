@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { OpinionCurso } from './OpinionCurso'
+import { DescripcionPrograma } from '@/components/DescripcionPrograma'
 
 export default async function ProgramaDetallePage(props: { params: Promise<{ programaId: string }> }) {
   const params = await props.params
@@ -52,6 +53,19 @@ export default async function ProgramaDetallePage(props: { params: Promise<{ pro
       <div>
         <h1 className="text-4xl font-heading font-bold text-tinta">{programa.titulo}</h1>
         <p className="text-lg font-sans text-tinta/70 mt-2">{programa.descripcion}</p>
+
+        {/* La descripción ampliada es la misma que ve el público en /cursos (duración,
+            para quién es, qué incluye y qué se trabaja). Va plegada para no empujar hacia
+            abajo el progreso y las lecciones, que es a lo que el alumno vino. Si no hay
+            ampliada, o es idéntica a la corta, no se repite. */}
+        {programa.descripcion_larga && programa.descripcion_larga.trim() !== programa.descripcion?.trim() && (
+          <details className="mt-4 rounded-xl border border-border bg-card px-5 py-4">
+            <summary className="cursor-pointer select-none font-sans text-sm font-medium text-tinta marker:text-marca">
+              Sobre este programa
+            </summary>
+            <DescripcionPrograma texto={programa.descripcion_larga} className="mt-4" />
+          </details>
+        )}
       </div>
 
       {total > 0 && (
