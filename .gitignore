@@ -59,3 +59,11 @@ __pycache__/
 /marketing/curso-asincronico/frames9/
 /marketing/curso-asincronico/out/
 /marketing/curso-asincronico/audio/
+
+# generador de videos de features (marketing/features) — el código es la
+# fuente; frames, audio y MP4 se regeneran corriéndolo
+/marketing/features/node_modules/
+/marketing/features/frames-*/
+/marketing/features/frames9-*/
+/marketing/features/out/
+/marketing/features/audio/
