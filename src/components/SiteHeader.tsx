@@ -17,10 +17,13 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 // "los profesionales no entienden qué es para quién". Formaciones sale de la barra y
 // pasa a vivir dentro de Supervisiones, que queda como la puerta de entrada de todo lo
 // dirigido a profesionales (supervisión + formaciones + cursos dedicados). Cursos queda
-// como la oferta para público general. La página /formaciones sigue existiendo y se
-// llega desde Supervisiones — por eso `rutasRelacionadas`, para que estando ahí la barra
-// igual marque Supervisiones y no deje a la persona sin saber dónde está parada.
+// como la oferta para público general. Quién soy abre la barra: es la presentación de
+// la persona detrás de todo lo demás (bio, enfoques y fotos de charlas y seminarios).
+// La página /formaciones sigue existiendo y se llega desde Supervisiones — por eso
+// `rutasRelacionadas`, para que estando ahí la barra igual marque Supervisiones y no
+// deje a la persona sin saber dónde está parada.
 const SECCIONES_NAV: { titulo: string; href: string; rutasRelacionadas?: string[] }[] = [
+  { titulo: 'Quién soy', href: '/quien-soy' },
   { titulo: 'ebooks', href: '/ebooks' },
   { titulo: 'Cursos', href: '/cursos' },
   { titulo: 'Supervisiones', href: '/supervisiones', rutasRelacionadas: ['/formaciones'] },

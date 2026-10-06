@@ -98,7 +98,7 @@ function generarPortada(cursoData, outPath) {
     const footerY = ph - 60
     doc.moveTo(54, footerY).lineTo(pw - 54, footerY).lineWidth(0.5).strokeColor(C.grisCalido).stroke()
     doc.fillColor(C.tinta).font('Heading-SemiBold').fontSize(8.5)
-    doc.text('Docente a cargo: Lic. Elías Pacione (M.N. 63.854)', 54, footerY + 10)
+    doc.text('Docente a cargo: Lic. Elías Pacione (M.P. 62423)', 54, footerY + 10)
     doc.fillColor(C.mutedFg).font('Body').fontSize(7.8)
     doc.text('Material didáctico para uso exclusivo de los alumnos del programa · Formación Asincrónica', 54, footerY + 22)
 

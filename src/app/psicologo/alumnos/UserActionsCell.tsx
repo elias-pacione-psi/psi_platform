@@ -8,16 +8,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, HeartHandshake } from 'lucide-react'
+import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, HeartHandshake, KeyRound } from 'lucide-react'
 import { toast } from 'sonner'
 import { actualizarAlumno, cambiarEstadoAlumno, eliminarUsuarioTotal } from '../actions'
 import { cambiarVinculo } from '../pacientes/actions'
+import { RestaurarCredencialesDialog } from './RestaurarCredencialesDialog'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alumno: any, todosLosProgramas: any[], stateType: string }) {
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showPurgeDialog, setShowPurgeDialog] = useState(false)
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false)
   const [purgeText, setPurgeText] = useState('')
   const [isPurging, startPurgeTransition] = useTransition()
   const [isPending, startTransition] = useTransition()
@@ -128,10 +130,16 @@ export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alum
           {stateType !== 'eliminado' && (
             <>
               {stateType === 'activo' ? (
-                <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEstado(alumno.id, 'suspendido'); }}>
-                  <Ban className="mr-2 h-4 w-4 text-orange-600 dark:text-orange-400" />
-                  <span className="text-orange-600 dark:text-orange-400">Suspender acceso</span>
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEstado(alumno.id, 'suspendido'); }}>
+                    <Ban className="mr-2 h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-orange-600 dark:text-orange-400">Suspender acceso</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => { e.preventDefault(); setShowRestoreDialog(true); }}>
+                    <KeyRound className="mr-2 h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-orange-600 dark:text-orange-400">Restaurar credenciales</span>
+                  </DropdownMenuItem>
+                </>
               ) : (
                 <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEstado(alumno.id, 'activo'); }}>
                   <CheckCircle2 className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
@@ -179,6 +187,8 @@ export function UserActionsCell({ alumno, todosLosProgramas, stateType }: { alum
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <RestaurarCredencialesDialog persona={alumno} open={showRestoreDialog} onOpenChange={setShowRestoreDialog} />
 
       <AlertDialog open={showPurgeDialog} onOpenChange={(open) => { setShowPurgeDialog(open); if (!open) setPurgeText('') }}>
         <AlertDialogContent>

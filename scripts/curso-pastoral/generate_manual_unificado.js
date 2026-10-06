@@ -186,7 +186,7 @@ async function run() {
   const footerY = ph - 65
   doc.moveTo(64, footerY).lineTo(pw - 64, footerY).lineWidth(0.6).strokeColor(C.grisCalido).stroke()
   doc.fillColor(C.tinta).font('Heading-SemiBold').fontSize(9)
-  doc.text('Docente a cargo: Lic. Elías Pacione (M.N. 63.854)', 64, footerY + 12)
+  doc.text('Docente a cargo: Lic. Elías Pacione (M.P. 62423)', 64, footerY + 12)
   doc.fillColor(C.mutedFg).font('Body').fontSize(8)
   doc.text('Material didáctico para uso exclusivo de los alumnos del programa · Dignos, Quilmes', 64, footerY + 26)
 

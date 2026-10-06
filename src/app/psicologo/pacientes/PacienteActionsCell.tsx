@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, BookMarked, GraduationCap } from 'lucide-react'
+import { Loader2, Settings2, CheckCircle2, MoreVertical, ArchiveRestore, Ban, ArchiveX, Trash2, BookMarked, GraduationCap, KeyRound } from 'lucide-react'
 import { toast } from 'sonner'
 import { actualizarPaciente, entregarMaterialAPaciente, cambiarVinculo } from './actions'
 import { cambiarEstadoAlumno, eliminarUsuarioTotal } from '../actions'
+import { RestaurarCredencialesDialog } from '../alumnos/RestaurarCredencialesDialog'
 import { LABEL_TIPO_MEDIO } from '@/utils/taxonomia-labels'
 import type { RecursoBiblioteca } from './PacientesClient'
 
@@ -36,6 +37,7 @@ export function PacienteActionsCell({
   const [showMaterialDialog, setShowMaterialDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showPurgeDialog, setShowPurgeDialog] = useState(false)
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false)
   const [purgeText, setPurgeText] = useState('')
   const [isPurging, startPurgeTransition] = useTransition()
   const [isPending, startTransition] = useTransition()
@@ -135,10 +137,16 @@ export function PacienteActionsCell({
           {stateType !== 'eliminado' && (
             <>
               {stateType === 'activo' ? (
-                <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEstado(paciente.id, 'suspendido') }}>
-                  <Ban className="mr-2 h-4 w-4 text-orange-600 dark:text-orange-400" />
-                  <span className="text-orange-600 dark:text-orange-400">Suspender acceso</span>
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEstado(paciente.id, 'suspendido') }}>
+                    <Ban className="mr-2 h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-orange-600 dark:text-orange-400">Suspender acceso</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => { e.preventDefault(); setShowRestoreDialog(true) }}>
+                    <KeyRound className="mr-2 h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-orange-600 dark:text-orange-400">Restaurar credenciales</span>
+                  </DropdownMenuItem>
+                </>
               ) : (
                 <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEstado(paciente.id, 'activo') }}>
                   <CheckCircle2 className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
@@ -190,6 +198,8 @@ export function PacienteActionsCell({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <RestaurarCredencialesDialog persona={paciente} open={showRestoreDialog} onOpenChange={setShowRestoreDialog} />
 
       <AlertDialog open={showPurgeDialog} onOpenChange={(open) => { setShowPurgeDialog(open); if (!open) setPurgeText('') }}>
         <AlertDialogContent>
