@@ -1,8 +1,10 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { FolderHeart, Calendar, ShieldCheck, Video, Users, MapPin } from 'lucide-react'
+import { FolderHeart, Calendar, ShieldCheck, ArrowRight } from 'lucide-react'
 import { BrandMark } from '@/components/BrandMark'
 import { SiteHeader } from '@/components/SiteHeader'
+import { FotoElias } from '@/components/FotoElias'
+import { CITA, COLEGIATURA, aniosDeEjercicio } from '@/utils/perfil-profesional'
 import { LandingClient } from './LandingClient'
 
 // Los cuatro conceptos que el brief define como la esencia de la marca.
@@ -11,34 +13,6 @@ const conceptos = [
   { titulo: 'Escucha', texto: 'La conversación como herramienta de encuentro y comprensión.' },
   { titulo: 'Contención', texto: 'Un espacio seguro donde lo que te pasa puede ser acompañado.' },
   { titulo: 'Cercanía', texto: 'Una identidad cálida y humana que prioriza el vínculo y la confianza.' },
-]
-
-// Perfil profesional — tomado del listado público de Elias en Psychology Today
-// (colegiatura, especialidades y enfoques declarados ahí).
-const especialidades = [
-  'Ansiedad',
-  'Depresión',
-  'Estrés',
-  'Autoestima',
-  'Conflictos relacionales',
-  'Trauma y estrés postraumático',
-  'TOC',
-  'Trastorno límite de la personalidad',
-]
-
-const datosRapidos = [
-  { icono: Video, titulo: 'Modalidad', texto: 'Presencial y virtual' },
-  { icono: Users, titulo: 'Atiende a', texto: 'Adolescentes, adultos y parejas' },
-  { icono: MapPin, titulo: 'Dónde', texto: 'Wilde y Quilmes, Buenos Aires' },
-]
-
-const enfoques = [
-  'Terapia cognitivo-conductual',
-  'Terapia racional emotiva conductual',
-  'Programación neurolingüística',
-  'Mindfulness',
-  'Terapia sistémica familiar',
-  'Terapia cristiana',
 ]
 
 const prestaciones = [
@@ -79,97 +53,35 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* SOBRE ELÍAS — credibilidad profesional antes de mostrar la plataforma.
-          Contenido tomado del perfil público de Psychology Today. */}
+      {/* SOBRE ELÍAS — introducción breve: credibilidad profesional antes de mostrar la
+          plataforma. El detalle (trayectoria, enfoques, áreas de trabajo, fotos de charlas
+          y seminarios) vive en /quien-soy; los datos compartidos, en
+          utils/perfil-profesional.ts. */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.55fr)] gap-12 items-start">
-            {/* Foto tomada de una charla presencial — se deja el encuadre original
-                (retrato, luz de escenario) en vez de recortarla a un headshot de
-                estudio: es la que hay y transmite mejor la trayectoria que un
-                placeholder genérico. */}
-            <div className="mx-auto max-w-xs overflow-hidden rounded-2xl border border-border bg-card md:sticky md:top-24 md:mx-0 md:max-w-none">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/elias-charla.jpg"
-                alt="Elías dando una charla presencial, micrófono en mano"
-                width={758}
-                height={1127}
-                className="aspect-[2/3] w-full object-cover"
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.55fr)] gap-12 items-center">
+            <FotoElias />
 
-            <div className="space-y-7">
-              <div>
-                <h2 className="font-heading font-semibold text-tinta text-3xl tracking-tight mb-4">
-                  Sobre Elías
-                </h2>
-                <p className="font-serif text-tinta/75 text-base leading-relaxed mb-4">
-                  Licenciado en Psicología, con más de 12 años de trayectoria acompañando
-                  procesos de adolescentes, adultos y parejas. Su formación es ecléctica:
-                  integra herramientas de distintos enfoques según lo que cada proceso
-                  necesita, en modalidad presencial y virtual.
-                </p>
-                <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
-                  Atiende presencialmente en Wilde y Quilmes (Buenos Aires), además de
-                  sesiones virtuales para quienes están en otra ciudad o prefieren esa
-                  modalidad.
-                </p>
-                <p className="font-serif italic text-tinta/60 text-sm leading-relaxed border-l-2 border-marca pl-4 mb-5">
-                  &ldquo;No son los hechos o problemas lo que nos afectan, sino lo que
-                  pensamos acerca de ellos.&rdquo;
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Colegio de Psicólogos de la Provincia de Buenos Aires · Distrito XII (Quilmes)
-                </p>
-              </div>
+            <div>
+              <h2 className="font-heading font-semibold text-tinta text-3xl tracking-tight mb-4">
+                Sobre Elías
+              </h2>
+              <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
+                Licenciado en Psicología, con más de {aniosDeEjercicio()} años de trayectoria
+                acompañando procesos de adolescentes, adultos y parejas, en modalidad
+                presencial y virtual.
+              </p>
+              <p className="font-serif italic text-tinta/60 text-sm leading-relaxed border-l-2 border-marca pl-4 mb-5">
+                &ldquo;{CITA}&rdquo;
+              </p>
+              <p className="text-xs text-muted-foreground mb-6">{COLEGIATURA}</p>
 
-              <div>
-                <h3 className="font-heading font-semibold text-tinta text-sm uppercase tracking-[0.14em] mb-3">
-                  Áreas de trabajo
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {especialidades.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-block bg-gris-calido/60 dark:bg-card text-tinta/80 text-xs px-3 py-1.5 rounded-full border border-border"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-heading font-semibold text-tinta text-sm uppercase tracking-[0.14em] mb-3">
-                  Enfoques terapéuticos
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {enfoques.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-block bg-gris-calido/60 dark:bg-card text-tinta/80 text-xs px-3 py-1.5 rounded-full border border-border"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                {datosRapidos.map(({ icono: Icono, titulo, texto }) => (
-                  <div
-                    key={titulo}
-                    className="flex items-start gap-3 bg-gris-calido/40 dark:bg-card border border-border rounded-xl p-3.5"
-                  >
-                    <Icono className="w-4 h-4 text-marca shrink-0 mt-0.5" strokeWidth={1.75} />
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">{titulo}</p>
-                      <p className="font-serif text-sm text-tinta/80 leading-snug">{texto}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Link
+                href="/quien-soy"
+                className="inline-flex items-center gap-2 font-sans text-sm font-medium text-tinta underline underline-offset-4 decoration-tinta/30 transition-colors hover:text-marca hover:decoration-marca"
+              >
+                Conocé más sobre Elías <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
