@@ -281,6 +281,36 @@ export async function existeEnR2(key: string): Promise<boolean> {
   }
 }
 
+// ETag del objeto (sin las comillas), o null si no existe. Cambia cada vez que se reemplaza
+// el archivo, así que sirve de "versión" para armar URLs que se renuevan solas con el
+// contenido (ver utils/ilustraciones.ts). Un HEAD, como existeEnR2: no baja el cuerpo.
+export async function etagEnR2(key: string): Promise<string | null> {
+  try {
+    const res = await cliente().send(
+      new HeadObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }),
+    )
+    return (res.ETag ?? '').replace(/"/g, '') || 'sin-etag'
+  } catch {
+    return null
+  }
+}
+
+// Lee un objeto chico como texto (un SVG, por ejemplo). A diferencia de los demás helpers,
+// el cuerpo pasa por el servidor en vez de ir directo del navegador a R2 con una URL
+// firmada: es lo que permite servir un archivo público sin que ninguna firma venza.
+// null si el objeto no existe; cualquier otro error se propaga para que el llamador decida.
+export async function leerTextoR2(key: string): Promise<string | null> {
+  try {
+    const res = await cliente().send(
+      new GetObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }),
+    )
+    return (await res.Body?.transformToString('utf-8')) ?? null
+  } catch (err) {
+    if (err instanceof Error && (err.name === 'NoSuchKey' || err.name === 'NotFound')) return null
+    throw err
+  }
+}
+
 // S3 no tiene un "mover/renombrar" real: hay que copiar a la key nueva y borrar la vieja.
 // El CopySource va con el bucket adelante y URL-encodeado — sin el encode, un nombre con
 // espacios o caracteres especiales rompe la copia.

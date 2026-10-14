@@ -4,15 +4,17 @@ import { FolderHeart, Calendar, ShieldCheck, ArrowRight } from 'lucide-react'
 import { BrandMark } from '@/components/BrandMark'
 import { SiteHeader } from '@/components/SiteHeader'
 import { FotoElias } from '@/components/FotoElias'
+import { ConceptoGlifo, type ConceptoGlifoNombre } from '@/components/ConceptoGlifo'
 import { CITA, COLEGIATURA, aniosDeEjercicio } from '@/utils/perfil-profesional'
 import { LandingClient } from './LandingClient'
 
-// Los cuatro conceptos que el brief define como la esencia de la marca.
-const conceptos = [
-  { titulo: 'Pausa', texto: 'Un momento para detenerse, bajar el ritmo y conectar con uno mismo.' },
-  { titulo: 'Escucha', texto: 'La conversación como herramienta de encuentro y comprensión.' },
-  { titulo: 'Contención', texto: 'Un espacio seguro donde lo que te pasa puede ser acompañado.' },
-  { titulo: 'Cercanía', texto: 'Una identidad cálida y humana que prioriza el vínculo y la confianza.' },
+// Los cuatro conceptos que el brief define como la esencia de la marca, cada uno con su
+// dibujo (ver ConceptoGlifo.tsx).
+const conceptos: { titulo: string; texto: string; glifo: ConceptoGlifoNombre }[] = [
+  { titulo: 'Pausa', glifo: 'pausa', texto: 'Un momento para detenerse, bajar el ritmo y conectar con uno mismo.' },
+  { titulo: 'Escucha', glifo: 'escucha', texto: 'La conversación como herramienta de encuentro y comprensión.' },
+  { titulo: 'Contención', glifo: 'contencion', texto: 'Un espacio seguro donde lo que te pasa puede ser acompañado.' },
+  { titulo: 'Cercanía', glifo: 'cercania', texto: 'Una identidad cálida y humana que prioriza el vínculo y la confianza.' },
 ]
 
 const prestaciones = [
@@ -95,8 +97,9 @@ export default function LandingPage() {
       <section className="bg-gris-calido/50 dark:bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {conceptos.map(({ titulo, texto }) => (
+            {conceptos.map(({ titulo, texto, glifo }) => (
               <div key={titulo}>
+                <ConceptoGlifo nombre={glifo} className="mb-5 h-[84px] w-auto text-tinta" />
                 <h2 className="font-heading font-semibold text-tinta text-base tracking-[0.14em] uppercase mb-3">
                   {titulo}
                 </h2>
