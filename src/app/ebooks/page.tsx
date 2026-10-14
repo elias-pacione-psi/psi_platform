@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { BookOpen } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { resolverUrlRecurso } from '@/utils/r2'
+import { VideoHero } from '@/components/VideoHero'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'ebooks | Elias Pacione' }
@@ -30,9 +31,18 @@ export default async function EbooksPage() {
 
       <div className="max-w-5xl mx-auto px-6 py-16">
         <h1 className="text-4xl font-heading font-semibold text-tinta mb-3">ebooks</h1>
-        <p className="text-tinta/70 max-w-2xl mb-12 font-serif">
+        <p className="text-tinta/70 max-w-2xl mb-8 font-serif">
           Material para leer a tu ritmo. Comprás y lo tenés al instante.
         </p>
+
+        <div className="max-w-2xl mb-12">
+          <VideoHero
+            archivo="Ebooks.mp4"
+            poster="/hero-ebooks-poster.jpg"
+            etiqueta="Cómo funcionan los ebooks"
+            fallback={null}
+          />
+        </div>
 
         {conPortada.length === 0 ? (
           <div className="bg-card border border-border rounded-2xl p-16 text-center text-muted-foreground">

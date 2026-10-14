@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { MessagesSquare, GraduationCap, CalendarCheck, ArrowRight, Users, Presentation, BookOpen, BadgeCheck, ClipboardList } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
+import { VideoHero } from '@/components/VideoHero'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Supervisiones | Elias Pacione' }
@@ -52,12 +53,19 @@ export default function SupervisionesPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <IlustracionSitio
-            slug="supervisiones-charla"
-            icon={MessagesSquare}
+          <VideoHero
+            archivo="Supervisiones.mp4"
+            poster="/hero-supervisiones-poster.jpg"
             etiqueta="Charla de supervisión"
-            variante="marca"
-            prioridad
+            fallback={
+              <IlustracionSitio
+                slug="supervisiones-charla"
+                icon={MessagesSquare}
+                etiqueta="Charla de supervisión"
+                variante="marca"
+                prioridad
+              />
+            }
           />
         </div>
       </section>

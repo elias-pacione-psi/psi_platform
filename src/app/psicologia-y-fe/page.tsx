@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { BookOpen, Users, MessageSquareQuote, ShieldCheck, ArrowRight, HeartHandshake, Sparkles, UserCheck, TreeDeciduous } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
+import { VideoHero } from '@/components/VideoHero'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Psicología y Fe | Elias Pacione' }
@@ -55,12 +56,19 @@ export default function PsicologiaYFePage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <IlustracionSitio
-            slug="fe-puente"
-            icon={HeartHandshake}
+          <VideoHero
+            archivo="Psicologia y fe.mp4"
+            poster="/hero-psicologia-y-fe-poster.jpg"
             etiqueta="Psicología y fe integrada"
-            variante="marca"
-            prioridad
+            fallback={
+              <IlustracionSitio
+                slug="fe-puente"
+                icon={HeartHandshake}
+                etiqueta="Psicología y fe integrada"
+                variante="marca"
+                prioridad
+              />
+            }
           />
         </div>
       </section>

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { HeartHandshake, UserRound, MessageCircleHeart, ArrowRight, ShieldCheck, DoorOpen } from 'lucide-react'
 import { IlustracionSitio } from '@/components/IlustracionSitio'
+import { VideoHero } from '@/components/VideoHero'
 import { SiteHeader } from '@/components/SiteHeader'
 
 export const metadata = { title: 'Terapia individual | Elias Pacione' }
@@ -52,12 +53,19 @@ export default function TerapiaIndividualPage() {
               Quiero más información <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <IlustracionSitio
-            slug="terapia-encuentro"
-            icon={HeartHandshake}
+          <VideoHero
+            archivo="Terapia individual.mp4"
+            poster="/hero-terapia-individual-poster.jpg"
             etiqueta="Encuentro terapéutico"
-            variante="marca"
-            prioridad
+            fallback={
+              <IlustracionSitio
+                slug="terapia-encuentro"
+                icon={HeartHandshake}
+                etiqueta="Encuentro terapéutico"
+                variante="marca"
+                prioridad
+              />
+            }
           />
         </div>
       </section>
