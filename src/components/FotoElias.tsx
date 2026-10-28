@@ -1,27 +1,18 @@
 import { cn } from '@/lib/utils'
-import { FOTO_PERFIL } from '@/utils/perfil-profesional'
+import { FOTOS_PERFIL } from '@/utils/perfil-profesional'
+import { CarruselFotos } from './CarruselFotos'
 
-// La foto de presentación de Elias, igual en la landing y en /quien-soy. Se deja el
-// encuadre original (retrato, luz de escenario) en vez de recortarla a un headshot de
-// estudio: es la que hay y transmite mejor la trayectoria que un placeholder genérico.
-// Cuando haya otra, se cambia en FOTO_PERFIL (utils/perfil-profesional.ts) y se actualizan
-// las dos páginas a la vez.
+// Las fotos de presentación de Elias, iguales en la landing y en /quien-soy: un carrusel
+// de retratos de él dando un seminario (ver FOTOS_PERFIL en utils/perfil-profesional.ts).
+// Se muestran recortadas sobre él y no el salón entero: acá la página habla de quién es, y
+// las fotos de los encuentros completos viven en la galería de /quien-soy. Para cambiar el
+// set se edita esa lista y las dos páginas se actualizan a la vez.
 export function FotoElias({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        'mx-auto max-w-xs overflow-hidden rounded-2xl border border-border bg-card md:mx-0 md:max-w-none',
-        className,
-      )}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={FOTO_PERFIL.src}
-        alt={FOTO_PERFIL.alt}
-        width={FOTO_PERFIL.width}
-        height={FOTO_PERFIL.height}
-        className="aspect-[2/3] w-full object-cover"
-      />
-    </div>
+    <CarruselFotos
+      fotos={FOTOS_PERFIL}
+      etiqueta="Fotos de Elías en charlas y seminarios"
+      className={cn('mx-auto max-w-xs md:mx-0 md:max-w-none', className)}
+    />
   )
 }
