@@ -18,6 +18,8 @@ const sinMovimiento = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 // Pista con scroll-snap nativo: el deslizar con el dedo, la rueda y el trackpad funcionan
 // sin código, y las flechas y los puntos sólo reposicionan el scroll. Cada diapositiva mide
 // exactamente el ancho de la pista, así que la foto i empieza en i × clientWidth.
+// El ancho lo decide quien lo usa (ver FotoElias y las grillas de las dos páginas); con
+// fotos de 960 px nítidas hasta ~480 px de ancho en pantallas de doble densidad.
 //
 // Avanza sola cada INTERVALO_MS, salvo con "reducir movimiento" activado, y se detiene
 // mientras el puntero o el foco están encima (WCAG 2.2.2). Al llegar a la última vuelve a

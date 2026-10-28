@@ -12,7 +12,7 @@ export function FotoElias({ className }: { className?: string }) {
     <CarruselFotos
       fotos={FOTOS_PERFIL}
       etiqueta="Fotos de Elías en charlas y seminarios"
-      className={cn('mx-auto max-w-xs md:mx-0 md:max-w-none', className)}
+      className={cn('mx-auto max-w-sm md:mx-0 md:max-w-none', className)}
     />
   )
 }

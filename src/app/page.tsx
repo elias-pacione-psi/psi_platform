@@ -61,7 +61,7 @@ export default function LandingPage() {
           utils/perfil-profesional.ts. */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.55fr)] gap-12 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.5fr)] gap-12 items-center">
             <FotoElias />
 
             <div>
