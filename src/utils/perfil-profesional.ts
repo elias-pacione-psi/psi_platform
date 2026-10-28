@@ -8,16 +8,23 @@ import { Video, Users, MapPin } from 'lucide-react'
 // Vive acá y no en page.tsx porque Next no deja exportar datos arbitrarios desde una
 // página (sólo `metadata`, `revalidate` y compañía).
 
-// Foto de Elias que usan la landing y /quien-soy (componente FotoElias). Es una charla
-// presencial, provisoria: para cambiarla alcanza con reemplazar el archivo de public/ y,
-// si cambian las proporciones, ajustar width/height acá — las dos páginas la toman de este
-// único lugar.
-export const FOTO_PERFIL = {
-  src: '/elias-charla.jpg',
-  alt: 'Elías dando una charla presencial, micrófono en mano',
-  width: 758,
-  height: 1127,
-}
+// Fotos de Elias que rotan en el carrusel de la landing y de /quien-soy (componente
+// FotoElias), en el orden en que se muestran. Son de un seminario presencial, recortadas a
+// 4:5 (960×1200) y sin metadatos; alternan saco y buzo para que ninguna se repita seguida.
+// Para sumar, quitar o reordenar alcanza con tocar esta lista y los archivos de
+// public/elias/ — las dos páginas la toman de este único lugar.
+export const FOTOS_PERFIL = [
+  { src: '/elias/seminario-01.jpg', alt: 'Elías explicando con el micrófono en una mano y la otra abierta, durante un seminario' },
+  { src: '/elias/seminario-02.jpg', alt: 'Elías señalando al público con el control de las diapositivas, micrófono en mano' },
+  { src: '/elias/seminario-03.jpg', alt: 'Elías con un brazo extendido mientras explica un tema ante el auditorio' },
+  { src: '/elias/seminario-04.jpg', alt: 'Elías mirando a cámara con el micrófono en la mano durante una charla' },
+  { src: '/elias/seminario-05.jpg', alt: 'Elías hablando con el micrófono, de perfil, en un seminario' },
+  { src: '/elias/seminario-06.jpg', alt: 'Elías gesticulando con una mano mientras expone' },
+  { src: '/elias/seminario-07.jpg', alt: 'Elías de pie con el micrófono y el control de las diapositivas durante una charla' },
+  { src: '/elias/seminario-08.jpg', alt: 'Elías señalando el pizarrón mientras explica ante el público' },
+  { src: '/elias/seminario-09.jpg', alt: 'Elías con la palma abierta, atento al público durante una charla' },
+  { src: '/elias/seminario-10.jpg', alt: 'Elías hablando en un seminario, micrófono en mano' },
+]
 
 // Año en que se recibió. Los años de ejercicio se calculan a partir de ahí en vez de
 // escribirse a mano, para que "más de 12 años" no quede viejo en cada cumpleaños del título.
