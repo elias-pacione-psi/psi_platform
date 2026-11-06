@@ -8,20 +8,23 @@ export type FotoCarrusel = { src: string; alt: string }
 
 const INTERVALO_MS = 6000
 
-// Las fotos se publican recortadas a 4:5 (960×1200): el aspecto fijo evita que la altura
+// Las fotos se publican recortadas a 4:5 (720×900): el aspecto fijo evita que la altura
 // salte entre diapositivas y reserva el lugar antes de que cargue la imagen.
-const ANCHO = 960
-const ALTO = 1200
+const ANCHO = 720
+const ALTO = 900
 
 const sinMovimiento = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 // Pista con scroll-snap nativo: el deslizar con el dedo, la rueda y el trackpad funcionan
 // sin código, y las flechas y los puntos sólo reposicionan el scroll. Cada diapositiva mide
-// exactamente el ancho de la pista, así que la foto i empieza en i × clientWidth.
+// exactamente el ancho de la pista, así que la foto i empieza en i × clientWidth. Ese ancho
+// se redondea hacia arriba a un píxel entero: en escritorio la columna es fraccionaria
+// (326,66 px) y el scroll siempre cae en píxeles enteros, así que sin el redondeo asomaba
+// una franja de la foto vecina en el borde.
 //
 // Avanza sola cada INTERVALO_MS, salvo con "reducir movimiento" activado, y se detiene
 // mientras el puntero o el foco están encima (WCAG 2.2.2). Al llegar a la última vuelve a
-// la primera de golpe, en vez de rebobinar recorriendo las otras nueve.
+// la primera de golpe, en vez de rebobinar recorriendo todas las anteriores.
 //
 // Sin next/image, igual que FotoElias antes: son archivos de public/ ya optimizados y
 // recortados, el optimizador no aportaría nada. Sólo la primera carga de entrada; el
@@ -71,7 +74,7 @@ export function CarruselFotos({ fotos, etiqueta, className }: { fotos: FotoCarru
         <ul
           ref={pista}
           onScroll={(e) => setActual(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
-          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex w-[round(up,100%,1px)] snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {fotos.map((foto, i) => (
             <li

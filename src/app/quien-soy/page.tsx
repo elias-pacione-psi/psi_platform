@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { FotoElias } from '@/components/FotoElias'
+import { CarruselFotos } from '@/components/CarruselFotos'
 import { GaleriaFotos } from '@/components/GaleriaFotos'
 import { SiteHeader } from '@/components/SiteHeader'
 import { listarGaleriaQuienSoy } from '@/utils/galeria-quien-soy'
@@ -12,6 +12,7 @@ import {
   ENFOQUES,
   ENFOQUE_PRINCIPAL,
   ESPECIALIDADES,
+  FOTOS_PERFIL,
   aniosDeEjercicio,
 } from '@/utils/perfil-profesional'
 
@@ -46,7 +47,11 @@ export default async function QuienSoyPage() {
       {/* PRESENTACIÓN */}
       <section className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-16 grid grid-cols-1 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.55fr)] gap-12 items-center">
-          <FotoElias />
+          <CarruselFotos
+            fotos={FOTOS_PERFIL}
+            etiqueta="Fotos de Elías en charlas y seminarios"
+            className="mx-auto max-w-xs md:mx-0 md:max-w-none"
+          />
 
           <div>
             <p className="font-sans text-xs font-semibold tracking-[0.14em] uppercase text-marca mb-4">
