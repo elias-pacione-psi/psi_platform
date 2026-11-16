@@ -22,7 +22,7 @@ export default async function CohortesPage() {
     supabase
       .from('cohortes')
       .select(`
-        id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, created_at,
+        id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, enlace_videollamada, created_at,
         cohortes_programas(programa_id, programas(id, titulo)),
         cohortes_recursos(recurso_id, biblioteca_recursos(id, titulo, tipo_medio, tipo_contenido, url_recurso)),
         cohortes_alumnos(alumno_id, alumnos(id, nombre, email))
@@ -30,8 +30,9 @@ export default async function CohortesPage() {
       .order('created_at', { ascending: false }),
     supabase.from('programas').select('id, titulo').order('titulo', { ascending: true }),
     supabase.from('alumnos').select('id, nombre, email').eq('estado', 'activo').eq('es_alumno', true).order('nombre', { ascending: true }),
-    // Para saber si una formación ya tiene clases agendadas y cuántas quedan por delante.
-    supabase.from('agenda_sesiones').select('cohorte_id, fecha_hora').not('cohorte_id', 'is', null),
+    // Para saber si una formación ya tiene clases agendadas, cuántas quedan por delante y
+    // si coinciden con su horario (compararClases necesita la fecha y la duración de cada una).
+    supabase.from('agenda_sesiones').select('cohorte_id, fecha_hora, duracion_minutos').not('cohorte_id', 'is', null),
     // Para el selector de "Asignación de Libros y Material extra" del formulario:
     supabase.from('biblioteca_recursos').select('id, titulo, tipo_medio, tipo_contenido, url_recurso').order('titulo', { ascending: true }),
   ])
@@ -51,11 +52,17 @@ export default async function CohortesPage() {
     )
   }
 
-  const clasesPorCohorte = (clases ?? []).reduce<Record<string, { total: number; futuras: number }>>((acc, c) => {
+  type ClasesDeCohorte = {
+    total: number
+    futuras: number
+    agendadas: { fecha_hora: string; duracion_minutos: number | null }[]
+  }
+  const clasesPorCohorte = (clases ?? []).reduce<Record<string, ClasesDeCohorte>>((acc, c) => {
     const id = c.cohorte_id as string
-    acc[id] ??= { total: 0, futuras: 0 }
+    acc[id] ??= { total: 0, futuras: 0, agendadas: [] }
     acc[id].total++
     if (c.fecha_hora >= ahora) acc[id].futuras++
+    acc[id].agendadas.push({ fecha_hora: c.fecha_hora, duracion_minutos: c.duracion_minutos })
     return acc
   }, {})
 
@@ -68,7 +75,7 @@ export default async function CohortesPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recursos: (c.cohortes_recursos ?? []).map((cr: any) => cr.biblioteca_recursos).filter(Boolean),
     recursoIds: (c.cohortes_recursos ?? []).map((cr: { recurso_id: string }) => cr.recurso_id),
-    clases: clasesPorCohorte[c.id] ?? { total: 0, futuras: 0 },
+    clases: clasesPorCohorte[c.id] ?? { total: 0, futuras: 0, agendadas: [] },
   }))
 
   return (

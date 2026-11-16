@@ -107,6 +107,18 @@ alter table public.cohortes drop constraint if exists cohortes_horario_coherente
 alter table public.cohortes add constraint cohortes_horario_coherente
   check (hora_inicio is null or hora_fin is null or hora_fin > hora_inicio);
 
+-- Enlace de videollamada (Meet) de la formación: se carga una vez y aparece en todas sus
+-- clases. Una clase con enlace propio (agenda_sesiones.enlace) lo pisa. Ver
+-- snippets/2026-11-16-cohortes-enlace-videollamada.sql.
+alter table public.cohortes add column if not exists enlace_videollamada text;
+
+alter table public.cohortes drop constraint if exists cohortes_enlace_videollamada_https;
+alter table public.cohortes add constraint cohortes_enlace_videollamada_https
+  check (
+    enlace_videollamada is null
+    or (enlace_videollamada ~ '^https://[^[:space:]]+$' and length(enlace_videollamada) <= 500)
+  );
+
 -- Inscripción de alumnos a cohortes
 create table if not exists public.cohortes_alumnos (
   cohorte_id uuid not null references public.cohortes(id) on delete cascade,

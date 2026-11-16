@@ -9,6 +9,7 @@ import { getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { EventoCalendario } from '@/app/calendarActions';
+import { aHoraDePared } from '@/utils/fecha-ar';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { CalendarPlus } from 'lucide-react'
@@ -77,9 +78,11 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectEvent = (event: any) => {
     // Todos ven el detalle (el alumno accede al link de videollamada); solo el psicólogo ve acciones de borrado
-    if (event.type === 'sesion') {
-      setDetalleDialog({ open: true, selectedEvent: event });
-    }
+    if (event.type !== 'sesion') return
+    // El evento que devuelve el calendario trae las fechas "de pared" (ver abajo); el
+    // detalle necesita el original, con el instante real, para el enlace a Google Calendar.
+    const original = eventos.find((e) => e.id === event.id)
+    if (original) setDetalleDialog({ open: true, selectedEvent: original });
   }
 
   const confirmDelete = async () => {
@@ -124,11 +127,13 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
     );
   }
 
-  // Deserializar las fechas que vienen del SSR
+  // Deserializar las fechas que vienen del SSR. Se dibujan en hora de Argentina sin
+  // importar la zona del navegador: una clase del martes 20:00 no puede aparecer el
+  // miércoles a las 00:00 porque quien mira está en Europa (ver aHoraDePared).
   const calendarEvents = eventos.map(ev => ({
     ...ev,
-    start: new Date(ev.start),
-    end: new Date(ev.end),
+    start: aHoraDePared(ev.start),
+    end: aHoraDePared(ev.end),
   }));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -170,6 +175,9 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
         onSelectEvent={handleSelectEvent}
         views={['month', 'week', 'day']}
         defaultView="month"
+        // "Hoy" y la línea de la hora actual también en hora de Argentina: si no, de madrugada
+        // en Europa el calendario marcaría como hoy un día que en Argentina todavía no empezó.
+        getNow={() => aHoraDePared(new Date())}
       />
 
       <AlertDialog open={detalleDialog.open} onOpenChange={(open) => setDetalleDialog({ open, selectedEvent: open ? detalleDialog.selectedEvent : null })}>
@@ -188,7 +196,7 @@ export function CalendarWidget({ eventos, esPsicologo = false }: CalendarWidgetP
                 {detalleDialog.selectedEvent?.type === 'sesion' && (
                   <>
                     <span className="mt-2 block">
-                      {detalleDialog.selectedEvent?.start ? format(new Date(detalleDialog.selectedEvent.start), "EEEE d 'de' MMMM - HH:mm 'hs'", { locale: es }) : ''}
+                      {detalleDialog.selectedEvent?.start ? format(aHoraDePared(detalleDialog.selectedEvent.start), "EEEE d 'de' MMMM - HH:mm 'hs (Argentina)'", { locale: es }) : ''}
                     </span>
                     {detalleDialog.selectedEvent?.tipo === 'presencial' && (
                       <span className="mt-2 block font-semibold text-tinta">📍 Presencial{detalleDialog.selectedEvent?.lugar ? ` — ${detalleDialog.selectedEvent.lugar}` : ''}</span>

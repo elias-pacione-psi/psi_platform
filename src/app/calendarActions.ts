@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { instanteArgentina } from '@/utils/horario-cohorte'
 
 export type EventoCalendario = {
   id: string;
@@ -23,8 +24,10 @@ function armarSesion(sesion: any, titulo: string): EventoCalendario {
   // clases de formación: una cursada de 8 a 12 aparecía como un bloque de una hora.
   const minutos = sesion.duracion_minutos ?? 60
   const end = new Date(start.getTime() + minutos * 60 * 1000)
-  // Enlace de la sesión, o el del alumno como fallback en sesiones individuales virtuales
-  const enlace = sesion.enlace || sesion.alumnos?.link_videollamada || null
+  // Enlace de la sesión; si no tiene, el de la formación (clases grupales) o el del alumno
+  // (sesiones individuales virtuales). Así el enlace que se carga en Formaciones aparece en
+  // todas las clases —las ya agendadas y las que se agenden después— sin copiarlo a cada fila.
+  const enlace = sesion.enlace || sesion.cohortes?.enlace_videollamada || sesion.alumnos?.link_videollamada || null
   return {
     id: `sesion-${sesion.id}`,
     title: titulo,
@@ -53,7 +56,7 @@ export async function obtenerEventosCalendario(): Promise<EventoCalendario[]> {
   // 1. SESIONES (RLS ya limita al alumno a las suyas + las de su cohorte)
   const { data: sesiones } = await supabase
     .from('agenda_sesiones')
-    .select('id, fecha_hora, duracion_minutos, alumno_id, cohorte_id, tipo, lugar, enlace, alumnos(nombre, link_videollamada), cohortes(nombre)')
+    .select('id, fecha_hora, duracion_minutos, alumno_id, cohorte_id, tipo, lugar, enlace, alumnos(nombre, link_videollamada), cohortes(nombre, enlace_videollamada)')
 
   if (sesiones) {
     sesiones.forEach(sesion => {
@@ -80,12 +83,14 @@ export async function obtenerEventosCalendario(): Promise<EventoCalendario[]> {
       const feriados = await res.json()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       feriados.forEach((feriado: any, index: number) => {
-        const dateStr = `${feriado.date}T00:00:00`
+        // Medianoche de Argentina, no la del servidor: sin zona, `new Date('…T00:00:00')`
+        // queda en UTC en Vercel y un navegador argentino dibujaba el feriado el día anterior.
+        const inicio = instanteArgentina(feriado.date, '00:00')
         eventos.push({
           id: `feriado-${year}-${index}`,
           title: `Feriado: ${feriado.localName}`,
-          start: new Date(dateStr).toISOString(),
-          end: new Date(dateStr).toISOString(),
+          start: inicio,
+          end: inicio,
           type: 'feriado',
           allDay: true,
         })
