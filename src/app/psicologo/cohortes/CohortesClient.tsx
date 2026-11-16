@@ -469,14 +469,18 @@ export function CohortesClient({
 
       {/* Crear/editar formación */}
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogContent className="sm:max-w-[560px] bg-crema max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[640px] bg-crema max-h-[90vh] overflow-y-auto overflow-x-hidden">
           <DialogHeader>
             <DialogTitle className="font-heading text-2xl text-tinta">{selected ? 'Editar formación' : 'Nueva formación'}</DialogTitle>
             <DialogDescription className="font-sans">
               Los inscriptos ven el contenido de todos los programas que asocies acá.
             </DialogDescription>
           </DialogHeader>
-          <form action={handleSubmit} className="space-y-4 mt-4">
+          {/* min-w-0: el cuerpo del diálogo es un grid, y un ítem de grid no se achica por
+              debajo de su contenido. Con un título largo sin espacios (un archivo
+              "Protocolo_unificado_…") el formulario se estiraba al ancho de ese texto y todo
+              quedaba cortado a la derecha, con scroll horizontal. */}
+          <form action={handleSubmit} className="space-y-4 mt-4 min-w-0">
             {selected && <input type="hidden" name="id" value={selected.id} />}
 
             <div className="space-y-2">
@@ -486,7 +490,8 @@ export function CohortesClient({
 
             <div className="space-y-2">
               <Label className="font-bold text-tinta">Programas</Label>
-              <div className="space-y-2 border border-border bg-card rounded-lg p-2 max-h-[180px] overflow-y-auto">
+              {/* Sin altura máxima: la lista se ve completa y el que se desplaza es el diálogo. */}
+              <div className="space-y-2 border border-border bg-card rounded-lg p-2">
                 {programas.map((p) => (
                   <div key={p.id} className="flex items-center space-x-3 bg-muted p-2.5 rounded-lg border border-border">
                     <Checkbox
@@ -496,7 +501,7 @@ export function CohortesClient({
                       disabled={isPending}
                     />
                     <label
-                      className="text-sm font-medium text-tinta cursor-pointer flex-1"
+                      className="text-sm font-medium text-tinta cursor-pointer flex-1 min-w-0 wrap-anywhere"
                       onClick={() => !isPending && togglePrograma(p.id)}
                     >
                       {p.titulo}
@@ -509,7 +514,7 @@ export function CohortesClient({
 
             {/* Asignación de Libros y Material extra: material de Biblioteca o cualquier archivo del bucket R2 */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <Label className="font-bold text-tinta">Asignacion de Libros y Material extra</Label>
                 <div className="flex items-center gap-2">
                   {recursosElegidos.length > 0 && (
@@ -535,7 +540,7 @@ export function CohortesClient({
                 onChange={(e) => setBusquedaRecursos(e.target.value)}
                 className="bg-card border-border h-9"
               />
-              <div className="space-y-2 border border-border bg-card rounded-lg p-2 max-h-[180px] overflow-y-auto">
+              <div className="space-y-2 border border-border bg-card rounded-lg p-2">
                 {recursosDisponibles.length === 0 ? (
                   <div className="text-center py-4 space-y-2">
                     <p className="text-sm text-muted-foreground">Todavía no hay material disponible.</p>
@@ -577,7 +582,9 @@ export function CohortesClient({
                       onClick={() => !isPending && toggleRecurso(r.id)}
                     >
                       {iconoRecurso(r.tipo_medio, r.tipo_contenido)}
-                      <span className="truncate">{r.titulo}</span>
+                      {/* El título entero, en varias líneas si hace falta: cortado con "…" no
+                          se distinguen "Manual de conductas…" de otro del mismo comienzo. */}
+                      <span className="wrap-anywhere">{r.titulo}</span>
                     </label>
                   </div>
                 ))}
@@ -653,11 +660,17 @@ export function CohortesClient({
               </p>
             </div>
 
-            {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}
-            <div className="flex justify-end pt-2">
-              <Button type="submit" disabled={isPending} className="bg-marca hover:bg-marca/90 text-crema px-8">
-                {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Guardar"}
-              </Button>
+            {/* Pegado al borde de abajo del diálogo: con las listas completas el formulario es
+                largo, y "Guardar" (con su error, si lo hay) no puede quedar al final de un scroll.
+                -bottom-4 / -mx-4 / -mb-4 compensan el p-4 del diálogo: el sticky se mide contra
+                el área sin padding, y sin el negativo el contenido asomaría por debajo. */}
+            <div className="sticky -bottom-4 -mx-4 -mb-4 flex flex-col gap-2 border-t border-border bg-crema px-4 py-3">
+              {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isPending} className="bg-marca hover:bg-marca/90 text-crema px-8">
+                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Guardar"}
+                </Button>
+              </div>
             </div>
           </form>
         </DialogContent>
