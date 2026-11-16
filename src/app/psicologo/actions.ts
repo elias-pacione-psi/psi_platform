@@ -10,7 +10,8 @@ import { keysHuerfanas } from '@/utils/supabase/referencias-r2'
 import { esMarcadorR2, extensionDe, marcarKeyR2 } from '@/utils/r2-marcador'
 import { tipoMedioPorTipoContenido, origenPorUrlRecurso } from '@/utils/taxonomia'
 import { tipoContenidoPorExtension } from '@/utils/medio-archivo'
-import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, MAXIMO_CLASES } from '@/utils/horario-cohorte'
+import { fechasDeClases, horarioCompleto, duracionMinutos, instanteArgentina, compararClases, MAXIMO_CLASES } from '@/utils/horario-cohorte'
+import type { createClient } from '@/utils/supabase/server'
 import { baseUrl } from '@/utils/site-url'
 import { invitarUsuario, type Vinculo } from '@/utils/supabase/invitaciones'
 import { borrarArchivosDeEntregas, borrarCuentaYDatos } from '@/utils/supabase/usuarios'
@@ -993,8 +994,14 @@ export async function guardarCohorte(formData: FormData) {
     .map(Number)
     .filter((d) => Number.isInteger(d) && d >= 0 && d <= 6)
   const dias_semana = dias.length > 0 ? [...new Set(dias)].sort() : null
+  // Enlace de la videollamada (Meet) de toda la cursada. Termina en un <a href> que abren
+  // los inscriptos y en los mails: https y nada más. Vacío = formación presencial.
+  const enlace_videollamada = (formData.get('enlace_videollamada') as string)?.trim() || null
 
   if (!nombre) return { error: 'El nombre es obligatorio' }
+  if (enlace_videollamada && (enlace_videollamada.length > 500 || !esUrlHttps(enlace_videollamada))) {
+    return { error: 'El enlace de la videollamada debe ser una URL https válida (ej: https://meet.google.com/abc-defg-hij)' }
+  }
   // Una formación puede ser también solo libros/documentos (sin programas), pero tiene
   // que tener algo que cursar.
   if (programaIds.length === 0 && recursoIds.length === 0) {
@@ -1009,7 +1016,7 @@ export async function guardarCohorte(formData: FormData) {
   }
   if (dias_semana && !hora_inicio) return { error: 'Si elegís días, poné también la hora de inicio' }
 
-  const campos = { nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin }
+  const campos = { nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, enlace_videollamada }
   const supabaseAdmin = createAdminClient()
 
   let cohorteId = id
@@ -1030,9 +1037,28 @@ export async function guardarCohorte(formData: FormData) {
 
   const nuevos = await sincronizarAccesosDeCohorte(supabaseAdmin, cohorteId as string)
 
+  // Con enlace la formación es virtual. Las clases futuras agendadas antes de cargarlo
+  // salieron presenciales y sin lugar (así las generaba el horario): si no pasan a virtual,
+  // el enlace no aparece en la agenda, porque la ficha de una clase presencial no lo muestra.
+  if (enlace_videollamada) {
+    const { error: errorTipo } = await supabase
+      .from('agenda_sesiones')
+      .update({ tipo: 'virtual' })
+      .eq('cohorte_id', cohorteId as string)
+      .eq('tipo', 'presencial')
+      .is('lugar', null)
+      .gte('fecha_hora', new Date().toISOString())
+    if (errorTipo) return { error: errorTipo.message }
+  }
+
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/alumno/programas')
   revalidatePath('/alumno/materiales')
+  // El enlace se resuelve al leer cada clase (ver armarSesion), así que cambiarlo acá
+  // cambia a la vez el de todas las clases: la agenda y el inicio del alumno lo muestran.
+  revalidatePath('/psicologo/agenda')
+  revalidatePath('/alumno/agenda')
+  revalidatePath('/alumno')
 
   if (nuevos.length > 0) {
     await notificarAccesosNuevos(nuevos, { nombreCohorte: nombre, fechaInicio: fecha_inicio, fechaFin: fecha_fin })
@@ -1137,7 +1163,8 @@ export async function quitarAlumnoDeCohorte(cohorteId: string, alumnoId: string)
 // Idempotente y no destructiva: lee lo que ya está agendado para esa formación y solo
 // inserta los horarios que faltan. Volver a apretar el botón no duplica, y las clases del
 // horario viejo (o las cargadas a mano desde Agenda) no se tocan — si el horario cambió,
-// la UI avisa cuáles quedaron fuera y el borrado es una decisión aparte.
+// la tarjeta avisa qué quedó fuera de horario y moverlas es una decisión aparte, con su
+// propia confirmación: ajustarClasesAlHorario.
 export async function generarClasesDeCohorte(cohorteId: string) {
   const auth = await requirePsicologo()
   if ('error' in auth) return { error: auth.error }
@@ -1145,7 +1172,7 @@ export async function generarClasesDeCohorte(cohorteId: string) {
 
   const { data: cohorte, error: errorCohorte } = await supabase
     .from('cohortes')
-    .select('id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin')
+    .select('id, nombre, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, enlace_videollamada')
     .eq('id', cohorteId)
     .single()
 
@@ -1175,13 +1202,36 @@ export async function generarClasesDeCohorte(cohorteId: string) {
     return { success: true, creadas: 0, total: fechas.length }
   }
 
-  const duracion = duracionMinutos(cohorte.hora_inicio as string, cohorte.hora_fin)
+  const resultado = await agendarClases(supabase, cohorte, faltantes)
+  if ('error' in resultado) return { error: resultado.error }
+
+  revalidatePath('/psicologo/cohortes')
+  revalidatePath('/psicologo/agenda')
+  revalidatePath('/alumno/agenda')
+  return { success: true, creadas: faltantes.length, total: fechas.length }
+}
+
+type SupabaseServidor = Awaited<ReturnType<typeof createClient>>
+
+// Inserta las clases (fechas ISO) de una formación y avisa a los inscriptos. Con enlace de
+// videollamada cargado en la formación las clases son virtuales; sin él, presenciales, que
+// es lo que siempre fueron las generadas desde el horario. El enlace NO se copia a cada
+// fila: se resuelve al leer (armarSesion, notificarClasesAgendadas, el cron), así que
+// cambiarlo en Formaciones alcanza a todas las clases, también a las ya agendadas.
+async function agendarClases(
+  supabase: SupabaseServidor,
+  cohorte: { id: string; hora_inicio: string; hora_fin: string | null; enlace_videollamada: string | null },
+  fechas: string[],
+): Promise<{ error: string } | { ok: true }> {
+  const tipo: 'virtual' | 'presencial' = cohorte.enlace_videollamada ? 'virtual' : 'presencial'
+  const duracion = duracionMinutos(cohorte.hora_inicio, cohorte.hora_fin)
+
   const { error } = await supabase.from('agenda_sesiones').insert(
-    faltantes.map((fecha_hora) => ({
-      cohorte_id: cohorteId,
+    fechas.map((fecha_hora) => ({
+      cohorte_id: cohorte.id,
       alumno_id: null,
       fecha_hora,
-      tipo: 'presencial',
+      tipo,
       duracion_minutos: duracion,
     })),
   )
@@ -1189,17 +1239,90 @@ export async function generarClasesDeCohorte(cohorteId: string) {
 
   await notificarClasesAgendadas({
     alumno_id: null,
-    cohorte_id: cohorteId,
-    tipo: 'presencial',
+    cohorte_id: cohorte.id,
+    tipo,
     lugar: null,
     enlace: null,
     duracionMinutos: duracion,
-  }, faltantes)
+  }, fechas)
+  return { ok: true }
+}
+
+// Hace que la agenda de la formación coincida con su horario: quita las clases FUTURAS que
+// el horario no contiene (o repetidas), agenda las que faltan y corrige la duración de las
+// que coinciden. Es la salida cuando se movieron las fechas o los días de la formación
+// después de agendar — generarClasesDeCohorte solo agrega y nunca mueve, a propósito.
+// Esta sí borra, así que la tarjeta la confirma mostrando qué va a tocar. El pasado no se
+// toca nunca, y las clases que se agregan avisan a los inscriptos como cualquier otra.
+export async function ajustarClasesAlHorario(cohorteId: string) {
+  const auth = await requirePsicologo()
+  if ('error' in auth) return { error: auth.error }
+  const { supabase } = auth
+
+  const { data: cohorte, error: errorCohorte } = await supabase
+    .from('cohortes')
+    .select('id, fecha_inicio, fecha_fin, dias_semana, hora_inicio, hora_fin, enlace_videollamada')
+    .eq('id', cohorteId)
+    .single()
+
+  if (errorCohorte || !cohorte) return { error: 'No se encontró la formación' }
+  if (!horarioCompleto(cohorte)) {
+    return { error: 'Faltan datos del horario: días, hora de inicio y las dos fechas.' }
+  }
+  // Mismas guardas que generarClasesDeCohorte. La de "ninguna fecha" importa más acá: sin
+  // ella, un horario que no cae en el rango dejaría TODAS las clases futuras como sobrantes.
+  const fechas = fechasDeClases(cohorte)
+  if (fechas.length === 0) return { error: 'Ese horario no cae ningún día dentro del rango de fechas.' }
+  if (fechas.length >= MAXIMO_CLASES) {
+    return { error: `El rango genera más de ${MAXIMO_CLASES} clases. Acortá las fechas.` }
+  }
+
+  const { data: agendadas, error: errorAgenda } = await supabase
+    .from('agenda_sesiones')
+    .select('id, fecha_hora, duracion_minutos')
+    .eq('cohorte_id', cohorteId)
+  if (errorAgenda) return { error: errorAgenda.message }
+
+  const { sobrantes, faltantes, otraDuracion } = compararClases(
+    cohorte,
+    (agendadas ?? []) as { id: string; fecha_hora: string; duracion_minutos: number | null }[],
+  )
+
+  // Orden a propósito: primero se agrega y se corrige, y recién al final se borra. Si algo
+  // falla a mitad de camino la formación queda con una clase de más (se ve en la tarjeta y
+  // otro intento la saca), nunca con clases de menos.
+  if (faltantes.length > 0) {
+    const resultado = await agendarClases(supabase, cohorte, faltantes)
+    if ('error' in resultado) return { error: resultado.error }
+  }
+
+  if (otraDuracion.length > 0) {
+    const { error } = await supabase
+      .from('agenda_sesiones')
+      .update({ duracion_minutos: duracionMinutos(cohorte.hora_inicio as string, cohorte.hora_fin) })
+      .eq('cohorte_id', cohorteId)
+      .in('id', otraDuracion.map((c) => c.id))
+    if (error) return { error: error.message }
+  }
+
+  if (sobrantes.length > 0) {
+    const { error } = await supabase
+      .from('agenda_sesiones')
+      .delete()
+      .eq('cohorte_id', cohorteId)
+      .in('id', sobrantes.map((c) => c.id))
+    if (error) return { error: error.message }
+  }
 
   revalidatePath('/psicologo/cohortes')
   revalidatePath('/psicologo/agenda')
   revalidatePath('/alumno/agenda')
-  return { success: true, creadas: faltantes.length, total: fechas.length }
+  return {
+    success: true,
+    agregadas: faltantes.length,
+    actualizadas: otraDuracion.length,
+    quitadas: sobrantes.length,
+  }
 }
 
 // Borra solo las clases FUTURAS de la formación. Es la salida para cuando se cambió el
@@ -1289,7 +1412,7 @@ async function notificarClasesAgendadas(
   if (!destino.cohorte_id) return
 
   const [{ data: cohorte }, { data: inscriptos }] = await Promise.all([
-    supabaseAdmin.from('cohortes').select('nombre').eq('id', destino.cohorte_id).single(),
+    supabaseAdmin.from('cohortes').select('nombre, enlace_videollamada').eq('id', destino.cohorte_id).single(),
     supabaseAdmin
       .from('cohortes_alumnos')
       .select('alumnos(id, nombre, email, estado)')
@@ -1320,7 +1443,8 @@ async function notificarClasesAgendadas(
       primeraFechaHora: primera,
       duracionMinutos: destino.duracionMinutos,
       lugar: destino.lugar,
-      enlace: destino.enlace,
+      // El de la clase, o el de la formación: es el mismo orden que usa la agenda.
+      enlace: destino.enlace || cohorte.enlace_videollamada || null,
       urlAgenda,
     }),
   }))

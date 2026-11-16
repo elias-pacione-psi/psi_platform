@@ -51,7 +51,7 @@ export default async function AlumnoHomePage() {
   const [{ data: proximaSesion }, { count: countProg }, countRec] = await Promise.all([
     supabase
       .from('agenda_sesiones')
-      .select('fecha_hora, duracion_minutos, tipo, lugar, enlace, cohortes(nombre)')
+      .select('fecha_hora, duracion_minutos, tipo, lugar, enlace, cohortes(nombre, enlace_videollamada)')
       .gte('fecha_hora', new Date().toISOString())
       .order('fecha_hora', { ascending: true })
       .limit(1)
@@ -68,7 +68,11 @@ export default async function AlumnoHomePage() {
   const cantidadProgramas = countProg || 0
   const cantidadMateriales = countRec || 0
 
-  const linkFinal = proximaSesion?.enlace || alumno?.link_videollamada || (esPsicologo ? 'https://meet.google.com' : null)
+  // El de la clase; si no tiene, el de la formación (clases grupales) y, al final, el del alumno.
+  // Mismo orden que armarSesion() en calendarActions.ts.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const enlaceDeLaFormacion = (proximaSesion as any)?.cohortes?.enlace_videollamada
+  const linkFinal = proximaSesion?.enlace || enlaceDeLaFormacion || alumno?.link_videollamada || (esPsicologo ? 'https://meet.google.com' : null)
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">

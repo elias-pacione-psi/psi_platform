@@ -9,21 +9,39 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import {
   guardarCohorte, eliminarCohorte, inscribirAlumnosEnCohorte, quitarAlumnoDeCohorte,
-  generarClasesDeCohorte, borrarClasesFuturasDeCohorte, asegurarRecursoDeR2,
+  generarClasesDeCohorte, ajustarClasesAlHorario, borrarClasesFuturasDeCohorte, asegurarRecursoDeR2,
 } from '../actions'
 import {
   Loader2, Plus, Settings2, Trash2, GraduationCap, Users, UserMinus, CalendarClock,
   CalendarPlus, TriangleAlert, BookOpen, FileText, FileAudio, FileVideo, FileImage,
-  Folder, FolderOpen, ChevronRight, Check,
+  Folder, FolderOpen, ChevronRight, Check, Video,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { DIAS_SEMANA, etiquetaHorario, fechasDeClases, horarioCompleto } from '@/utils/horario-cohorte'
+import {
+  DIAS_SEMANA, compararClases, duracionMinutos, etiquetaHorario, fechasDeClases, horarioCompleto,
+} from '@/utils/horario-cohorte'
+import { fechaConDia, fechaCorta } from '@/utils/fecha-ar'
 import { listarCarpeta } from '@/app/psicologo/archivos/actions'
 import { keyDeMarcadorR2, PREFIJO_ENTREGAS_R2 } from '@/utils/r2-marcador'
 import type { ListadoR2 } from '@/utils/r2'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Cohorte = any
+
+// "mar 17 nov, mar 24 nov, mié 25 nov y 3 más": alcanza para reconocer de qué clases habla
+// el aviso sin llenar la tarjeta cuando son muchas.
+function listarFechas(isos: string[], max = 4): string {
+  const orden = [...isos].sort()
+  const visibles = orden.slice(0, max).map(fechaConDia).join(', ')
+  return orden.length > max ? `${visibles} y ${orden.length - max} más` : visibles
+}
+
+// Singular/plural de los avisos: "1 clase" / "7 clases", "Sobra" / "Sobran".
+const clases = (n: number) => `${n} ${n === 1 ? 'clase' : 'clases'}`
+const plural = (n: number, singular: string, varias: string) => (n === 1 ? singular : varias)
+
+// "2026-11-24" → "24 nov 2026" (columna `date`: se ancla en Argentina para no correr el día).
+const dia = (fecha: string | null | undefined) => (fecha ? fechaCorta(`${fecha}T00:00:00-03:00`) : '—')
 
 type RecursoBiblioteca = {
   id: string
@@ -50,6 +68,7 @@ export function CohortesClient({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [toDelete, setToDelete] = useState<string | null>(null)
   const [aLimpiar, setALimpiar] = useState<Cohorte>(null)
+  const [aAjustar, setAAjustar] = useState<Cohorte>(null)
 
   // Inscripción
   const [openEnroll, setOpenEnroll] = useState(false)
@@ -161,6 +180,21 @@ export function CohortesClient({
     })
   }
 
+  function handleAjustar() {
+    if (!aAjustar) return
+    startTransition(async () => {
+      const result = await ajustarClasesAlHorario(aAjustar.id)
+      if ('error' in result) { toast.error(result.error); return }
+      const partes = [
+        result.agregadas > 0 && `${result.agregadas} agendada(s)`,
+        result.quitadas > 0 && `${result.quitadas} quitada(s)`,
+        result.actualizadas > 0 && `${result.actualizadas} con la duración corregida`,
+      ].filter(Boolean)
+      toast.success(partes.length > 0 ? `Clases ajustadas al horario: ${partes.join(', ')}.` : 'Las clases ya coincidían con el horario.')
+      setAAjustar(null)
+    })
+  }
+
   function handleLimpiarFuturas() {
     if (!aLimpiar) return
     startTransition(async () => {
@@ -257,6 +291,9 @@ export function CohortesClient({
   }
   const clasesPreview = horarioCompleto(horarioForm) ? fechasDeClases(horarioForm).length : 0
 
+  // Lo que va a hacer "Ajustar al horario", para mostrarlo en la confirmación antes de tocar nada.
+  const diffAjuste = aAjustar && horarioCompleto(aAjustar) ? compararClases(aAjustar, aAjustar.clases.agendadas) : null
+
   // Lista de "Asignación de Libros y Material extra" del formulario, filtrada por la búsqueda.
   const recursosFiltrados = recursosDisponibles.filter((r) =>
     r.titulo?.toLowerCase().includes(busquedaRecursos.toLowerCase())
@@ -282,9 +319,13 @@ export function CohortesClient({
           {cohortes.map((c) => {
             const horario = etiquetaHorario(c)
             const clasesDelHorario = horarioCompleto(c) ? fechasDeClases(c).length : 0
-            // Hay clases futuras agendadas que no coinciden con lo que da el horario
-            // actual: casi siempre es que el horario se editó después de generarlas.
-            const desalineada = clasesDelHorario > 0 && c.clases.futuras > 0 && c.clases.total !== clasesDelHorario
+            // Qué le sobra o le falta a la agenda respecto del horario actual: casi siempre es
+            // que el horario se editó después de agendar las clases. Se compara por fecha y no
+            // por cantidad: con el horario corrido una semana la cantidad sigue coincidiendo
+            // (ocho y ocho) y un aviso por conteo no saltaba aunque las fechas fueran otras.
+            const diff = clasesDelHorario > 0 && c.clases.total > 0 ? compararClases(c, c.clases.agendadas) : null
+            const desalineada = diff !== null
+              && diff.sobrantes.length + diff.faltantes.length + diff.otraDuracion.length > 0
 
             return (
               <div key={c.id} className="bg-card border border-border rounded-xl shadow-sm p-5 space-y-3">
@@ -317,6 +358,19 @@ export function CohortesClient({
                     {horario && (
                       <p className="text-xs text-tinta mt-1 flex items-center gap-1.5">
                         <CalendarClock className="w-3.5 h-3.5 text-marca" /> {horario}
+                      </p>
+                    )}
+                    {c.enlace_videollamada?.startsWith('https://') && (
+                      <p className="text-xs text-tinta mt-1 flex items-center gap-1.5 min-w-0">
+                        <Video className="w-3.5 h-3.5 text-marca shrink-0" />
+                        <a
+                          href={c.enlace_videollamada}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="truncate underline underline-offset-2 hover:text-marca"
+                        >
+                          {c.enlace_videollamada.replace(/^https:\/\//, '')}
+                        </a>
                       </p>
                     )}
                   </div>
@@ -368,20 +422,42 @@ export function CohortesClient({
                     </p>
                   )}
 
-                  {desalineada && (
+                  {desalineada && diff && (
                     <div className="flex items-start gap-2 text-xs bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900 text-orange-800 dark:text-orange-300 rounded-lg p-2.5">
                       <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" />
-                      <span className="flex-1">
-                        Hay {c.clases.total} clases agendadas pero el horario actual da {clasesDelHorario}.
-                        Si cambiaste el horario, las viejas siguen ahí.
-                        <button
-                          onClick={() => setALimpiar(c)}
-                          disabled={isPending}
-                          className="ml-1 font-semibold underline underline-offset-2 hover:opacity-80"
-                        >
-                          Borrar las futuras
-                        </button>
-                      </span>
+                      <div className="flex-1 space-y-1.5">
+                        <p>
+                          Las clases agendadas no coinciden con el horario actual. Si cambiaste las
+                          fechas o los días, las clases ya agendadas no se mueven solas.
+                        </p>
+                        <ul className="list-disc pl-4 space-y-0.5">
+                          {diff.sobrantes.length > 0 && (
+                            <li>{plural(diff.sobrantes.length, 'Sobra', 'Sobran')} {clases(diff.sobrantes.length)}: {listarFechas(diff.sobrantes.map((s: { fecha_hora: string }) => s.fecha_hora))}</li>
+                          )}
+                          {diff.faltantes.length > 0 && (
+                            <li>{plural(diff.faltantes.length, 'Falta', 'Faltan')} {clases(diff.faltantes.length)}: {listarFechas(diff.faltantes)}</li>
+                          )}
+                          {diff.otraDuracion.length > 0 && (
+                            <li>{clases(diff.otraDuracion.length)} con otra duración (el horario dice {duracionMinutos(c.hora_inicio, c.hora_fin)} min)</li>
+                          )}
+                        </ul>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1">
+                          <button
+                            onClick={() => setAAjustar(c)}
+                            disabled={isPending}
+                            className="font-semibold underline underline-offset-2 hover:opacity-80"
+                          >
+                            Ajustar al horario
+                          </button>
+                          <button
+                            onClick={() => setALimpiar(c)}
+                            disabled={isPending}
+                            className="font-semibold underline underline-offset-2 hover:opacity-80"
+                          >
+                            Borrar las futuras
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -560,6 +636,23 @@ export function CohortesClient({
               </p>
             </div>
 
+            <div className="space-y-2 border-t border-border pt-4">
+              <Label htmlFor="enlace_videollamada" className="font-bold text-tinta">Enlace de la videollamada (Meet)</Label>
+              <Input
+                id="enlace_videollamada"
+                type="url"
+                name="enlace_videollamada"
+                defaultValue={selected?.enlace_videollamada || ''}
+                placeholder="https://meet.google.com/abc-defg-hij"
+                className="bg-card border-border"
+              />
+              <p className="text-xs text-muted-foreground">
+                Se carga una sola vez y vale para todas las clases de la formación: aparece en la agenda,
+                en el inicio de los inscriptos y en los avisos por email. Si la formación es presencial,
+                dejalo vacío.
+              </p>
+            </div>
+
             {errorMsg && <p className="text-red-600 dark:text-red-400 text-sm">{errorMsg}</p>}
             <div className="flex justify-end pt-2">
               <Button type="submit" disabled={isPending} className="bg-marca hover:bg-marca/90 text-crema px-8">
@@ -612,6 +705,47 @@ export function CohortesClient({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={(e) => { e.preventDefault(); handleDelete() }} disabled={isPending} className="bg-red-600 hover:bg-red-700 text-white">Eliminar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!aAjustar} onOpenChange={(o) => !o && setAAjustar(null)}>
+        <AlertDialogContent className="bg-crema">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-heading text-2xl text-tinta">¿Ajustar las clases al horario?</AlertDialogTitle>
+            <AlertDialogDescription className="font-sans">
+              <span className="block">
+                La agenda de <b>{aAjustar?.nombre}</b> va a quedar igual al horario de la formación
+                ({aAjustar ? etiquetaHorario(aAjustar) : ''}, del {dia(aAjustar?.fecha_inicio)} al {dia(aAjustar?.fecha_fin)}).
+              </span>
+              {diffAjuste && diffAjuste.sobrantes.length > 0 && (
+                <span className="block mt-2">
+                  • Se {plural(diffAjuste.sobrantes.length, 'quita', 'quitan')} {clases(diffAjuste.sobrantes.length)} que no{' '}
+                  {plural(diffAjuste.sobrantes.length, 'está', 'están')} en el horario:{' '}
+                  {listarFechas(diffAjuste.sobrantes.map((s: { fecha_hora: string }) => s.fecha_hora))}.
+                </span>
+              )}
+              {diffAjuste && diffAjuste.faltantes.length > 0 && (
+                <span className="block mt-1">
+                  • Se {plural(diffAjuste.faltantes.length, 'agenda', 'agendan')} {clases(diffAjuste.faltantes.length)} que{' '}
+                  {plural(diffAjuste.faltantes.length, 'falta', 'faltan')}: {listarFechas(diffAjuste.faltantes)}.
+                  Los inscriptos reciben el aviso por email.
+                </span>
+              )}
+              {diffAjuste && diffAjuste.otraDuracion.length > 0 && (
+                <span className="block mt-1">
+                  • {clases(diffAjuste.otraDuracion.length)} {plural(diffAjuste.otraDuracion.length, 'pasa', 'pasan')} a
+                  durar {duracionMinutos(aAjustar.hora_inicio, aAjustar.hora_fin)} min.
+                </span>
+              )}
+              <span className="block mt-2">Las clases que ya pasaron no se tocan.</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); handleAjustar() }} disabled={isPending} className="bg-marca hover:bg-marca/90 text-crema">
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null} Ajustar
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -47,6 +47,13 @@ export function fechaCorta(iso: string | Date): string {
   )
 }
 
+/** "mar 25 ago" — día de la semana incluido, para listar fechas de clase sin ambigüedad. */
+export function fechaConDia(iso: string | Date): string {
+  return new Date(iso)
+    .toLocaleDateString('es-AR', conZona({ weekday: 'short', day: 'numeric', month: 'short' }))
+    .replace(/[,.]/g, '')
+}
+
 /** "25/8/2026" — numérica, para columnas de metadatos. */
 export function fechaNumerica(iso: string | Date): string {
   return new Date(iso).toLocaleDateString('es-AR', conZona({}))
@@ -63,6 +70,31 @@ export function hora(iso: string | Date): string {
 /** "25 ago 2026, 21:00" — fecha y hora juntas en una línea. */
 export function fechaHoraCorta(iso: string | Date): string {
   return `${fechaCorta(iso)}, ${hora(iso)}`
+}
+
+// react-big-calendar y date-fns dibujan con los getters LOCALES de Date (getDate(),
+// getHours()…), es decir con la zona del navegador, y no hay `timeZone` que se les pueda
+// pasar. Una clase del martes 20:00 de Argentina es el martes 23:00 UTC: en un navegador en
+// Ámsterdam (UTC+1) el calendario la dibujaba el miércoles a las 00:00.
+//
+// Esto devuelve un Date "de pared": un objeto cuyos getters locales dan la fecha y la hora
+// que marca un reloj en Argentina para ese instante. Sirve SOLO para dibujar (posición en
+// el calendario y formato); no es un instante real, así que para enlaces, mails o
+// cualquier comparación con `new Date()` hay que seguir usando el ISO original.
+//
+// El único caso en que falla es una hora que no existe en la zona del navegador (la que
+// se saltea en su cambio de horario de verano): ahí JS la corre una hora.
+const PARTES_AR = new Intl.DateTimeFormat('en-CA', {
+  timeZone: ZONA_AR,
+  hourCycle: 'h23',
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', second: '2-digit',
+})
+
+export function aHoraDePared(instante: string | Date): Date {
+  const p: Record<string, string> = {}
+  for (const { type, value } of PARTES_AR.formatToParts(new Date(instante))) p[type] = value
+  return new Date(Number(p.year), Number(p.month) - 1, Number(p.day), Number(p.hour), Number(p.minute), Number(p.second))
 }
 
 // Una columna `date` de Postgres (fecha_inicio/fecha_fin de una cohorte) llega como

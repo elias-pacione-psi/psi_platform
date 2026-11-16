@@ -80,8 +80,11 @@ export function AgendaAdminPanel({ alumnos, pacientes = [], cohortes }: { alumno
       </div>
       {tipo === 'virtual' ? (
         <div className="space-y-2">
-          <Label htmlFor="enlace" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Enlace (opcional para individual)</Label>
-          <Input name="enlace" placeholder="https://meet.google.com/..." className="bg-muted border-border h-10" disabled={isPending} />
+          <Label htmlFor="enlace" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Enlace (opcional)</Label>
+          <Input id="enlace" name="enlace" placeholder="https://meet.google.com/..." className="bg-muted border-border h-10" disabled={isPending} />
+          <p className="text-xs text-muted-foreground">
+            Vacío: se usa el enlace de la formación (cargado en Formaciones) o el del alumno.
+          </p>
         </div>
       ) : (
         <div className="space-y-2">

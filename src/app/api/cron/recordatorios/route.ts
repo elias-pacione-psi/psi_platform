@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       enlace,
       duracion_minutos,
       alumnos(id, email, nombre, link_videollamada, estado),
-      cohortes(nombre, cohortes_alumnos(alumnos(id, email, nombre, estado)))
+      cohortes(nombre, enlace_videollamada, cohortes_alumnos(alumnos(id, email, nombre, estado)))
     `)
     .gte('fecha_hora', mananaAR_inicio.toISOString())
     .lte('fecha_hora', mananaAR_fin.toISOString())
@@ -127,7 +127,8 @@ export async function GET(req: NextRequest) {
             fechaHora,
             duracionMinutos: s.duracion_minutos,
             lugar: s.lugar,
-            enlace: s.enlace,
+            // El de la clase, o el de la formación (mismo orden que la agenda).
+            enlace: s.enlace || s.cohortes.enlace_videollamada,
             urlAgenda,
           }),
         })

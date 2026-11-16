@@ -90,6 +90,50 @@ export function fechasDeClases(c: HorarioCohorte): string[] {
   return fechas
 }
 
+export type ClaseAgendada = { fecha_hora: string; duracion_minutos: number | null }
+
+// Qué le falta o le sobra a la agenda de una formación respecto de su horario. Se compara
+// por INSTANTE y no por cantidad: con un horario movido una semana, la agenda sigue
+// teniendo la misma cantidad de clases (ocho y ocho) pero en otras fechas, y un chequeo
+// por conteo da todo en orden. Solo cuenta lo que viene: el pasado es historia, no se
+// "corrige" ni se resucita una clase que se dio de baja a propósito.
+//
+// - sobrantes: clases futuras que el horario no contiene (o repetidas en el mismo instante).
+// - faltantes: fechas futuras del horario que no están agendadas.
+// - otraDuracion: clases futuras que sí coinciden pero duran distinto (las que carga la
+//   agenda en modo recurrente salen de 60 minutos, aunque la formación sea de 90).
+//
+// Lo usan la tarjeta de Formaciones (aviso) y el servidor (ajuste): mismo cálculo, así el
+// aviso no puede decir una cosa y el botón hacer otra.
+export function compararClases<T extends ClaseAgendada>(
+  c: HorarioCohorte,
+  agendadas: T[],
+  ahora: Date = new Date(),
+): { sobrantes: T[]; faltantes: string[]; otraDuracion: T[] } {
+  const deseadas = fechasDeClases(c)
+  const enHorario = new Set(deseadas.map((f) => new Date(f).getTime()))
+  const duracion = horarioCompleto(c) ? duracionMinutos(c.hora_inicio as string, c.hora_fin) : null
+  const corte = ahora.getTime()
+
+  const presentes = new Set<number>()
+  const sobrantes: T[] = []
+  const otraDuracion: T[] = []
+  for (const clase of agendadas) {
+    const t = new Date(clase.fecha_hora).getTime()
+    const repetida = presentes.has(t)
+    presentes.add(t)
+    if (t < corte) continue
+    if (!enHorario.has(t) || repetida) sobrantes.push(clase)
+    else if (duracion !== null && clase.duracion_minutos !== duracion) otraDuracion.push(clase)
+  }
+
+  const faltantes = deseadas.filter((f) => {
+    const t = new Date(f).getTime()
+    return t >= corte && !presentes.has(t)
+  })
+  return { sobrantes, faltantes, otraDuracion }
+}
+
 export function etiquetaHorario(c: HorarioCohorte): string | null {
   if (!c.hora_inicio || !c.dias_semana || c.dias_semana.length === 0) return null
 
