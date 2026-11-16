@@ -19,15 +19,21 @@ export const FOTO_PERFIL = {
 }
 
 // Fotos de Elias que rotan en el carrusel de /quien-soy, en el orden en que se muestran:
-// primero la charla con luz violeta (la misma de FOTO_PERFIL) y después dos de un seminario
-// presencial. Todas están recortadas a 4:5 (720×900) con Elias como centro del encuadre, y
-// sin metadatos; en la de la campera se encuadró por encima de la cabeza de un asistente
-// que tapaba la parte baja. Para sumar, quitar o reordenar alcanza con tocar esta lista y
-// los archivos de public/elias/.
+// primero la charla con luz violeta (la misma de FOTO_PERFIL), después las de un seminario
+// presencial —alternando campera y buzo— y al final la foto grupal con los asistentes.
+// Todas son 4:5 (720×900) y sin metadatos, encuadradas con Elias como centro (en las de
+// campera se dejó afuera la cabeza desenfocada de un asistente que tapaba la parte baja).
+// La grupal va entera, sobre su propio fondo desenfocado, para que nadie quede cortado.
+// Para sumar, quitar o reordenar alcanza con tocar esta lista y los archivos de
+// public/elias/.
 export const FOTOS_PERFIL = [
   { src: '/elias/charla-escenario.jpg', alt: FOTO_PERFIL.alt },
   { src: '/elias/seminario-campera.jpg', alt: 'Elías con campera oscura y el micrófono en la mano, durante un seminario' },
   { src: '/elias/seminario-buzo.jpg', alt: 'Elías con buzo oscuro, señalando con una mano y el micrófono en la otra, durante un seminario' },
+  { src: '/elias/seminario-microfono.jpg', alt: 'Elías con campera oscura, el micrófono en una mano y el control de las diapositivas en la otra' },
+  { src: '/elias/seminario-presentacion.jpg', alt: 'Elías hablando con el micrófono frente al público, con una presentación en pantalla detrás' },
+  { src: '/elias/seminario-acompanando.jpg', alt: 'Elías sonriendo y apoyando una mano en el hombro de un asistente, que aparece de espaldas' },
+  { src: '/elias/seminario-grupal.jpg', alt: 'Foto grupal de Elías con los asistentes al seminario, posando en el salón' },
 ]
 
 // Año en que se recibió. Los años de ejercicio se calculan a partir de ahí en vez de
