@@ -23,7 +23,9 @@ export const FOTO_PERFIL = {
 // presencial —alternando campera y buzo— y al final la foto grupal con los asistentes.
 // Todas son 4:5 (720×900) y sin metadatos, encuadradas con Elias como centro (en las de
 // campera se dejó afuera la cabeza desenfocada de un asistente que tapaba la parte baja).
-// La grupal va entera, sobre su propio fondo desenfocado, para que nadie quede cortado.
+// La grupal es apaisada y el carrusel es vertical: entera quedaba como una tira chica con
+// mucho vacío (o con relleno desenfocado) arriba y abajo, así que se recortó sobre el
+// centro del grupo: Elías y una docena de asistentes, con las caras a buen tamaño.
 // Para sumar, quitar o reordenar alcanza con tocar esta lista y los archivos de
 // public/elias/.
 export const FOTOS_PERFIL = [
@@ -33,7 +35,7 @@ export const FOTOS_PERFIL = [
   { src: '/elias/seminario-microfono.jpg', alt: 'Elías con campera oscura, el micrófono en una mano y el control de las diapositivas en la otra' },
   { src: '/elias/seminario-presentacion.jpg', alt: 'Elías hablando con el micrófono frente al público, con una presentación en pantalla detrás' },
   { src: '/elias/seminario-acompanando.jpg', alt: 'Elías sonriendo y apoyando una mano en el hombro de un asistente, que aparece de espaldas' },
-  { src: '/elias/seminario-grupal.jpg', alt: 'Foto grupal de Elías con los asistentes al seminario, posando en el salón' },
+  { src: '/elias/seminario-grupal.jpg', alt: 'Foto grupal de Elías con asistentes al seminario, posando en el salón' },
 ]
 
 // Año en que se recibió. Los años de ejercicio se calculan a partir de ahí en vez de
