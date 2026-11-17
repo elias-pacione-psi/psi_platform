@@ -328,11 +328,12 @@ async function actualizarReferenciasR2(
   keyNueva: string,
 ): Promise<number> {
   const marcaNueva = marcarKeyR2(keyNueva)
-  const [{ data: lecs }, { data: recs }, { data: ebs }, { data: progs }] = await Promise.all([
+  const [{ data: lecs }, { data: recs }, { data: ebs }, { data: progs }, { data: eps }] = await Promise.all([
     supabase.from('lecciones').select('id, url_recurso').not('url_recurso', 'is', null),
     supabase.from('biblioteca_recursos').select('id, url_recurso').not('url_recurso', 'is', null),
     supabase.from('ebooks').select('id, archivo_key, portada_key'),
     supabase.from('programas').select('id, portada_key').not('portada_key', 'is', null),
+    supabase.from('podcast_episodios').select('id, audio_key'),
   ])
 
   const apunta = (valor: string | null) => Boolean(valor) && extraerKeyDeR2(valor as string) === keyVieja
@@ -349,6 +350,8 @@ async function actualizarReferenciasR2(
   const idsEbookPortada = (ebs ?? []).filter((r: any) => apunta(r.portada_key)).map((r: any) => r.id)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const idsProgramas = (progs ?? []).filter((r: any) => apunta(r.portada_key)).map((r: any) => r.id)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const idsEpisodios = (eps ?? []).filter((r: any) => apunta(r.audio_key)).map((r: any) => r.id)
 
   await Promise.all([
     idsLecciones.length > 0
@@ -366,11 +369,14 @@ async function actualizarReferenciasR2(
     idsProgramas.length > 0
       ? supabase.from('programas').update({ portada_key: marcaNueva }).in('id', idsProgramas)
       : Promise.resolve(),
+    idsEpisodios.length > 0
+      ? supabase.from('podcast_episodios').update({ audio_key: marcaNueva }).in('id', idsEpisodios)
+      : Promise.resolve(),
   ])
 
   return (
     idsLecciones.length + idsRecursos.length
-    + idsEbookArchivo.length + idsEbookPortada.length + idsProgramas.length
+    + idsEbookArchivo.length + idsEbookPortada.length + idsProgramas.length + idsEpisodios.length
   )
 }
 

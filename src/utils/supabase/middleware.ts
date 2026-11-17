@@ -37,6 +37,8 @@ export async function updateSession(request: NextRequest) {
     // Presentación de Elias (bio + galería de fotos). Es contenido de marca, sin datos de
     // nadie: igual que las de arriba, tiene que verse sin sesión.
     '/quien-soy',
+    // Podcast gratuito: abierto a todo el público, sin cuenta.
+    '/podcast',
     // El webhook de Mercado Pago (api/webhooks/mercadopago) lo llama el servidor de
     // Mercado Pago, sin ninguna sesión de esta app — la propia ruta valida la firma de
     // la notificación, así que redirigirla a /login antes de que corra ese código sería

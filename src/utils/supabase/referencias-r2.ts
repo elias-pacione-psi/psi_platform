@@ -28,11 +28,12 @@ type Fila = { url: string | null; etiqueta: string }
 async function todasLasReferencias(): Promise<Fila[]> {
   const supabaseAdmin = createAdminClient()
 
-  const [lecciones, biblioteca, ebooks, programas] = await Promise.all([
+  const [lecciones, biblioteca, ebooks, programas, podcast] = await Promise.all([
     supabaseAdmin.from('lecciones').select('titulo, url_recurso'),
     supabaseAdmin.from('biblioteca_recursos').select('titulo, url_recurso, origen'),
     supabaseAdmin.from('ebooks').select('titulo, archivo_key, portada_key'),
     supabaseAdmin.from('programas').select('titulo, portada_key'),
+    supabaseAdmin.from('podcast_episodios').select('numero, titulo, audio_key'),
   ])
 
   const filas: Fila[] = []
@@ -56,6 +57,9 @@ async function todasLasReferencias(): Promise<Fila[]> {
   }
   for (const p of programas.data ?? []) {
     filas.push({ url: p.portada_key, etiqueta: `la portada del programa "${p.titulo}"` })
+  }
+  for (const e of podcast.data ?? []) {
+    filas.push({ url: e.audio_key, etiqueta: `el episodio ${e.numero} del podcast "${e.titulo}"` })
   }
 
   return filas

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag, ChevronDown, MessageSquareHeart, HeartHandshake } from "lucide-react"
+import { Home, LogOut, Users, Library, Calendar, LayoutList, GraduationCap, Inbox, ClipboardList, FolderCog, BookOpen, ShoppingBag, ChevronDown, MessageSquareHeart, HeartHandshake, Mic } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
@@ -115,6 +115,12 @@ const itemsPsicologo = [
     title: "ebooks",
     url: "/psicologo/ebooks",
     icon: BookOpen,
+  },
+  {
+    // Episodios gratuitos de /podcast.
+    title: "Podcast",
+    url: "/psicologo/podcast",
+    icon: Mic,
   },
   {
     title: "Entregas",
