@@ -5,7 +5,7 @@ import { BrandMark } from '@/components/BrandMark'
 import { SiteHeader } from '@/components/SiteHeader'
 import { FotoElias } from '@/components/FotoElias'
 import { ConceptoGlifo, type ConceptoGlifoNombre } from '@/components/ConceptoGlifo'
-import { CITA, COLEGIATURA, aniosDeEjercicio } from '@/utils/perfil-profesional'
+import { CITA, COLEGIATURA, INSTAGRAM_URL } from '@/utils/perfil-profesional'
 import { LandingClient } from './LandingClient'
 
 // Los cuatro conceptos que el brief define como la esencia de la marca, cada uno con su
@@ -69,9 +69,8 @@ export default function LandingPage() {
                 Sobre Elías
               </h2>
               <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
-                Licenciado en Psicología, con más de {aniosDeEjercicio()} años de trayectoria
-                acompañando procesos de adolescentes, adultos y parejas, en modalidad
-                presencial y virtual.
+                Licenciado en Psicología, con una amplia trayectoria acompañando procesos de
+                jóvenes, adultos y parejas, en modalidad presencial y virtual.
               </p>
               <p className="font-serif italic text-tinta/60 text-sm leading-relaxed border-l-2 border-marca pl-4 mb-5">
                 &ldquo;{CITA}&rdquo;
@@ -145,7 +144,29 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="text-sm space-y-2 md:text-right">
-            <p>&copy; {new Date().getFullYear()} Elias Pacione.</p>
+            {/* lucide-react 1.x ya no trae íconos de marcas, por eso el de Instagram va
+                como SVG propio. */}
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 md:justify-end">
+              <span>&copy; {new Date().getFullYear()} Elias Pacione.</span>
+              <span aria-hidden className="text-nieve/30">·</span>
+              <span className="flex items-center gap-2">
+                Seguinos en:
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 underline hover:text-nieve transition-colors"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
+                  </svg>
+                  Instagram
+                </a>
+                <span className="text-nieve/45">(próximamente YouTube y TikTok)</span>
+              </span>
+            </p>
             {/* El "Botón de Arrepentimiento" tiene que estar visible en la home
                 (Resolución 424/2020) para quien compra un ebook — no puede ir escondido
                 dentro de otra página. Va acá junto a los otros dos links legales. */}

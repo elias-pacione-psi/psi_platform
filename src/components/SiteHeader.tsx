@@ -24,6 +24,9 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 // deje a la persona sin saber dónde está parada.
 const SECCIONES_NAV: { titulo: string; href: string; rutasRelacionadas?: string[] }[] = [
   { titulo: 'Quién soy', href: '/quien-soy' },
+  // Material gratuito y abierto: va pegado a Quién soy porque es la otra puerta de
+  // entrada sin compromiso, antes de cualquier cosa que se compra o se asigna.
+  { titulo: 'Podcast', href: '/podcast' },
   { titulo: 'ebooks', href: '/ebooks' },
   { titulo: 'Cursos', href: '/cursos' },
   { titulo: 'Supervisiones', href: '/supervisiones', rutasRelacionadas: ['/formaciones'] },

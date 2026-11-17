@@ -38,6 +38,11 @@ export const FOTOS_PERFIL = [
   { src: '/elias/seminario-grupal.jpg', alt: 'Foto grupal de Elías con asistentes al seminario, posando en el salón' },
 ]
 
+// Redes de Elias que se muestran en el footer de la landing ("Seguinos en"). Va sin el
+// parámetro de seguimiento `xtok` que trae el link compartido desde la app.
+// YouTube y TikTok se suman acá cuando existan las cuentas.
+export const INSTAGRAM_URL = 'https://www.instagram.com/psi.eliaspacione/'
+
 // Año en que se recibió. Los años de ejercicio se calculan a partir de ahí en vez de
 // escribirse a mano, para que "más de 12 años" no quede viejo en cada cumpleaños del título.
 export const ANIO_TITULO = 2014
