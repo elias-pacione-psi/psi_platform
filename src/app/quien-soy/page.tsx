@@ -5,7 +5,6 @@ import { GaleriaFotos } from '@/components/GaleriaFotos'
 import { SiteHeader } from '@/components/SiteHeader'
 import { listarGaleriaQuienSoy } from '@/utils/galeria-quien-soy'
 import {
-  ANIO_TITULO,
   CITA,
   COLEGIATURA,
   DATOS_RAPIDOS,
@@ -13,13 +12,13 @@ import {
   ENFOQUE_PRINCIPAL,
   ESPECIALIDADES,
   FOTOS_PERFIL,
-  aniosDeEjercicio,
+  PRESENTACION,
 } from '@/utils/perfil-profesional'
 
 export const metadata = {
   title: 'Quién soy | Elias Pacione',
   description:
-    'Licenciado en Psicología desde 2014, especializado en terapia cognitivo-conductual. Trayectoria, enfoques, áreas de trabajo y fotos de charlas, seminarios y encuentros.',
+    'Licenciado en Psicología con amplia trayectoria, especializado en terapia cognitivo-conductual. Enfoques, áreas de trabajo y fotos de charlas, seminarios y encuentros.',
 }
 
 // Se regenera cada hora por la galería: las fotos se sirven con URL firmada de R2 (ver
@@ -31,14 +30,7 @@ const CHIP = 'bg-crema dark:bg-background text-tinta/80 text-xs px-3 py-1.5 roun
 
 export default async function QuienSoyPage() {
   const albumes = await listarGaleriaQuienSoy()
-  const anios = aniosDeEjercicio()
   const otrosEnfoques = ENFOQUES.filter((e) => e !== ENFOQUE_PRINCIPAL)
-
-  const hitos = [
-    { valor: String(ANIO_TITULO), texto: 'Se recibió de Licenciado en Psicología' },
-    { valor: `+${anios}`, texto: 'años de ejercicio profesional' },
-    { valor: 'TCC', texto: 'Terapia cognitivo-conductual, su enfoque de especialidad' },
-  ]
 
   return (
     <main className="min-h-screen bg-crema font-sans flex flex-col">
@@ -60,11 +52,7 @@ export default async function QuienSoyPage() {
             <h1 className="text-tinta text-4xl md:text-5xl font-heading font-semibold mb-5 leading-[1.15] tracking-tight">
               Elias Pacione
             </h1>
-            <p className="font-serif text-tinta/75 text-lg leading-relaxed mb-4">
-              Licenciado en Psicología, con más de {anios} años de trayectoria acompañando
-              procesos de adolescentes, adultos y parejas, en modalidad presencial y
-              virtual.
-            </p>
+            <p className="font-serif text-tinta/75 text-lg leading-relaxed mb-4">{PRESENTACION}</p>
             <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
               Se formó con una mirada ecléctica: su especialidad es la terapia
               cognitivo-conductual, y la integra con herramientas de otros enfoques según
@@ -93,20 +81,6 @@ export default async function QuienSoyPage() {
               )}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* TRAYECTORIA EN BREVE */}
-      <section className="border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-14">
-          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {hitos.map(({ valor, texto }) => (
-              <div key={valor} className="flex items-baseline gap-4 sm:block">
-                <dt className="w-28 shrink-0 font-heading font-semibold text-marca text-4xl tracking-tight sm:mb-2 sm:w-auto">{valor}</dt>
-                <dd className="font-serif text-tinta/75 text-sm leading-relaxed">{texto}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </section>
 

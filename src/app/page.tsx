@@ -5,7 +5,7 @@ import { BrandMark } from '@/components/BrandMark'
 import { SiteHeader } from '@/components/SiteHeader'
 import { FotoElias } from '@/components/FotoElias'
 import { ConceptoGlifo, type ConceptoGlifoNombre } from '@/components/ConceptoGlifo'
-import { CITA, COLEGIATURA, INSTAGRAM_URL } from '@/utils/perfil-profesional'
+import { CITA, COLEGIATURA, INSTAGRAM_URL, PRESENTACION } from '@/utils/perfil-profesional'
 import { LandingClient } from './LandingClient'
 
 // Los cuatro conceptos que el brief define como la esencia de la marca, cada uno con su
@@ -68,10 +68,7 @@ export default function LandingPage() {
               <h2 className="font-heading font-semibold text-tinta text-3xl tracking-tight mb-4">
                 Sobre Elías
               </h2>
-              <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">
-                Licenciado en Psicología, con una amplia trayectoria acompañando procesos de
-                jóvenes, adultos y parejas, en modalidad presencial y virtual.
-              </p>
+              <p className="font-serif text-tinta/75 text-base leading-relaxed mb-5">{PRESENTACION}</p>
               <p className="font-serif italic text-tinta/60 text-sm leading-relaxed border-l-2 border-marca pl-4 mb-5">
                 &ldquo;{CITA}&rdquo;
               </p>
