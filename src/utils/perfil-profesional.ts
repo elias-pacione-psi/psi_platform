@@ -43,13 +43,11 @@ export const FOTOS_PERFIL = [
 // YouTube y TikTok se suman acá cuando existan las cuentas.
 export const INSTAGRAM_URL = 'https://www.instagram.com/psi.eliaspacione/'
 
-// Año en que se recibió. Los años de ejercicio se calculan a partir de ahí en vez de
-// escribirse a mano, para que "más de 12 años" no quede viejo en cada cumpleaños del título.
-export const ANIO_TITULO = 2014
-
-export function aniosDeEjercicio(): number {
-  return new Date().getFullYear() - ANIO_TITULO
-}
+// Frase de presentación de Elias: la primera línea de "Sobre Elías" en la landing y la de
+// la cabecera de /quien-soy. Las dos páginas la toman de acá para que no se desfasen (ya
+// pasó: se reescribió en la landing y /quien-soy quedó con la versión vieja).
+export const PRESENTACION =
+  'Licenciado en Psicología, con una amplia trayectoria acompañando procesos de jóvenes, adultos y parejas, en modalidad presencial y virtual.'
 
 // Especialidades declaradas en el perfil. Quedan afuera a propósito las dos más delicadas
 // del listado original (ideación suicida y psicosis): en una página pública de presentación
@@ -91,7 +89,7 @@ export const ENFOQUES = [
 
 export const DATOS_RAPIDOS = [
   { icono: Video, titulo: 'Modalidad', texto: 'Presencial y virtual' },
-  { icono: Users, titulo: 'Atiende a', texto: 'Adolescentes, adultos y parejas' },
+  { icono: Users, titulo: 'Atiende a', texto: 'Jóvenes, adultos y parejas' },
   { icono: MapPin, titulo: 'Dónde', texto: 'Wilde y Quilmes, Buenos Aires' },
 ]
 
